@@ -3,14 +3,15 @@ title: "gmse_vary Notebook"
 output: html_notebook
 ---
 
-This is a start at a notebook to keep track of work.
+# Aims and objectives
 
-```{r}
-plot(cars)
-```
+The overall aim of this work is to investigate the effect of stakeholder variation, in particular in terms of budget and land ownership, on natural resource management, and how this interacts with manager budgets.
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+Objectives  
+  1. Demonstrate the functionality of GMSE as a tool to project the likely effects of different management scenarios under      varying conditions.  
+  2. Compare natural resource population dynamics (using geese as an example) and user (stakeholder) decision making when      stakeholders are varying in budget and land ownership
+  3. Test the effect of natual resource distribution responding to farmland yield.  
+  4. "Externally" (to GMSE) include variation in crop type within farms as well as differential preference of the resource      to different crop types.   
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
