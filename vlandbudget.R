@@ -6,7 +6,6 @@ source('global_pars.R')
 z <- 4 # 4 repeat sims
 
 for(i in 1:z) {
-  
   sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                         land_dim_1 = gmse_paras$land_dim_1,
                         land_dim_2 = gmse_paras$land_dim_2,
@@ -31,6 +30,21 @@ for(i in 1:z) {
                         converge_crit = gmse_paras$converge_crit,
                         ga_mingen = gmse_paras$ga_mingen)
   
+  sim_old$LAND[1:20, 1:20, 3] <- 2;
+  sim_old$LAND[1:20, 21:40, 3] <- 3;
+  sim_old$LAND[1:20, 41:60, 3] <- 4;
+  sim_old$LAND[1:20, 61:80, 3] <- 5;
+  sim_old$LAND[1:20, 81:100, 3] <- 6;
+  sim_old$LAND[21:40, 1:50, 3] <- 7;
+  sim_old$LAND[21:40, 51:100, 3] <- 8;
+  sim_old$LAND[41:60, 1:100, 3] <- 9;
+  sim_old$LAND[61:100, 1:100, 3] <- 1; 
+  
+  for(ID in 2:9){
+    cells_owned <- sum(sim_old$LAND[,,3] == ID);
+    sim_old$AGENTS[ID, 17] <- 2 * cells_owned;
+  }
+  
   sims <- as.data.frame(NULL)
   for(t in 1:time_steps){
     
@@ -49,17 +63,18 @@ for(i in 1:z) {
     sims <- rbind(sims, sim_t)
     sim_old <- sim_new
     sim_old$AGENTS[,16] <- 0
+    
   }
   cnames <- c("time", "pop", "pop_est", "cull_cost", "cull_count", "scare_cost","scare_n","tend_n")
   names(sims) <- c(cnames, paste0("yield",1:sholders))
   
-  saved(sims, "basic")
+  saved(sims, "vlandbudget")
 }
-
 
 mtimes <- file.info(list.files("./out", full.names = T))
 mtimes <- mtimes[order(mtimes$mtime, decreasing=T),]
-recent_files <- row.names(mtimes[1:z])
+mtimes <- mtimes[grepl("vlandbudget", row.names(mtimes)),]
+recent_files <- row.names(mtimes[1:z,])
 
 par(mfrow=c(2,2))
 for(i in 1:z) {

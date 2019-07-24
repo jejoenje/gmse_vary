@@ -6,7 +6,13 @@ source('global_pars.R')
 z <- 4 # 4 repeat sims
 
 for(i in 1:z) {
+
+  # This draws 8 random budgets with a mean of u_budget and a standard dev of u_budget/u_budget_scale.
+  # The idea is that this budget will stay the same for each stakeholder throughout all time steps.
+  ubudgets <- floor(rnorm(sholders, u_budget, u_budget/u_budget_vscale))
   
+  #ubudgets <- c(250,250,250,900,900,900,900,1200)
+    
   sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                         land_dim_1 = gmse_paras$land_dim_1,
                         land_dim_2 = gmse_paras$land_dim_2,
@@ -31,6 +37,8 @@ for(i in 1:z) {
                         converge_crit = gmse_paras$converge_crit,
                         ga_mingen = gmse_paras$ga_mingen)
   
+  sim_old$AGENTS[sim_old$AGENTS[,2]==1,17] <- ubudgets
+  
   sims <- as.data.frame(NULL)
   for(t in 1:time_steps){
     
@@ -49,17 +57,18 @@ for(i in 1:z) {
     sims <- rbind(sims, sim_t)
     sim_old <- sim_new
     sim_old$AGENTS[,16] <- 0
+
   }
   cnames <- c("time", "pop", "pop_est", "cull_cost", "cull_count", "scare_cost","scare_n","tend_n")
   names(sims) <- c(cnames, paste0("yield",1:sholders))
   
-  saved(sims, "basic")
+  saved(sims, "vbudget")
 }
-
 
 mtimes <- file.info(list.files("./out", full.names = T))
 mtimes <- mtimes[order(mtimes$mtime, decreasing=T),]
-recent_files <- row.names(mtimes[1:z])
+mtimes <- mtimes[grepl("vbudget", row.names(mtimes)),]
+recent_files <- row.names(mtimes[1:z,])
 
 par(mfrow=c(2,2))
 for(i in 1:z) {
@@ -67,4 +76,12 @@ for(i in 1:z) {
   plot_gmse_sims(dat)
 }
 
+### Check yield calcs for last iteration:
+yields <- as.vector(NULL)
+for (i in 1:sholders) {
+  yields <- c(yields, sum(sim_new$LAND[,,2][which(sim_new$LAND[,,3]==i+1)]))
+}
+round(yields,2)
+# Should be the same as
+round(tail(sims[,grepl("yield", names(sims))],1),2)
 

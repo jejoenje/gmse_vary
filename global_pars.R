@@ -4,4 +4,31 @@ target <- 5000
 sc <- 1
 time_steps <- 100
 sholders <- 8
-birth_K = 5000
+birth_K = 6000
+u_budget <- 1000
+u_budget_vscale <- 8
+
+gmse_paras <- list(
+  get_res = "Full",
+  land_dim_1 = 100,
+  land_dim_2 = 100,
+  land_ownership = TRUE,
+  tend_crops = TRUE,
+  scaring = TRUE,
+  remove_pr = 0.20,   # 0.20         
+  lambda = 0.275,             
+  res_death_K = K,         
+  RESOURCE_ini = N,       
+  manage_target = target,
+  res_death_type = 3,
+  manager_budget = 1000, 
+  user_budget = u_budget,
+  public_land = 0.1,
+  stakeholders = sholders, 
+  res_consume = 0.035,  
+  res_birth_K = birth_K,
+  observe_type = 3, 
+  agent_view = 1,
+  agent_move = 25,
+  converge_crit = 0.02,
+  ga_mingen = 100)

@@ -7,7 +7,7 @@ saved <- function(dat, prefix="") {
   save(dat, file=outname)
 }
 
-plot_gmse_sims <- function(s, t = target, scl = sc) {
+plot_gmse_sims <- function(s, t = target, scl = sc, main = "") {
   t_sc <- t/scl
   
   y_min <- min(c(s$pop,t_sc))
@@ -16,7 +16,7 @@ plot_gmse_sims <- function(s, t = target, scl = sc) {
   y_max <- y_max+y_max*0.05
   
   par(mar=c(5,5,3,5))
-  plot(s$time, s$pop, type="l", ylim=c(y_min, y_max), ylab="", xlab = "Time step")
+  plot(s$time, s$pop, type="l", ylim=c(y_min, y_max), ylab="", xlab = "Time step", main = main)
   
   abline(h = t_sc, col="red", lty="dashed")
   par(new = T)

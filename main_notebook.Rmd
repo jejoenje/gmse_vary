@@ -11,7 +11,6 @@ Objectives
   1. Demonstrate the functionality of GMSE as a tool to project the likely effects of different management scenarios under      varying conditions.  
   2. Compare natural resource population dynamics (using geese as an example) and user (stakeholder) decision making when      stakeholders are varying in budget and land ownership
   3. Test the effect of natual resource distribution responding to farmland yield.  
-  4. "Externally" (to GMSE) include variation in crop type within farms as well as differential preference of the resource      to different crop types.   
-
+  4. "Externally" (to GMSE) include variation in crop type within farms as well as differential preference of the resource      to different crop types.  
 
 
