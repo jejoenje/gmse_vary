@@ -6,7 +6,8 @@ plot_gmse_sims <- function(s, t = target, scl = sc) {
   y_min <- y_min-y_min*0.05
   y_max <- y_max+y_max*0.05
   
-  plot(s$time, s$pop, type="l", ylim=c(y_min, y_max))
+  par(mar=c(5,5,3,5))
+  plot(s$time, s$pop, type="l", ylim=c(y_min, y_max), ylab="", xlab = "Time step")
   
   abline(h = t_sc, col="red", lty="dashed")
   par(new = T)
@@ -17,4 +18,6 @@ plot_gmse_sims <- function(s, t = target, scl = sc) {
   }
   axis(side = 4)
   mtext(side = 4, line = 3, 'Yield per user')
+  mtext(side = 2, line = 3, 'Population size (est)')
+  
 }
