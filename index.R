@@ -1,6 +1,7 @@
 rm(list=ls())
 library(GMSE)
 source('helpers.R')
+source('gmse_apply_helpers.R')
 source('global_pars.R')
 
 sim_old <- gmse_apply(get_res = gmse_paras$get_res,
@@ -48,6 +49,8 @@ for(sim in 1:sims) {
   res[[sim]] = res_year
   
 }
+
+plot_sims(res, type="resource", sumtype = "none", ylim = c(100, 4000))
 
 
 

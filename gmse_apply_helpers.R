@@ -31,7 +31,7 @@ extract_gmse = function(all_dat, extract = "resource_results") {
 ### - observation: "observed" resources
 ### - resobs: both true and observed resources in the same plot.
 
-plot_sims = function(gmse_res, type="resource", sumtype="mean") {
+plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
   
   ### Plot "real" resource number only:
   
@@ -49,8 +49,13 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean") {
       y_lo = apply(y_res, 2, function(x) quantile(x, probs = 0.025))
       y_hi = apply(y_res, 2, function(x) quantile(x, probs = 0.975))
       
-      y_min = bufRange(y_lo, end="lo", incl_val = manage_target )
-      y_max = bufRange(y_hi, end="hi", incl_val = manage_target )
+      if(is.null(ylim)) {
+        y_min = bufRange(y_lo, end="lo", incl_val = manage_target )
+        y_max = bufRange(y_hi, end="hi", incl_val = manage_target )
+      } else {
+        y_min = ylim[1]
+        y_max = ylim[2]
+      }
       
       plot(x, y_res[1,], type="n", ylim = c(y_min, y_max))
       lines(x = x, y = y_mean, lwd = 2)
@@ -63,8 +68,15 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean") {
     
     if(sumtype == "none") {
       x = 1:ncol(y_res)
-      y_min = bufRange(y_res, end="lo", incl_val = manage_target )
-      y_max = bufRange(y_res, end="hi", incl_val = manage_target )
+      
+      if(is.null(ylim)) {
+        y_min = bufRange(y_res, end="lo", incl_val = manage_target )
+        y_max = bufRange(y_res, end="hi", incl_val = manage_target )
+      } else {
+        y_min = ylim[1]
+        y_max = ylim[2]
+      }
+      
       plot(x, y_res[1,], type = "n", ylim=c(y_min, y_max))
       for(i in 1:nrow(y_res)) {
         lines(x, y_res[i,])
@@ -92,8 +104,13 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean") {
       y_obs_lo = apply(y_obs, 2, function(x) quantile(x, probs = 0.025))
       y_obs_hi = apply(y_obs, 2, function(x) quantile(x, probs = 0.975))
       
-      y_min = bufRange(c(y_res_lo, y_obs_lo), end="lo", incl_val = manage_target )
-      y_max = bufRange(c(y_res_hi, y_obs_hi), end="hi", incl_val = manage_target )
+      if(is.null(ylim)) {
+        y_min = bufRange(c(y_res_lo, y_obs_lo), end="lo", incl_val = manage_target )
+        y_max = bufRange(c(y_res_hi, y_obs_hi), end="hi", incl_val = manage_target )
+      } else {
+        y_min = ylim[1]
+        y_max = ylim[2]
+      }
       
       plot(x, y_res[1,], type="n", ylim = c(y_min, y_max))
       lines(x = x, y = y_res_mean, lwd = 2)
@@ -110,8 +127,15 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean") {
     
     if(sumtype == "none") {
       x = 1:ncol(y_res)
-      y_min = bufRange(c(y_res,y_obs), end="lo", incl_val = manage_target )
-      y_max = bufRange(c(y_res,y_obs), end="hi", incl_val = manage_target )
+      
+      if(is.null(ylim)) {
+        y_min = bufRange(c(y_res,y_obs), end="lo", incl_val = manage_target )
+        y_max = bufRange(c(y_res,y_obs), end="hi", incl_val = manage_target )
+      } else {
+        y_min = ylim[1]
+        y_max = ylim[2]
+      }
+      
       plot(x, y_res[1,], type = "n", ylim=c(y_min, y_max))
       for(i in 1:nrow(y_res)) {
         lines(x, y_res[i,], col = "black")
@@ -136,8 +160,13 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean") {
       y_obs_lo = apply(y_obs, 2, function(x) quantile(x, probs = 0.025))
       y_obs_hi = apply(y_obs, 2, function(x) quantile(x, probs = 0.975))
       
-      y_min = bufRange(y_obs_lo, end="lo", incl_val = manage_target )
-      y_max = bufRange(y_obs_hi, end="hi", incl_val = manage_target )
+      if(is.null(ylim)) {
+        y_min = bufRange(y_obs_lo, end="lo", incl_val = manage_target )
+        y_max = bufRange(y_obs_hi, end="hi", incl_val = manage_target )
+      } else {
+        y_min = ylim[1]
+        y_max = ylim[2]
+      }
       
       plot(x, y_obs[1,], type="n", ylim = c(y_min, y_max))
       lines(x = x, y = y_obs_mean, lwd = 2, col = "blue")
@@ -150,8 +179,15 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean") {
     
     if(sumtype == "none") {
       x = 1:ncol(y_obs)
-      y_min = bufRange(y_obs, end="lo", incl_val = manage_target )
-      y_max = bufRange(y_obs, end="hi", incl_val = manage_target )
+      
+      if(is.null(ylim)) {
+        y_min = bufRange(y_obs, end="lo", incl_val = manage_target )
+        y_max = bufRange(y_obs, end="hi", incl_val = manage_target )
+      } else {
+        y_min = ylim[1]
+        y_max = ylim[2]
+      }
+      
       plot(x, y_obs[1,], type = "n", ylim=c(y_min, y_max))
       for(i in 1:nrow(y_obs)) {
         lines(x, y_obs[i,], col = "blue")
