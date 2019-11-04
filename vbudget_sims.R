@@ -13,14 +13,14 @@ for(i in 1:z) {
   
   #ubudgets <- c(250,250,250,900,900,900,900,1200)
     
-  sim_old <- gmse_apply(get_res = gmse_paras$get_res,
-                        land_dim_1 = gmse_paras$land_dim_1,
-                        land_dim_2 = gmse_paras$land_dim_2,
-                        land_ownership = gmse_paras$land_ownership,
-                        tend_crops = gmse_paras$tend_crops,
-                        scaring = gmse_paras$scaring,
-                        remove_pr = gmse_paras$remove_pr,         
-                        lambda = gmse_paras$lambda,             
+  sim_old <- gmse_apply(get_res = gmse_paras$get_res,                  
+                        land_dim_1 = gmse_paras$land_dim_1,             
+                        land_dim_2 = gmse_paras$land_dim_2,           
+                        land_ownership = gmse_paras$land_ownership,     
+                        tend_crops = gmse_paras$tend_crops,             
+                        scaring = gmse_paras$scaring,                   
+                        remove_pr = gmse_paras$remove_pr,             
+                        lambda = gmse_paras$lambda,                    
                         res_death_K = K,         
                         RESOURCE_ini = N,       
                         manage_target = target,
@@ -39,20 +39,26 @@ for(i in 1:z) {
   
   sim_old$AGENTS[sim_old$AGENTS[,2]==1,17] <- ubudgets
   
+  sim_old$AGENTS[,16] <- 0                 #### As per time step below??
+  
   sims <- as.data.frame(NULL)
+  sims$sum <- as.data.frame(NULL)
+  sims$yield <- as.data.frame(NULL)
+  sims$budget <- as.data.frame(NULL)
+  
   for(t in 1:time_steps){
     
     sim_new <- gmse_apply(get_res = "Full", old_list = sim_old)
     print(t)
     
-    sim_t <- c(t, sim_new$basic_output$resource_results[1],
-               sim_new$basic_output$observation_results[1],
-               sim_new$basic_output$manager_results[3],
-               sum(sim_new$basic_output$user_results[,3]),
-               sim_new$basic_output$manager_results[2],
-               sum(sim_new$basic_output$user_results[,2]),
-               sum(sim_new$basic_output$user_results[,7]))
-    sim_t <- c(sim_t, round(sim_new$AGENTS[2:nrow(sim_new$AGENTS),16],3))
+    sim_t <- c(t, sim_new$basic_output$resource_results[1],               # True resource number
+               sim_new$basic_output$observation_results[1],               # Observed resource number
+               sim_new$basic_output$manager_results[3],                   # Cull cost set by manager ?
+               sum(sim_new$basic_output$user_results[,3]),                # Number culled (across all users)
+               sim_new$basic_output$manager_results[2],                   # Scare cost set by manager
+               sum(sim_new$basic_output$user_results[,2]),                # Number scared (across all users)             
+               sum(sim_new$basic_output$user_results[,7]))                # Number of "tend_crops" (across all users)
+    sim_t <- c(sim_t, round(sim_new$AGENTS[2:nrow(sim_new$AGENTS),16],3)) # Yield per user 
     
     sims <- rbind(sims, sim_t)
     sim_old <- sim_new
