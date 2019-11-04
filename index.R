@@ -27,8 +27,8 @@ sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       converge_crit = gmse_paras$converge_crit,
                       ga_mingen = gmse_paras$ga_mingen)
 
-years = 3
-sims = 4
+years = 5
+sims = 10
 
 res = list()
 
@@ -51,50 +51,11 @@ for(sim in 1:sims) {
 
 
 
-plot_sims = function(gmse_res, type="resource1", sumtype="mean") {
-  no_sims = len(res)
-  no_years = length(res[[1]][])
-  
-  ### type="resource1" plots resource and resource count
-  
-  if(type=="resource1") {
-    
-    
-    
-    sum_res = function(all_dat, extract = "resource_results") {
-      no_sims = len(all_dat)
-      no_years = length(all_dat[[1]][])
-      dat = matrix(NA, nrow=no_sims, ncol=no_years)
-      for(i in 1:no_sims) {
-        for(j in 1:no_years) {
-          dat[i,j] = 
-        }
-      }
-    }
-    
-    # Extract resource_results and observation results, and reconstruct a time series for X
-    y_res = unlist(lapply(gmse_res, function(x) x$basic_output$resource_results))
-    y_obs = unlist(lapply(gmse_res, function(x) x$basic_output$observation_results))
-    x = 1:no_years
-    
-    # Set upper/lower bounds for Y: 5% plus/minus the max/min for combined y_res and y_obs
-    y_max = ceiling(max(c(y_obs, y_res))+max(c(y_obs, y_res))*0.05)
-    y_min = floor(min(c(y_obs, y_res))-min(c(y_obs, y_res))*0.05)
-    
-    # Reset upper/lower limits if the manage_target line isn't within range.
-    manage_target = gmse_res[[1]]$manage_target
-    if( manage_target > y_max ) y_max = manage_target
-    if( manage_target < y_min ) y_min = manage_target
-    
-    par(mfrow=c(1,1))
-    plot(x, y_res, type="l", lwd = 2, ylim = c(y_min, y_max))
-    lines(x, y_obs, lwd = 1, col = "grey")
-    abline(h = manage_target, col="red", lty="dashed")
-    
-  }
-}
 
-plot_sims(res)
+
+
+
+
 
 
 
