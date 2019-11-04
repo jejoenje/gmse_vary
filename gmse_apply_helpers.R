@@ -30,18 +30,19 @@ extract_gmse = function(all_dat, extract = "resource_results") {
 ### - resource: "true" resource only
 ### - observation: "observed" resources
 ### - resobs: both true and observed resources in the same plot.
-
+### For each of the above output types, there are two summary options -
+### - mean: plots the mean and upper/lower 95% quantiles across simulations
+### - none: plots a line for each simulation
+### 
 plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
   
   ### Plot "real" resource number only:
-  
   if(type=="resource") {
     
     y_res = extract_gmse(gmse_res, "resource_results")
     manage_target = gmse_res[[1]][[1]]$manage_target
     
-    # Summarised as means and upper/lower bounds across simulations:
-    
+    # sumtype == "mean": Summarised as means and upper/lower bounds across simulations:
     if(sumtype == "mean") {
       
       x = 1:ncol(y_res)
@@ -57,15 +58,14 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
         y_max = ylim[2]
       }
       
-      plot(x, y_res[1,], type="n", ylim = c(y_min, y_max))
+      plot(x, y_res[1,], type="n", ylim = c(y_min, y_max), xlab = "Time step", ylab = "Resource")
       lines(x = x, y = y_mean, lwd = 2)
       lines(x = x, y = y_lo, lwd = 1, col="grey")
       lines(x = x, y = y_hi, lwd = 1, col="grey")
       abline(h = manage_target, col="red", lty = "dashed")
     }
     
-    # Not summarised, just each simulation plotted as a line
-    
+    # sumtype =="none": Not summarised, just each simulation plotted as a line
     if(sumtype == "none") {
       x = 1:ncol(y_res)
       
@@ -77,7 +77,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
         y_max = ylim[2]
       }
       
-      plot(x, y_res[1,], type = "n", ylim=c(y_min, y_max))
+      plot(x, y_res[1,], type = "n", ylim=c(y_min, y_max), xlab = "Time step", ylab = "Resource")
       for(i in 1:nrow(y_res)) {
         lines(x, y_res[i,])
       }
@@ -86,6 +86,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
     
   }
   
+  ### Plot both real and observed resource number:
   if(type=="resobs") {
     
     y_res = extract_gmse(gmse_res, "resource_results")
@@ -93,6 +94,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
     
     manage_target = gmse_res[[1]][[1]]$manage_target
     
+    # sumtype == "mean": Summarised as means and upper/lower bounds across simulations:
     if(sumtype == "mean") {
       
       x = 1:ncol(y_res)
@@ -112,7 +114,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
         y_max = ylim[2]
       }
       
-      plot(x, y_res[1,], type="n", ylim = c(y_min, y_max))
+      plot(x, y_res[1,], type="n", ylim = c(y_min, y_max), xlab = "Time step", ylab = "Resource")
       lines(x = x, y = y_res_mean, lwd = 2)
       lines(x = x, y = y_obs_mean, lwd = 2, col = "blue")
       
@@ -125,6 +127,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
       abline(h = manage_target, col="red", lty = "dashed")
     }
     
+    # sumtype =="none": Not summarised, just each simulation plotted as a line
     if(sumtype == "none") {
       x = 1:ncol(y_res)
       
@@ -136,7 +139,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
         y_max = ylim[2]
       }
       
-      plot(x, y_res[1,], type = "n", ylim=c(y_min, y_max))
+      plot(x, y_res[1,], type = "n", ylim=c(y_min, y_max), xlab = "Time step", ylab = "Resource")
       for(i in 1:nrow(y_res)) {
         lines(x, y_res[i,], col = "black")
         lines(x, y_obs[i,], col = "blue")
@@ -146,12 +149,14 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
     
   }
   
+  ### Plot both real and observed resource number:
   if(type=="observation") {
     
     y_obs = extract_gmse(gmse_res, "obs_results")
     
     manage_target = gmse_res[[1]][[1]]$manage_target
     
+    # sumtype == "mean": Summarised as means and upper/lower bounds across simulations:
     if(sumtype == "mean") {
       
       x = 1:ncol(y_obs)
@@ -168,7 +173,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
         y_max = ylim[2]
       }
       
-      plot(x, y_obs[1,], type="n", ylim = c(y_min, y_max))
+      plot(x, y_obs[1,], type="n", ylim = c(y_min, y_max), xlab = "Time step", ylab = "Resource (observed)")
       lines(x = x, y = y_obs_mean, lwd = 2, col = "blue")
       
       lines(x = x, y = y_obs_lo, lwd = 1, col="blue")
@@ -177,6 +182,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
       abline(h = manage_target, col="red", lty = "dashed")
     }
     
+    # sumtype =="none": Not summarised, just each simulation plotted as a line
     if(sumtype == "none") {
       x = 1:ncol(y_obs)
       
@@ -188,7 +194,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
         y_max = ylim[2]
       }
       
-      plot(x, y_obs[1,], type = "n", ylim=c(y_min, y_max))
+      plot(x, y_obs[1,], type = "n", ylim=c(y_min, y_max), xlab = "Time step", ylab = "Resource (observed)")
       for(i in 1:nrow(y_obs)) {
         lines(x, y_obs[i,], col = "blue")
       }

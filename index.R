@@ -28,8 +28,8 @@ sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       converge_crit = gmse_paras$converge_crit,
                       ga_mingen = gmse_paras$ga_mingen)
 
-years = 5
-sims = 10
+years = 25
+sims = 2
 
 res = list()
 
@@ -39,7 +39,7 @@ for(sim in 1:sims) {
   
   for(year in 1:years) {
 
-    sprintf("Sim %d, year %d", sim, year)
+    print(sprintf("Sim %d, year %d", sim, year))
     sim_new <- gmse_apply(get_res = "Full", old_list = sim_old)
     res_year[[year]] = sim_new
     sim_old <- sim_new
@@ -50,7 +50,7 @@ for(sim in 1:sims) {
   
 }
 
-plot_sims(res, type="resource", sumtype = "none", ylim = c(100, 4000))
+plot_sims(res, type="resource", sumtype = "none")
 
 
 
