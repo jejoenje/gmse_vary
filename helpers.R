@@ -12,6 +12,8 @@ ulen = function(x) {
 ### plus or minus a given buffer fraction.
 ### If incl_val != NULL, extends either the min/max range to include a given constant.
 bufRange = function(limrange, end, buffer = 0.05, incl_val=NULL) {
+  limrange = limrange[!is.na(limrange)]
+  
   if(end == "hi") {
     val = max(limrange)+max(limrange)*buffer
     if(!is.null(incl_val)) {
@@ -29,6 +31,21 @@ bufRange = function(limrange, end, buffer = 0.05, incl_val=NULL) {
   return(val)
 }
 
+to.array = function(a) {
+  I = max(unlist(lapply(a, nrow)))
+  J = max(unlist(lapply(a, ncol)))
+  K = len(a)
+  out = array(NA, dim=c(I, J, K))
+  for(k in 1:K) {
+    for(j in 1:J) {
+      for(i in 1:I) {
+        out[i,j,k] = a[[k]][i,j]
+      }
+    }
+  }
+  return(out)
+}
 
-
-
+list.to.df = function(l) {
+  return(data.frame(matrix(unlist(l), nrow=length(l), byrow=T)))
+}
