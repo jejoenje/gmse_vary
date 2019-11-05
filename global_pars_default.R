@@ -1,0 +1,28 @@
+
+
+gmse_paras <- list(
+  get_res = "Full",
+  land_dim_1 = 100,       
+  land_dim_2 = 100,
+  land_ownership = TRUE,
+  tend_crops = TRUE,
+  tend_crop_yld = 0.2,
+  scaring = TRUE,
+  remove_pr = 0,           
+  res_death_type = 3,
+  lambda = 0.3,
+  res_death_K = 2000,         
+  RESOURCE_ini = 1000,       
+  manage_target = 1000,
+  manager_budget = 1000, 
+  user_budget = 1000,
+  public_land = 0,    
+  stakeholders = 4, 
+  res_consume = 0.5,     
+  observe_type = 0,
+  res_move_obs = TRUE,
+  agent_view = 10,
+  times_observe = 1,
+  agent_move = 20,
+  converge_crit = 0.1,
+  ga_mingen = 40)
