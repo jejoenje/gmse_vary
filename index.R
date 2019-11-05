@@ -5,7 +5,7 @@ source('gmse_apply_helpers.R')
 
 source('global_pars2.R')
 
-years = 10
+years = 20
 sims = 20
 
 res = list()
@@ -50,17 +50,15 @@ for(sim in 1:sims) {
   
 }
 
-get_user_data(res, "budget")
+
 
 par(mfrow=c(2,2))
-plot_resource(res, type="resource", sumtype = "none")
+plot_resource(res, type="resources", sumtype = "none")
+plot_resource(res, type="observations", sumtype = "none")
+plot_actions(res, type = "mean")
+plot_actions(res, type = "cv")
 
-plot_resource(res, type="observation", sumtype = "none")
-
-plot(res[[1]][[10]]$RESOURCE[,5],res[[1]][[10]]$RESOURCE[,6], pch = 16, cex = 0.5)
-
-
-
+get_user_data(res, "observations")
 
 
 

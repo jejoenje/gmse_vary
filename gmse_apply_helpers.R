@@ -138,11 +138,11 @@ extract_gmse = function(all_dat, extract = "resources") {
 ### - mean: plots the mean and upper/lower 95% quantiles across simulations
 ### - none: plots a line for each simulation
 ### 
-plot_resource = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
+plot_resource = function(gmse_res, type="resources", sumtype="mean", ylim=NULL) {
   
   ### Plot "real" resource number only:
-  if(type=="resource") {
-    y_res = extract_gmse(gmse_res, "resource_results")
+  if(type=="resources") {
+    y_res = extract_gmse(gmse_res, "resources")
     manage_target = gmse_res[[1]][[1]]$manage_target
     
     # sumtype == "mean": Summarised as means and upper/lower bounds across simulations:
@@ -192,8 +192,8 @@ plot_resource = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
   ### Plot both real and observed resource number:
   if(type=="resobs") {
     
-    y_res = extract_gmse(gmse_res, "resource_results")
-    y_obs = extract_gmse(gmse_res, "obs_results")
+    y_res = extract_gmse(gmse_res, "resources")
+    y_obs = extract_gmse(gmse_res, "observations")
     
     manage_target = gmse_res[[1]][[1]]$manage_target
     
@@ -253,9 +253,9 @@ plot_resource = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
   } ## endif type == "resobs"
   
   ### Plot both real and observed resource number:
-  if(type=="observation") {
+  if(type=="observations") {
     
-    y_obs = extract_gmse(gmse_res, "obs_results")
+    y_obs = extract_gmse(gmse_res, "observations")
     
     manage_target = gmse_res[[1]][[1]]$manage_target
     
@@ -311,7 +311,7 @@ plot_resource = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
 ### plot_actions()
 ### 
 
-plot_actions = function(gmse_res) {
+plot_actions = function(gmse_res, type = "mean", sumtype = "stakeholder") {
   
   no_sims = len(gmse_res)
   no_years = length(gmse_res[[1]][])
@@ -320,7 +320,48 @@ plot_actions = function(gmse_res) {
   scares = get_user_data(gmse_res, "scares")
   crops = get_user_data(gmse_res, "crops")
   
-  act_sums = rbind(unlist(lapply(culls, max)),unlist(lapply(scares, max)),unlist(lapply(crops, max)))
-  act_totals = apply(act_sums, 2, sum)
+  culls = to.array(culls)
+  scares = to.array(scares)
+  crops = to.array(crops)
+  
+  # Summary statistics per stakeholder, across simulations:
+  culls_mn = apply(culls, c(1,2), mean)
+  culls_cv = apply(culls, c(1,2), function(x) sd(x)/mean(x) )
+  
+  scares_mn = apply(scares, c(1,2), mean)
+  scares_cv = apply(scares, c(1,2), function(x) sd(x)/mean(x) )
+  
+  crops_mn = apply(crops, c(1,2), mean)
+  crops_cv = apply(crops, c(1,2), function(x) sd(x)/mean(x) )
+  
+  culls_cv[is.na(culls_cv)] = 0
+  scares_cv[is.na(scares_cv)] = 0
+  crops_cv[is.na(crops_cv)] = 0
+  
+  if(type == "mean") {
+    ylims_mn = c(bufRange(c(culls_mn,scares_mn,crops_mn), end="lo"),
+                 bufRange(c(culls_mn,scares_mn,crops_mn), end="hi"))
+    plot(1:nrow(culls_mn), culls_mn[,1], type = "n", ylim = ylims_mn,
+         xlab = "Time step", ylab = "Mean number of actions per stakeholder")
+    # One trace per user:
+    for(i in 1:ncol(culls_mn)) {
+      lines(culls_mn[,i], col = "darkred")
+      lines(scares_mn[,i], col = "blue")
+      lines(crops_mn[,i], col = "darkgreen")
+    }  
+  }
+  
+  if(type == "cv") {
+    ylims_cv = c(bufRange(c(culls_cv,scares_cv,crops_cv), end="lo"),
+                 bufRange(c(culls_cv,scares_cv,crops_cv), end="hi"))
+    plot(1:nrow(culls_cv), culls_cv[,1], type = "n", ylim = ylims_cv,
+         xlab = "Time step", ylab = "CV of actions per stakeholder")
+    # One trace per user:
+    for(i in 1:ncol(culls_mn)) {
+      lines(culls_cv[,i], col = "darkred")
+      lines(scares_cv[,i], col = "blue")
+      lines(crops_cv[,i], col = "darkgreen")
+    }  
+  }
 
 }
