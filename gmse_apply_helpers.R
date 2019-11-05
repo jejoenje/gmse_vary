@@ -5,7 +5,8 @@
 ### get_user_acts()
 ### 
 ### Extracts a list of matrixes where each list element is a simulation, each row in a matrix is a year,
-###  and each column in a matrix is a user. Each value is a given action (cull, scare, tend crops).
+###  and each column in a matrix is a user. Each value is the desired user parameter (currently: number 
+###  of actions taken (cull, scare, tend crops), yield, or budget.)
 
 get_user_data = function(all_dat, type) {
   
@@ -77,12 +78,17 @@ get_user_data = function(all_dat, type) {
 
 }
 
-extract_gmse = function(all_dat, extract = "resource_results") {
+extract_gmse = function(all_dat, extract = "resources") {
+  
+  accepted_types = c("resources","observations","culls", "scares", "crops", "yield", "budget")
+  if(!(extract %in% accepted_types)) {
+    stop(sprintf("No extraction method for user data type '%s'. ", extract))
+  }
   
   no_sims = len(all_dat)
   no_years = length(all_dat[[1]][])
   
-  if(extract == "resource_results") {
+  if(extract == "resources") {
     dat = matrix(NA, nrow=no_sims, ncol=no_years)
     for(i in 1:no_sims) {
       dat[i,] = unlist(lapply(all_dat[[i]], function(x) x$basic_output$resource_results))
@@ -90,7 +96,7 @@ extract_gmse = function(all_dat, extract = "resource_results") {
     return(dat)
   }
   
-  if(extract == "obs_results") {
+  if(extract == "observations") {
     dat = matrix(NA, nrow=no_sims, ncol=no_years)
     for(i in 1:no_sims) {
       dat[i,] = unlist(lapply(all_dat[[i]], function(x) x$basic_output$observation_results))
@@ -98,16 +104,24 @@ extract_gmse = function(all_dat, extract = "resource_results") {
     return(dat)
   }
 
-  if(extract == "act_cull") {
-    return(get_user_acts(all_dat=all_dat, type = "culls"))
+  if(extract == "culls") {
+    return(get_user_data(all_dat=all_dat, type = "culls"))
   }
   
-  if(extract == "act_scare") {
-    return(get_user_acts(all_dat=all_dat, type = "scares"))
+  if(extract == "scares") {
+    return(get_user_data(all_dat=all_dat, type = "scares"))
   }
 
-  if(extract == "act_crop") {
-    return(get_user_acts(all_dat=all_dat, type = "crops"))
+  if(extract == "crops") {
+    return(get_user_data(all_dat=all_dat, type = "crops"))
+  }
+  
+  if(extract == "yield") {
+    return(get_user_data(all_dat=all_dat, type = "yield"))
+  }
+  
+  if(extract == "budget") {
+    return(get_user_data(all_dat=all_dat, type = "budget"))
   }
   
 }
@@ -298,5 +312,15 @@ plot_resource = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
 ### 
 
 plot_actions = function(gmse_res) {
-  extract_gmse(gmse_res, "resource_results")
+  
+  no_sims = len(gmse_res)
+  no_years = length(gmse_res[[1]][])
+  
+  culls = get_user_data(gmse_res, "culls")
+  scares = get_user_data(gmse_res, "scares")
+  crops = get_user_data(gmse_res, "crops")
+  
+  act_sums = rbind(unlist(lapply(culls, max)),unlist(lapply(scares, max)),unlist(lapply(crops, max)))
+  act_totals = apply(act_sums, 2, sum)
+
 }

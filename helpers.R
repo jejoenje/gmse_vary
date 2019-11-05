@@ -14,12 +14,16 @@ ulen = function(x) {
 bufRange = function(limrange, end, buffer = 0.05, incl_val=NULL) {
   if(end == "hi") {
     val = max(limrange)+max(limrange)*buffer
-    if(incl_val>val) val = incl_val+incl_val*0.05
+    if(!is.null(incl_val)) {
+      if(incl_val>val) val = incl_val+incl_val*0.05
+    }
     val = ceiling(val)
   }
   if(end == "lo") {
     val = min(limrange)-min(limrange)*buffer
-    if(incl_val<val) val = incl_val-incl_val*0.05
+    if(!is.null(incl_val)) {
+      if(incl_val<val) val = incl_val-incl_val*0.05
+    }
     val = floor(val)
   }
   return(val)
