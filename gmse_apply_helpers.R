@@ -2,10 +2,49 @@
 ### 
 ### 
 
-### extract_gmse()
+### get_user_acts()
 ### 
-### Takes a list as argument, which is one or more series of outputs (sims) of gmse_apply() with all results saved.
-### For each sim, extracts the given result vector from the output.
+### Extracts a list of matrixes where each list element is a simulation, each row in a matrix is a year,
+###  and each column in a matrix is a user. Each value is a given action (cull, scare, tend crops).
+
+get_user_acts = function(all_dat, type) {
+  
+  no_sims = len(all_dat)
+  no_years = length(all_dat[[1]][])
+  
+  dat = list()
+  
+  for(i in 1:no_sims) {
+    # Find no. of stakeholders
+    stakeholders = all_dat[[i]][[1]]$stakeholders
+    
+    # For each year, within a simulation...
+    
+    acts_j = matrix(NA, ncol=stakeholders, nrow=no_years)
+    
+    for(j in 1:no_years) {
+      
+      # Extract actions for year j in sim i
+      acts_year = all_dat[[i]][[j]]$ACTION
+      user_acts = acts_year[,,2:dim(acts_year)[3]] 
+      acts = as.vector(NULL)
+      for(k in 1:stakeholders) {
+        if(type == "culls") {
+          acts[k] = user_acts[,,k][1,9] 
+        }
+        if(type == "scares") {
+          acts[k] = user_acts[,,k][1,8]
+        }
+        if(type == "crops") {
+          acts[k] = user_acts[,,k][2,10]  
+        }
+      }
+      acts_j[j,] = acts
+    }
+    dat[[i]] = acts_j
+  }
+  return(dat)
+}
 
 extract_gmse = function(all_dat, extract = "resource_results") {
   
@@ -29,81 +68,15 @@ extract_gmse = function(all_dat, extract = "resource_results") {
   }
 
   if(extract == "act_cull") {
-    dat = list()
-    for(i in 1:no_sims) {
-      # Find no. of stakeholders
-      stakeholders = all_dat[[i]][[1]]$stakeholders
-      
-      # For each year, within a simulation...
-      
-      acts_j = matrix(NA, ncol=stakeholders, nrow=no_years)
-      
-      for(j in 1:no_years) {
-        
-        # Extract actions for year j in sim i
-        acts_year = all_dat[[i]][[j]]$ACTION
-        user_acts = acts_year[,,2:dim(acts_year)[3]] 
-        culls = as.vector(NULL)
-        for(k in 1:stakeholders) {
-          culls[k] = user_acts[,,k][1,9]   # Numbers of culls
-        }
-        acts_j[j,] = culls
-      }
-      dat[[i]] = acts_j
-    }
-    return(dat)
+    return(get_user_acts(all_dat=all_dat, type = "culls"))
   }
   
   if(extract == "act_scare") {
-    dat = list()
-    for(i in 1:no_sims) {
-      # Find no. of stakeholders
-      stakeholders = all_dat[[i]][[1]]$stakeholders
-      
-      # For each year, within a simulation...
-      
-      acts_j = matrix(NA, ncol=stakeholders, nrow=no_years)
-      
-      for(j in 1:no_years) {
-        
-        # Extract actions for year j in sim i
-        acts_year = all_dat[[i]][[j]]$ACTION
-        user_acts = acts_year[,,2:dim(acts_year)[3]] 
-        culls = as.vector(NULL)
-        for(k in 1:stakeholders) {
-          culls[k] = user_acts[,,k][1,8]   # Numbers of scares
-        }
-        acts_j[j,] = culls
-      }
-      dat[[i]] = acts_j
-    }
-    return(dat)
+    return(get_user_acts(all_dat=all_dat, type = "scares"))
   }
 
   if(extract == "act_crop") {
-    dat = list()
-    for(i in 1:no_sims) {
-      # Find no. of stakeholders
-      stakeholders = all_dat[[i]][[1]]$stakeholders
-      
-      # For each year, within a simulation...
-      
-      acts_j = matrix(NA, ncol=stakeholders, nrow=no_years)
-      
-      for(j in 1:no_years) {
-        
-        # Extract actions for year j in sim i
-        acts_year = all_dat[[i]][[j]]$ACTION
-        user_acts = acts_year[,,2:dim(acts_year)[3]] 
-        culls = as.vector(NULL)
-        for(k in 1:stakeholders) {
-          culls[k] = user_acts[,,k][2,10]   # Numbers of tend crop actions
-        }
-        acts_j[j,] = culls
-      }
-      dat[[i]] = acts_j
-    }
-    return(dat)
+    return(get_user_acts(all_dat=all_dat, type = "crops"))
   }
   
 }
