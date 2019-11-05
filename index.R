@@ -50,6 +50,7 @@ for(sim in 1:sims) {
   
 }
 
+get_user_data(res, "budget")
 
 par(mfrow=c(2,2))
 plot_resource(res, type="resource", sumtype = "none")

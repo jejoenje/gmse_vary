@@ -7,43 +7,74 @@
 ### Extracts a list of matrixes where each list element is a simulation, each row in a matrix is a year,
 ###  and each column in a matrix is a user. Each value is a given action (cull, scare, tend crops).
 
-get_user_acts = function(all_dat, type) {
+get_user_data = function(all_dat, type) {
   
   no_sims = len(all_dat)
   no_years = length(all_dat[[1]][])
   
   dat = list()
   
-  for(i in 1:no_sims) {
-    # Find no. of stakeholders
-    stakeholders = all_dat[[i]][[1]]$stakeholders
+  if(type == "culls" | type == "scares" | type == "crops") {
     
-    # For each year, within a simulation...
-    
-    acts_j = matrix(NA, ncol=stakeholders, nrow=no_years)
-    
-    for(j in 1:no_years) {
+    for(i in 1:no_sims) {
+      # Find no. of stakeholders
+      stakeholders = all_dat[[i]][[1]]$stakeholders
       
-      # Extract actions for year j in sim i
-      acts_year = all_dat[[i]][[j]]$ACTION
-      user_acts = acts_year[,,2:dim(acts_year)[3]] 
-      acts = as.vector(NULL)
-      for(k in 1:stakeholders) {
-        if(type == "culls") {
-          acts[k] = user_acts[,,k][1,9] 
+      # For each year, within a simulation...
+      
+      udat_j = matrix(NA, ncol=stakeholders, nrow=no_years)
+      
+      for(j in 1:no_years) {
+        
+        # Extract actions for year j in sim i
+        udat_year = all_dat[[i]][[j]]$ACTION
+        user_dat = udat_year[,,2:dim(udat_year)[3]] 
+        udat = as.vector(NULL)
+        for(k in 1:stakeholders) {
+          if(type == "culls") {
+            udat[k] = user_dat[,,k][1,9] 
+          }
+          if(type == "scares") {
+            udat[k] = user_dat[,,k][1,8]
+          }
+          if(type == "crops") {
+            udat[k] = user_dat[,,k][2,10]  
+          }
         }
-        if(type == "scares") {
-          acts[k] = user_acts[,,k][1,8]
-        }
-        if(type == "crops") {
-          acts[k] = user_acts[,,k][2,10]  
-        }
+        udat_j[j,] = udat
       }
-      acts_j[j,] = acts
+      dat[[i]] = udat_j
     }
-    dat[[i]] = acts_j
+    return(dat)
   }
-  return(dat)
+  
+  if(type == "yield" | type == "budget") {
+    
+    for(i in 1:no_sims) {
+      # Find no. of stakeholders
+      stakeholders = all_dat[[i]][[1]]$stakeholders
+      
+      # For each year, within a simulation...
+      
+      udat_j = matrix(NA, ncol=stakeholders, nrow=no_years)
+      
+      for(j in 1:no_years) {
+        
+        # Extract actions for year j in sim i
+        udat_year = all_dat[[i]][[j]]$AGENTS
+        if(type == "yield") {
+          udat_j[j,] = udat_year[2:nrow(udat_year),16]
+        }
+        if(type == "budget") {
+          udat_j[j,] = udat_year[2:nrow(udat_year),17]
+        }
+
+      }
+      dat[[i]] = udat_j
+    }
+    return(dat)    ## Returning data if type == "yield" or "budget"
+  }
+
 }
 
 extract_gmse = function(all_dat, extract = "resource_results") {

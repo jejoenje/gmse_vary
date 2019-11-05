@@ -17,7 +17,7 @@ gmse_paras <- list(
   manager_budget = 1000, 
   user_budget = 1000,
   public_land = 0,    
-  stakeholders = 4, 
+  stakeholders = 5, 
   res_consume = 0.5,     
   observe_type = 0,
   res_move_obs = TRUE,
