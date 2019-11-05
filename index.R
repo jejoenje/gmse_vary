@@ -5,10 +5,8 @@ source('gmse_apply_helpers.R')
 
 source('global_pars2.R')
 
-
-
 years = 10
-sims = 50
+sims = 20
 
 res = list()
 
@@ -54,8 +52,10 @@ for(sim in 1:sims) {
 
 
 par(mfrow=c(2,2))
-plot_sims(res, type="resource", sumtype = "none")
-plot_sims(res, type="observation", sumtype = "none")
+plot_resource(res, type="resource", sumtype = "none")
+
+plot_resource(res, type="observation", sumtype = "none")
+
 plot(res[[1]][[10]]$RESOURCE[,5],res[[1]][[10]]$RESOURCE[,6], pch = 16, cex = 0.5)
 
 

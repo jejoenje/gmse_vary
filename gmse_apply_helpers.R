@@ -8,23 +8,109 @@
 ### For each sim, extracts the given result vector from the output.
 
 extract_gmse = function(all_dat, extract = "resource_results") {
+  
   no_sims = len(all_dat)
   no_years = length(all_dat[[1]][])
-  dat = matrix(NA, nrow=no_sims, ncol=no_years)
-  for(i in 1:no_sims) {
-    if(extract == "resource_results") {
+  
+  if(extract == "resource_results") {
+    dat = matrix(NA, nrow=no_sims, ncol=no_years)
+    for(i in 1:no_sims) {
       dat[i,] = unlist(lapply(all_dat[[i]], function(x) x$basic_output$resource_results))
     }
-    if(extract == "obs_results") {
+    return(dat)
+  }
+  
+  if(extract == "obs_results") {
+    dat = matrix(NA, nrow=no_sims, ncol=no_years)
+    for(i in 1:no_sims) {
       dat[i,] = unlist(lapply(all_dat[[i]], function(x) x$basic_output$observation_results))
     }
+    return(dat)
   }
-  return(dat)
+
+  if(extract == "act_cull") {
+    dat = list()
+    for(i in 1:no_sims) {
+      # Find no. of stakeholders
+      stakeholders = all_dat[[i]][[1]]$stakeholders
+      
+      # For each year, within a simulation...
+      
+      acts_j = matrix(NA, ncol=stakeholders, nrow=no_years)
+      
+      for(j in 1:no_years) {
+        
+        # Extract actions for year j in sim i
+        acts_year = all_dat[[i]][[j]]$ACTION
+        user_acts = acts_year[,,2:dim(acts_year)[3]] 
+        culls = as.vector(NULL)
+        for(k in 1:stakeholders) {
+          culls[k] = user_acts[,,k][1,9]   # Numbers of culls
+        }
+        acts_j[j,] = culls
+      }
+      dat[[i]] = acts_j
+    }
+    return(dat)
+  }
+  
+  if(extract == "act_scare") {
+    dat = list()
+    for(i in 1:no_sims) {
+      # Find no. of stakeholders
+      stakeholders = all_dat[[i]][[1]]$stakeholders
+      
+      # For each year, within a simulation...
+      
+      acts_j = matrix(NA, ncol=stakeholders, nrow=no_years)
+      
+      for(j in 1:no_years) {
+        
+        # Extract actions for year j in sim i
+        acts_year = all_dat[[i]][[j]]$ACTION
+        user_acts = acts_year[,,2:dim(acts_year)[3]] 
+        culls = as.vector(NULL)
+        for(k in 1:stakeholders) {
+          culls[k] = user_acts[,,k][1,8]   # Numbers of scares
+        }
+        acts_j[j,] = culls
+      }
+      dat[[i]] = acts_j
+    }
+    return(dat)
+  }
+
+  if(extract == "act_crop") {
+    dat = list()
+    for(i in 1:no_sims) {
+      # Find no. of stakeholders
+      stakeholders = all_dat[[i]][[1]]$stakeholders
+      
+      # For each year, within a simulation...
+      
+      acts_j = matrix(NA, ncol=stakeholders, nrow=no_years)
+      
+      for(j in 1:no_years) {
+        
+        # Extract actions for year j in sim i
+        acts_year = all_dat[[i]][[j]]$ACTION
+        user_acts = acts_year[,,2:dim(acts_year)[3]] 
+        culls = as.vector(NULL)
+        for(k in 1:stakeholders) {
+          culls[k] = user_acts[,,k][2,10]   # Numbers of tend crop actions
+        }
+        acts_j[j,] = culls
+      }
+      dat[[i]] = acts_j
+    }
+    return(dat)
+  }
+  
 }
 
-### plot_sims()
+### plot_resource()
 ### 
-### Plots output of gmse_apply() sim results.
+### Plots actual and/or observed resource pop trends from gmse_apply() simulation results.
 ### 
 ### Can plot different types of output - 
 ### - resource: "true" resource only
@@ -34,11 +120,10 @@ extract_gmse = function(all_dat, extract = "resource_results") {
 ### - mean: plots the mean and upper/lower 95% quantiles across simulations
 ### - none: plots a line for each simulation
 ### 
-plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
+plot_resource = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
   
   ### Plot "real" resource number only:
   if(type=="resource") {
-    
     y_res = extract_gmse(gmse_res, "resource_results")
     manage_target = gmse_res[[1]][[1]]$manage_target
     
@@ -74,7 +159,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
         y_max = bufRange(y_res, end="hi", incl_val = manage_target )
       } else {
         y_min = ylim[1]
-        y_max = ylim[2]
+        y_max = ylim[2]    
       }
       
       plot(x, y_res[1,], type = "n", ylim=c(y_min, y_max), xlab = "Time step", ylab = "Resource")
@@ -84,8 +169,8 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
       abline(h = manage_target, col="red", lty = "dashed")
     }
     
-  }
-  
+  }  ## endif type == "resource"
+
   ### Plot both real and observed resource number:
   if(type=="resobs") {
     
@@ -147,7 +232,7 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
       abline(h = manage_target, col="red", lty = "dashed")
     }
     
-  }
+  } ## endif type == "resobs"
   
   ### Plot both real and observed resource number:
   if(type=="observation") {
@@ -201,6 +286,13 @@ plot_sims = function(gmse_res, type="resource", sumtype="mean", ylim=NULL) {
       abline(h = manage_target, col="red", lty = "dashed")
     }
     
-  }
+  } ## endif type == "observation
   
+}
+
+### plot_actions()
+### 
+
+plot_actions = function(gmse_res) {
+  extract_gmse(gmse_res, "resource_results")
 }
