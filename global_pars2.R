@@ -8,7 +8,7 @@ gmse_paras <- list(
   tend_crops = TRUE,
   tend_crop_yld = 0.2,
   scaring = TRUE,
-  remove_pr = 0,           
+  remove_pr = 0.45,           
   res_death_type = 3,
   lambda = 0.3,
   res_death_K = 10000,         
@@ -21,7 +21,7 @@ gmse_paras <- list(
   res_consume = 0.5,     
   observe_type = 0,
   res_move_obs = TRUE,
-  agent_view = 20,           # Keep to land_dim_1/10 ? (as default?)
+  agent_view = 100,           # Keep to land_dim_1/5 ?
   times_observe = 1,
   agent_move = 100,          # Keep to land_dim_1/2 ? (as default?)
   converge_crit = 0.1,

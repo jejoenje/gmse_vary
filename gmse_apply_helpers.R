@@ -86,12 +86,21 @@ extract_gmse = function(all_dat, extract = "resources") {
   }
   
   no_sims = len(all_dat)
-  no_years = length(all_dat[[1]][])
+  no_years = max(unlist(lapply(all_dat, len)))
   
   if(extract == "resources") {
     dat = matrix(NA, nrow=no_sims, ncol=no_years)
     for(i in 1:no_sims) {
-      dat[i,] = unlist(lapply(all_dat[[i]], function(x) x$basic_output$resource_results))
+      #dat[i,] = unlist(lapply(all_dat[[i]], function(x) x$basic_output$resource_results))
+      dat[i,] = unlist(
+        lapply(all_dat[[i]], function(x) {
+            if(class(x) == "character") {
+              return(NA)
+            } else {
+              return(x$basic_output$resource_results)  
+            }
+          })
+        )
     }
     return(dat)
   }

@@ -6,7 +6,7 @@ source('gmse_apply_helpers.R')
 source('global_pars2.R')
 
 years = 20
-sims = 20
+sims = 10
 
 res = list()
 
@@ -39,26 +39,40 @@ for(sim in 1:sims) {
     
   for(year in 1:years) {
 
-    print(sprintf("Sim %d, year %d", sim, year))
-    sim_new <- gmse_apply(get_res = "Full", old_list = sim_old)
-    res_year[[year]] = sim_new
-    sim_old <- sim_new
-    
+    sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
+    if(class(sim_new)=="try-error") {
+      if(grepl("Extinction", sim_new[1])) {
+        print(sprintf("True extinction, skipping to next sim."))
+        res_year[[year]] = "true_extinction"
+        year = years+1
+      }
+      if(grepl("couldn't estimate population", sim_new[1])) {
+        print(sprintf("Observed extinction, skipping to next sim."))
+        res_year[[year]] = "observed_extinction"
+        year = years+1
+      }
+    } else {
+      print(sprintf("Sim %d, year %d", sim, year))
+      res_year[[year]] = sim_new
+      sim_old <- sim_new
+    }
   }
   
   res[[sim]] = res_year
   
 }
 
+### If not all of these are == years, some extinctions occurred.
+unlist(lapply(res, len))
 
 
-par(mfrow=c(2,2))
-plot_resource(res, type="resources", sumtype = "none")
-plot_resource(res, type="observations", sumtype = "none")
-plot_actions(res, type = "mean")
-plot_actions(res, type = "cv")
-
-get_user_data(res, "observations")
+# par(mfrow=c(2,2))
+# plot_resource(res, type="resources", sumtype = "none")
+# plot_resource(res, type="observations", sumtype = "none")
+# plot_actions(res, type = "mean")
+# plot_actions(res, type = "cv")
+# 
+# get_user_data(res, "observations")
 
 
 
