@@ -11,7 +11,7 @@
 get_user_data = function(all_dat, type) {
   
   no_sims = len(all_dat)
-  no_years = length(all_dat[[1]][])
+  no_years = max(unlist(lapply(all_dat, len)))
   
   dat = list()
   
@@ -27,22 +27,24 @@ get_user_data = function(all_dat, type) {
       
       for(j in 1:no_years) {
         
-        # Extract actions for year j in sim i
-        udat_year = all_dat[[i]][[j]]$ACTION
-        user_dat = udat_year[,,2:dim(udat_year)[3]] 
-        udat = as.vector(NULL)
-        for(k in 1:stakeholders) {
-          if(type == "culls") {
-            udat[k] = user_dat[,,k][1,9] 
+        if(class(all_dat[[i]][[j]])=="list") {
+          # Extract actions for year j in sim i
+          udat_year = all_dat[[i]][[j]]$ACTION
+          user_dat = udat_year[,,2:dim(udat_year)[3]] 
+          udat = as.vector(NULL)
+          for(k in 1:stakeholders) {
+            if(type == "culls") {
+              udat[k] = user_dat[,,k][1,9] 
+            }
+            if(type == "scares") {
+              udat[k] = user_dat[,,k][1,8]
+            }
+            if(type == "crops") {
+              udat[k] = user_dat[,,k][2,10]  
+            }
           }
-          if(type == "scares") {
-            udat[k] = user_dat[,,k][1,8]
-          }
-          if(type == "crops") {
-            udat[k] = user_dat[,,k][2,10]  
-          }
+          udat_j[j,] = udat
         }
-        udat_j[j,] = udat
       }
       dat[[i]] = udat_j
     }
@@ -61,15 +63,17 @@ get_user_data = function(all_dat, type) {
       
       for(j in 1:no_years) {
         
-        # Extract actions for year j in sim i
-        udat_year = all_dat[[i]][[j]]$AGENTS
-        if(type == "yield") {
-          udat_j[j,] = udat_year[2:nrow(udat_year),16]
+        if(class(all_dat[[i]][[j]])=="list") {
+        
+          # Extract actions for year j in sim i
+          udat_year = all_dat[[i]][[j]]$AGENTS
+          if(type == "yield") {
+            udat_j[j,] = udat_year[2:nrow(udat_year),16]
+          }
+          if(type == "budget") {
+            udat_j[j,] = udat_year[2:nrow(udat_year),17]
+          }
         }
-        if(type == "budget") {
-          udat_j[j,] = udat_year[2:nrow(udat_year),17]
-        }
-
       }
       dat[[i]] = udat_j
     }
@@ -108,7 +112,16 @@ extract_gmse = function(all_dat, extract = "resources") {
   if(extract == "observations") {
     dat = matrix(NA, nrow=no_sims, ncol=no_years)
     for(i in 1:no_sims) {
-      dat[i,] = unlist(lapply(all_dat[[i]], function(x) x$basic_output$observation_results))
+      #dat[i,] = unlist(lapply(all_dat[[i]], function(x) x$basic_output$observation_results))
+      dat[i,] = unlist(
+        lapply(all_dat[[i]], function(x) {
+          if(class(x) == "character") {
+            return(NA)
+          } else {
+            return(x$basic_output$observation_results)  
+          }
+        })
+      )
     }
     return(dat)
   }
@@ -158,9 +171,9 @@ plot_resource = function(gmse_res, type="resources", sumtype="mean", ylim=NULL) 
     if(sumtype == "mean") {
       
       x = 1:ncol(y_res)
-      y_mean = apply(y_res, 2, mean)
-      y_lo = apply(y_res, 2, function(x) quantile(x, probs = 0.025))
-      y_hi = apply(y_res, 2, function(x) quantile(x, probs = 0.975))
+      y_mean = apply(y_res, 2, function(x) mean(x, na.rm = T))
+      y_lo = apply(y_res, 2, function(x) quantile(x, probs = 0.025, na.rm=T))
+      y_hi = apply(y_res, 2, function(x) quantile(x, probs = 0.975, na.rm=T))
       
       if(is.null(ylim)) {
         y_min = bufRange(y_lo, end="lo", incl_val = manage_target )
@@ -213,10 +226,10 @@ plot_resource = function(gmse_res, type="resources", sumtype="mean", ylim=NULL) 
       y_res_mean = apply(y_res, 2, mean)
       y_obs_mean = apply(y_obs, 2, mean)
       
-      y_res_lo = apply(y_res, 2, function(x) quantile(x, probs = 0.025))
-      y_res_hi = apply(y_res, 2, function(x) quantile(x, probs = 0.975))
-      y_obs_lo = apply(y_obs, 2, function(x) quantile(x, probs = 0.025))
-      y_obs_hi = apply(y_obs, 2, function(x) quantile(x, probs = 0.975))
+      y_res_lo = apply(y_res, 2, function(x) quantile(x, probs = 0.025, na.rm=T))
+      y_res_hi = apply(y_res, 2, function(x) quantile(x, probs = 0.975, na.rm=T))
+      y_obs_lo = apply(y_obs, 2, function(x) quantile(x, probs = 0.025, na.rm=T))
+      y_obs_hi = apply(y_obs, 2, function(x) quantile(x, probs = 0.975, na.rm=T))
       
       if(is.null(ylim)) {
         y_min = bufRange(c(y_res_lo, y_obs_lo), end="lo", incl_val = manage_target )
@@ -272,10 +285,10 @@ plot_resource = function(gmse_res, type="resources", sumtype="mean", ylim=NULL) 
     if(sumtype == "mean") {
       
       x = 1:ncol(y_obs)
-      y_obs_mean = apply(y_obs, 2, mean)
+      y_obs_mean = apply(y_obs, 2, function(x) mean(x, na.rm=T))
       
-      y_obs_lo = apply(y_obs, 2, function(x) quantile(x, probs = 0.025))
-      y_obs_hi = apply(y_obs, 2, function(x) quantile(x, probs = 0.975))
+      y_obs_lo = apply(y_obs, 2, function(x) quantile(x, probs = 0.025, na.rm=T))
+      y_obs_hi = apply(y_obs, 2, function(x) quantile(x, probs = 0.975, na.rm=T))
       
       if(is.null(ylim)) {
         y_min = bufRange(y_obs_lo, end="lo", incl_val = manage_target )
@@ -323,7 +336,7 @@ plot_resource = function(gmse_res, type="resources", sumtype="mean", ylim=NULL) 
 plot_actions = function(gmse_res, type = "mean", sumtype = "stakeholder") {
   
   no_sims = len(gmse_res)
-  no_years = length(gmse_res[[1]][])
+  no_years = max(unlist(lapply(gmse_res, len)))
   
   culls = get_user_data(gmse_res, "culls")
   scares = get_user_data(gmse_res, "scares")
@@ -334,14 +347,14 @@ plot_actions = function(gmse_res, type = "mean", sumtype = "stakeholder") {
   crops = to.array(crops)
   
   # Summary statistics per stakeholder, across simulations:
-  culls_mn = apply(culls, c(1,2), mean)
-  culls_cv = apply(culls, c(1,2), function(x) sd(x)/mean(x) )
+  culls_mn = apply(culls, c(1,2), function(x) mean(x, na.rm=T))
+  culls_cv = apply(culls, c(1,2), function(x) sd(x, na.rm=T)/mean(x, na.rm=T) )
   
-  scares_mn = apply(scares, c(1,2), mean)
-  scares_cv = apply(scares, c(1,2), function(x) sd(x)/mean(x) )
+  scares_mn = apply(scares, c(1,2), function(x) mean(x, na.rm=T))
+  scares_cv = apply(scares, c(1,2), function(x) sd(x, na.rm=T)/mean(x, na.rm=T) )
   
-  crops_mn = apply(crops, c(1,2), mean)
-  crops_cv = apply(crops, c(1,2), function(x) sd(x)/mean(x) )
+  crops_mn = apply(crops, c(1,2), function(x) mean(x, na.rm=T))
+  crops_cv = apply(crops, c(1,2), function(x) sd(x, na.rm=T)/mean(x, na.rm=T) )
   
   culls_cv[is.na(culls_cv)] = 0
   scares_cv[is.na(scares_cv)] = 0
