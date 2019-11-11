@@ -387,3 +387,49 @@ plot_actions = function(gmse_res, type = "mean", sumtype = "stakeholder") {
   }
 
 }
+
+### plot_yield()
+### 
+
+plot_yield = function(gmse_res, type = "all") {
+  
+  # Extract all yield data from all sims
+  all_yield = get_user_data(gmse_res, type = "yield")
+  
+  n_stakeholders = gmse_res[[1]][[1]]$stakeholders
+  
+  # Find max and mins and set yrange limits:
+  all_max = unlist(lapply(all_yield, max))
+  all_min = unlist(lapply(all_yield, min))
+  hi = bufRange(all_max, end = "hi")
+  lo = bufRange(all_min, end = "lo")
+  
+  plot(1:nrow(all_yield[[1]]), all_yield[[1]][,1], type = "n", ylim = c(lo,hi))
+  
+  if (type == "all") {
+    
+    stakeholder_cols = alpha(brewer.pal(n_stakeholders, "Paired"),0.8)
+    
+    for(i in 1:n_stakeholders) {
+      lapply(all_yield, function(x) lines(1:nrow(x), x[,i], col = stakeholder_cols[i]) )
+    }
+    
+  }
+  
+  if (type == "stakeholder_mean") {
+    
+    stakeholder_cols = brewer.pal(n_stakeholders, "Paired")
+    
+    for(i in 1:n_stakeholders) {
+      sholder_i = lapply(all_yield, function(x) x[,i])
+      # This gives matrix for stakeholder i: columns are years, rows are simulations:
+      sholder_i = list.to.df(sholder_i)
+      sholder_i_mean = apply(sholder_i, 2, mean)
+      
+      lines(1:length(sholder_i_mean), sholder_i_mean, col = stakeholder_cols[i])
+      
+    }
+    
+  }
+  
+}

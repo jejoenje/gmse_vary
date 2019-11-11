@@ -1,5 +1,7 @@
 rm(list=ls())
 library(GMSE)
+library(scales)
+library(RColorBrewer)
 source('helpers.R')
 source('gmse_apply_helpers.R')
 
@@ -83,10 +85,11 @@ checkState
 
  
 par(mfrow=c(2,2))
-plot_resource(res, type="resources", sumtype = "none")
-plot_resource(res, type="observations", sumtype = "none")
+plot_resource(res, type="resources", sumtype = "none", ylim = c(0, 1400))
+plot_resource(res, type="observations", sumtype = "none", ylim = c(0, 1400))
 plot_actions(res, type = "mean")
-plot_actions(res, type = "cv")
+plot_yield(res, type = "all")
+
 # 
 # get_user_data(res, "observations")
 
