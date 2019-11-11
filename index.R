@@ -83,10 +83,12 @@ checkState = data.frame(sim = rep(1:sims, each=years),
                         state = unlist(lapply(res, function(x) lapply(x, class)  )))
 checkState
 
+y_lims = c(bufRange(min(extract_gmse(res, "resources"), na.rm=T), end = "lo"),
+           bufRange(max(extract_gmse(res, "resources"), na.rm=T), end = "hi"))
  
 par(mfrow=c(2,2))
-plot_resource(res, type="resources", sumtype = "none", ylim = c(0, 1400))
-plot_resource(res, type="observations", sumtype = "none", ylim = c(0, 1400))
+plot_resource(res, type="resources", sumtype = "none", ylim = y_lims)
+plot_resource(res, type="observations", sumtype = "none", ylim = y_lims)
 plot_actions(res, type = "mean")
 plot_yield(res, type = "all")
 
