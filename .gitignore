@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 gmse_vary.Rproj
+out/*.Rds
+out/*.Rdata
