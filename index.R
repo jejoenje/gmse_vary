@@ -7,8 +7,8 @@ source('gmse_apply_helpers.R')
 
 source('global_pars2.R')
 
-years = 50
-sims = 10
+years = 500
+sims = 50
 
 res = list()
 
