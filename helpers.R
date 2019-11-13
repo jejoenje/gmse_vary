@@ -49,3 +49,5 @@ to.array = function(a) {
 list.to.df = function(l) {
   return(data.frame(matrix(unlist(l), nrow=length(l), byrow=T)))
 }
+
+

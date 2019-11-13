@@ -21,7 +21,7 @@ get_user_data = function(all_dat, type) {
       # Find no. of stakeholders
       stakeholders = all_dat[[i]][[1]]$stakeholders
       
-      # For each year, within a simulation...
+      # For each year, within a sim ulation...
       
       udat_j = matrix(NA, ncol=stakeholders, nrow=no_years)
       
@@ -431,5 +431,26 @@ plot_yield = function(gmse_res, type = "all") {
     }
     
   }
+  
+}
+
+### Store parameters and output
+### 
+
+save_gmse = function(gmse_paras = gmse_paras, gmse_res = res, dir = "out/") {
+  
+  gmse_paras_out = as.data.frame(gmse_paras)
+  gmse_paras_out = cbind(data.frame(years = years, sims = sims), gmse_paras_out)
+  
+  fname = Sys.time() 
+  fname = gsub(":","", fname)
+  fname = gsub("-","", fname)
+  fname = gsub(" ","", fname)
+  
+  gmse_paras_out = cbind(data.frame(file_index = fname),gmse_paras_out)
+  
+  write.csv(gmse_paras_out, sprintf("%sparas_log.csv", dir))
+  
+  
   
 }

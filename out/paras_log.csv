@@ -1,0 +1,2 @@
+"","file_index","years","sims","get_res","land_dim_1","land_dim_2","land_ownership","tend_crops","tend_crop_yld","scaring","remove_pr","res_death_type","lambda","res_death_K","RESOURCE_ini","manage_target","manager_budget","user_budget","public_land","stakeholders","res_consume","observe_type","res_move_obs","agent_view","times_observe","agent_move","converge_crit","ga_mingen"
+"1","20191113110146",500,50,"Full",200,200,TRUE,TRUE,0.9,TRUE,0.075,3,0.25,10000,1000,1000,1000,1000,0,5,0.2,0,TRUE,100,10,100,0.1,40
