@@ -2,11 +2,210 @@
 ### 
 ### 
 
+### Initialises simulations following a specific SIM_NAME (a scenario defined by a set of parameters).
+### 
+### Assumes a strict folder structure for outputs as well as a specific name for input parameters:
+### - From the root project folder, simulation code and outputs are in subfolder 'sims'.
+### - Within 'sims', file "global_paras.R" contains parameters common to all simulations. 
+###     THIS ALSO SETS NUMBERS OF YEARS/SIMS.
+### - Within 'sims' each subfolder corresponds to a set of simulations, identified by function parameter SIM_NAME.
+### - Within each subfolder SIM_NAME, there are two files (index_SIM_NAME) and (paras_SIM_NAME), and one further 
+###     subfolder. The file index_SIM_NAME contains the code for each simulation, and the file paras_SIM_NAME contains 
+###     the correspondng parameter values specific to this simulation run. The subfolder 'out' contains further 
+###     subfolders with the output for each simulation run, prefixed by a unique date/timestamp to separate different 
+###     runs.
+### 
+### The function does not have explit return values but ASSIGNS outdir, outidx, and outpath to the global environment.
+
+init_sims = function(SIM_NAME) {
+  
+  source(sprintf("sims/%s/paras_%s.R", SIM_NAME, SIM_NAME))
+  
+  ### Set output dir
+  outdir = sprintf("sims/%s/out/",SIM_NAME)
+  
+  ### Create output identifier (date/time string)
+  outidx = gsub(":", "", gsub(" ", "", gsub("-", "",Sys.time())))
+  ### Create outpath
+  outpath = sprintf("%s%s_%s/", outdir, outidx, SIM_NAME)
+  ### Create output dir
+  dir.create(outpath)
+  ### Save current parameters to output dir (note Rdata file to separate from Rds sim files)
+  save(gmse_paras, file=sprintf("%sparas_%s_%s.Rdata", outpath, outidx, SIM_NAME))
+ 
+  assign("outdir", outdir, env = globalenv())
+  assign("outidx", outidx, env = globalenv())
+  assign("outpath", outpath, env = globalenv())
+  
+}
+
+### Random budget sampling functions:
+### 
+
+
+### This draws a sample of budgets where the majority of stakeholders are poorer than a minority 
+### (i.e. capital biased "up").
+### The scale parameter indicates the relative size of the "high" budget to the manager's budget.
+### (i.e. when this is 1, the "richest" stakeholders will only ever be as rich as the manager; when it is 2, 
+### the richest stakeholder will be twice as rich as the manager, etc. )
+sample_budgets_ManyPoorFewRich = function(nstakeholders = 8, manager_budget = 1000, scale = 1) {
+  return(floor(rbeta(nstakeholders, 1, .5)*(manager_budget*scale)))
+}
+
+
+load_sims = function(outdir = NULL, no_files = NULL) {
+  sim_files = list.files(outdir)
+  para_file = sim_files
+  
+  sim_files = sim_files[grep(".Rds", sim_files)]
+  para_file = para_file[grep(".Rdata", para_file)]
+  
+  load(paste(outdir, para_file, sep=""))
+  
+  sim_files = paste(outdir, sim_files, sep="")
+  alldat = list()
+  
+  if(is.null(no_files)) {
+    n_load = length(sim_files)
+  } else {
+    n_load = no_files
+  }
+  
+  for(i in 1:n_load) {
+    simdat = readRDS(sim_files[i])
+    alldat[[i]] = simdat
+    progress(i)
+  }
+  
+  return(list(sims = alldat, para = gmse_paras))
+  
+}
+
+### Compress sim files
+### 
+compress_sim_files = function(dir, idx, outname, del=TRUE) {
+
+  dirstring = sprintf("%s%s", dir,idx)
+  
+  all_files = list.files(dirstring, full.names = T)
+  
+  sim_files = all_files[grep(".Rds", all_files)]
+  
+  outstring = sprintf("%s/%s.gz", dirstring, outname)
+  
+  tar(tarfile = outstring, files = sim_files, compression = "gzip", tar="tar")
+  
+  if(del == TRUE) {
+    file.remove(sim_files)
+  }
+  
+}
+
+
+trunc_res = function(simres) {
+
+  out = list(AGENTS = simres[["AGENTS"]],
+             RESOURCES = simres[["RESOURCES"]],
+             OBSERVATION = simres[["OBSERVATION"]],
+             COST = simres[["COST"]],
+             ACTION = simres[["ACTION"]],
+             #LAND = simres[["LAND"]],
+             stakeholders = simres[["stakeholders"]],
+             basic_output = simres[["basic_output"]])
+
+  return(out)
+}
+
+
 ### get_user_acts()
 ### 
 ### Extracts a list of matrixes where each list element is a simulation, each row in a matrix is a year,
 ###  and each column in a matrix is a user. Each value is the desired user parameter (currently: number 
 ###  of actions taken (cull, scare, tend crops), yield, or budget.)
+
+gmse_sims = function(years = 5 , sims = 5, sim_paras) {
+
+  # Create sim ID string for storing output under:
+  sim_idx = gsub(" ", "", gsub(":", "", gsub("-", "", Sys.time())))
+  
+  # Check if output dir for sim run exists, if not, create it:
+  if(!dir.exists(sprintf("out/%s", sim_idx))) {
+    dir.create(sprintf("out/%s", sim_idx))
+  }
+  
+  # Save GMSE paras in output folder.
+  # gmse_paras$years = years
+  # gmse_paras$sims = sims
+  # saveRDS(gmse_paras, sprintf("out/%s/gmse_paras.Rds",sim_idx))
+   
+  res = list()
+  
+  for(sim in 1:sims) {
+    
+    res_year = as.list(rep(NA, years))
+    
+    sim_old <- gmse_apply(get_res = eval(sim_paras$get_res),
+                          land_dim_1 = eval(sim_paras$land_dim_1),
+                          land_dim_2 = eval(sim_paras$land_dim_2),
+                          land_ownership = eval(sim_paras$land_ownership),
+                          tend_crops = eval(sim_paras$tend_crops),
+                          scaring = eval(sim_paras$scaring),
+                          remove_pr = eval(sim_paras$remove_pr),         
+                          lambda = eval(sim_paras$lambda),             
+                          res_death_K = eval(sim_paras$res_death_K),         
+                          RESOURCE_ini = eval(sim_paras$RESOURCE_ini),       
+                          manage_target = eval(sim_paras$manage_target),
+                          res_death_type = eval(sim_paras$res_death_type),
+                          manager_budget = eval(sim_paras$manager_budget), 
+                          user_budget = eval(sim_paras$user_budget),
+                          public_land = eval(sim_paras$public_land),
+                          stakeholders = eval(sim_paras$stakeholders), 
+                          res_consume = eval(sim_paras$res_consume),  
+                          observe_type = eval(sim_paras$observe_type), 
+                          agent_view = eval(sim_paras$agent_view),
+                          agent_move = eval(sim_paras$agent_move),
+                          converge_crit = eval(sim_paras$converge_crit),
+                          ga_mingen = eval(sim_paras$ga_mingen))
+    
+    for(year in 1:years) {
+      
+      sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
+      
+      if(class(sim_new)=="try-error") {
+        if(grepl("Extinction", sim_new[1])) {
+          print(sprintf("True extinction, skipping to next sim."))
+          res_year[year:years] = "Extinction (true)"
+          break()
+        } else {
+          if(grepl("Error in estimate_abundances", sim_new[1])) {
+            print(sprintf("Observed extinction, skipping to next sim."))
+            res_year[year:years] = "Extinction (observed)"
+            break()
+          } else {
+            print(sprintf("Observed extinction, skipping to next sim."))
+            res_year[year:years] = "Extinction (observed, other error)"
+            break()
+          }
+        }
+      } else {
+        print(sprintf("Sim %d, year %d", sim, year))
+        res_year[[year]] = sim_new
+        fname = sprintf("out/%s/sim%04d_year%04d.Rds",sim_idx,sim,year)
+        saveRDS(sim_new, fname)
+        sim_old <- sim_new
+        rm(sim_new)
+        suppressMessages({gc()})
+      }
+    }
+    fname = sprintf("out/%s/sim%04d.Rds",sim_idx,sim)
+    res[[sim]] = res_year
+    saveRDS(res_year, fname)
+  }
+
+}
+
+
+
 
 get_user_data = function(all_dat, type) {
   
@@ -434,23 +633,3 @@ plot_yield = function(gmse_res, type = "all") {
   
 }
 
-### Store parameters and output
-### 
-
-save_gmse = function(gmse_paras = gmse_paras, gmse_res = res, dir = "out/") {
-  
-  gmse_paras_out = as.data.frame(gmse_paras)
-  gmse_paras_out = cbind(data.frame(years = years, sims = sims), gmse_paras_out)
-  
-  fname = Sys.time() 
-  fname = gsub(":","", fname)
-  fname = gsub("-","", fname)
-  fname = gsub(" ","", fname)
-  
-  gmse_paras_out = cbind(data.frame(file_index = fname),gmse_paras_out)
-  
-  write.csv(gmse_paras_out, sprintf("%sparas_log.csv", dir))
-  
-  
-  
-}

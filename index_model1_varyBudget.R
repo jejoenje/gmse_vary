@@ -1,21 +1,32 @@
+### Null model simulation runs
+### 
+
 rm(list=ls())
 library(GMSE)
 library(scales)
 library(RColorBrewer)
-source('helpers.R')
-source('gmse_apply_helpers.R')
+source("helpers.R")
+source("gmse_apply_helpers.R")
 
-source("global_pars2.R")
+source("paras_model1_varyBudget.R")
 
-years = 10
-sims = 10
+### Set output dir
+outdir = "out/varyBudget/"
+### Create output identifier (date/time string)
+outidx = gsub(":", "", gsub(" ", "", gsub("-", "",Sys.time())))
+### Create output dir
+dir.create(paste(outdir, outidx, sep=""))
+### Save current parameters to output dir (note Rdata file to separate from Rds sim files)
+save(gmse_paras, file = sprintf("%s%s/paras_%s.Rdata", outdir, outidx, outidx))
 
+
+### Init empty list
 res = list()
 
 for(sim in 1:sims) {
   
   res_year = as.list(rep(NA, years))
-
+  
   sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                         land_dim_1 = gmse_paras$land_dim_1,
                         land_dim_2 = gmse_paras$land_dim_2,
@@ -38,9 +49,16 @@ for(sim in 1:sims) {
                         agent_move = gmse_paras$agent_move,
                         converge_crit = gmse_paras$converge_crit,
                         ga_mingen = gmse_paras$ga_mingen)
-    
+  
+  ### Set budgets for users:
+  K = gmse_paras$stakeholders
+  for(i in 1:K) {
+    sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = sample_budgets_ManyPoorFewRich(nstakeholders = K, 
+                                                                               manager_budget = gmse_paras$manager_budget)
+  }
+  
   for(year in 1:years) {
-
+    
     sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
     if(class(sim_new)=="try-error") {
       if(grepl("Extinction", sim_new[1])) {
@@ -58,9 +76,12 @@ for(sim in 1:sims) {
           break()
         }
       }
-    } else {
+    } else {sample_budgets_ManyPoorFewRich
       print(sprintf("Sim %d, year %d", sim, year))
       res_year[[year]] = sim_new
+      # Save sim/year data
+      output_trunc = trunc_res(sim_new)
+      saveRDS(output_trunc, sprintf("%s%s/%s_s%04dy%04d.Rds", outdir, outidx, outidx, sim, year))
       sim_old <- sim_new
     }
   }
@@ -69,33 +90,39 @@ for(sim in 1:sims) {
   
 }
 
-check_len = lapply(res, function(x) lapply(x, len))
-
-
-### If not all of these are == years, some extinctions occurred.
-unlist(lapply(res, len))
-
-
-unlist(lapply(res, function(x) lapply(x, class)  ))
-
-checkState = data.frame(sim = rep(1:sims, each=years), 
-                        year = rep(1:years,sims), 
-                        state = unlist(lapply(res, function(x) lapply(x, class)  )))
-checkState
+### T
+format(object.size(res), units = "auto")
+for(i in 1:sims) {
+  for(j in 1:years) {
+    res[[i]][[j]]$LAND = NULL
+    res[[i]][[j]]$resource_array = NULL
+    res[[i]][[j]]$observation_array = NULL
+    res[[i]][[j]]$manager_array = NULL
+    res[[i]][[j]]$user_array = NULL
+  }
+}
+format(object.size(res), units = "auto")
 
 y_lims = c(bufRange(min(extract_gmse(res, "resources"), na.rm=T), end = "lo"),
            bufRange(max(extract_gmse(res, "resources"), na.rm=T), end = "hi"))
- 
+par(mfrow=c(1,1))
+tiff(sprintf("%s%s/resources.tiff", outdir, outidx))
+plot_resource(res, type="resources", sumtype = "none", ylim = y_lims)
+dev.off()
+tiff(sprintf("%s%s/observations.tiff", outdir, outidx))
+plot_resource(res, type="observations", sumtype = "none", ylim = y_lims)
+dev.off()
+tiff(sprintf("%s%s/actions.tiff", outdir, outidx))
+plot_actions(res, type = "mean")
+dev.off()
+tiff(sprintf("%s%s/yield.tiff", outdir, outidx))
+plot_yield(res, type = "all")
+dev.off()
+
 par(mfrow=c(2,2))
 plot_resource(res, type="resources", sumtype = "none", ylim = y_lims)
 plot_resource(res, type="observations", sumtype = "none", ylim = y_lims)
 plot_actions(res, type = "mean")
 plot_yield(res, type = "all")
-
-# 
-# get_user_data(res, "observations")
-
-
-
 
 
