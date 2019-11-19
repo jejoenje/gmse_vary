@@ -3,5 +3,6 @@
 .RData
 .Ruserdata
 gmse_vary.Rproj
-sims/
+sims/varyBudget/
+sims/*/out/
 out/
