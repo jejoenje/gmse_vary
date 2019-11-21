@@ -25,7 +25,7 @@ gmse_paras <- list(
   agent_move =      100,         
   converge_crit =   0.1,
   ga_mingen =       40,
-  years =           50,
+  years =           10,
   sims =            10)
 
 years = gmse_paras$years

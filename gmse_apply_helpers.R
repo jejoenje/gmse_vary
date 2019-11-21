@@ -2,6 +2,10 @@
 ### 
 ### 
 
+### Some constants:
+### 
+ACT_NAMES = c("scares","kills","castr","crops","feeds","helps","noact")
+
 ### Initialises simulations following a specific SIM_NAME (a scenario defined by a set of parameters).
 ### 
 ### Assumes a strict folder structure for outputs as well as a specific name for input parameters:
@@ -36,6 +40,57 @@ init_sims = function(SIM_NAME) {
   assign("outdir", outdir, env = globalenv())
   assign("outidx", outidx, env = globalenv())
   assign("outpath", outpath, env = globalenv())
+  
+}
+
+init_out = function(s, y, users) {
+  
+  POP = expand.grid(SIM=c(1:sims), YEAR=c(1:years))
+  POP = POP[order(POP[,"SIM"],POP[,"YEAR"]),]
+  POP["N"] = NA
+  POP["N_OBS"] = NA
+  assign("POP", POP, env = globalenv())
+  
+  USR = expand.grid(usr = c(1:users), YEAR=c(1:years), SIM=c(1:sims))
+  USR = subset(USR, select=c("SIM","YEAR","usr"))
+  USR["yld"] = NA
+  USR["bud"] = NA
+  acts = as.data.frame(matrix(NA, nrow=nrow(USR), ncol=7))
+  names(acts) = ACT_NAMES
+  USR = cbind(USR, acts)
+  assign("USR", USR, env = globalenv())
+  
+  EXT = expand.grid(SIM = c(1:sims))
+  EXT["status"] = FALSE
+  EXT["year"] = NA
+  assign("EXT", EXT, env = globalenv())
+  
+}
+
+store_dat = function(dat, s, y, type = "normal") {
+  
+  if(type=="normal") {
+    ### Extract and save population data
+    POP[which(POP["SIM"]==s & POP["YEAR"]==y),"N"] = dat[["basic_output"]][["resource_results"]]
+    POP[which(POP["SIM"]==s & POP["YEAR"]==y),"N_OBS"] = dat[["basic_output"]][["observation_results"]]
+    assign("POP", POP, env = globalenv())
+    
+    ### Extract and save action data per user (looping through each action)
+    for(i in 1:len(ACT_NAMES)) {
+      n = ACT_NAMES[i]
+      USR[which(USR["SIM"]==s & USR["YEAR"]==y),n] = extractUser(dat, n)
+    }
+    ### Extract and save yield data:
+    USR[which(USR["SIM"]==s & USR["YEAR"]==y),"yld"] = extractUser(sim_new, "yield")
+    ### Extract and save budget data (NOTE THAT THIS SHOULD BE DONE AFTER "UPDATING" A BUDGET, IF DESIRED:
+    USR[which(USR["SIM"]==s & USR["YEAR"]==y),"bud"] = extractUser(sim_new, "budget")
+    
+    assign("USR", USR, env = globalenv())  
+  } else {
+    EXT[which(EXT["SIM"]==s),"status"] = TRUE
+    EXT[which(EXT["SIM"]==s),"year"] = y
+    assign("EXT", EXT, env = globalenv())  
+  }
   
 }
 
@@ -207,6 +262,23 @@ extractUser = function(dat, type) {
     return(apply(actions, 3, function(x) x[1,8]))
   }
   
+  if(type == "castr") {
+    return(apply(actions, 3, function(x) x[1,10]))
+  }
+  
+  if(type == "feeds") {
+    return(apply(actions, 3, function(x) x[1,11]))
+  }
+  
+  if(type == "helps") {
+    return(apply(actions, 3, function(x) x[1,12]))
+  }
+  
+  if(type == "noact") {
+    return(apply(actions, 3, function(x) x[1,13]))
+  }
+  
+  ### 'all_actions' returns the total number of actions per user.
   if(type == "all_actions") {
     all_act = apply(actions, 3, function(x) {
         x[1,8]+   # SCARING
@@ -233,6 +305,7 @@ extractUser = function(dat, type) {
     return(apply(expenses, 3, function(x) sum(x, na.rm=T)))
   }
   
+  ### 'all_costs' returns total costs per user.
   ### THIS EXCLUDES "NOTHING" AS IT ASSUMES IT "COSTS" NOTHING.
   if(type == "all_costs") {
     all_act = apply(actions, 3, function(x) {
