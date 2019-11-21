@@ -42,7 +42,6 @@ init_sims = function(SIM_NAME) {
 ### Random budget sampling functions:
 ### 
 
-
 ### This draws a sample of budgets where the majority of stakeholders are poorer than a minority 
 ### (i.e. capital biased "up").
 ### The scale parameter indicates the relative size of the "high" budget to the manager's budget.
@@ -50,6 +49,59 @@ init_sims = function(SIM_NAME) {
 ### the richest stakeholder will be twice as rich as the manager, etc. )
 sample_budgets_ManyPoorFewRich = function(nstakeholders = 8, manager_budget = 1000, scale = 1) {
   return(floor(rbeta(nstakeholders, 1, .5)*(manager_budget*scale)))
+}
+
+
+### Converts given yield to a return for a next budget.
+yield_to_return = function(yield, yield_return, type = "direct") {
+  
+  if(type == "direct") {
+    return(yield)
+  }
+  if(type == "linear") {
+    if(is.null(yield_return)) {
+      yield_return = 1
+      warning("'yield_return' not specified, assuming 1.")
+    }
+    return(yield*yield_return)
+  }
+  if(type == "poisson") {
+    if(is.null(yield_return)) {
+      yield_return = 1
+      warning("'yield_return' not specified, assuming 1.")
+    }
+    return(rpois(len(yield), lambda = yield*yield_return))
+  }
+  if(type == "beta1") {
+    s1 = 5
+    s2 = (s1/yield_return)-s1
+    # test = rbeta(1000, s1, s2)
+    # hist(test); summary(test)
+    u_yield_returns = rbeta(8, s1, s2)
+    return(yield*u_yield_returns)
+  }
+  
+}
+
+
+### set_budgets()
+### Takes AGENTS data frame as argument and returns a series of new budgets based on 
+set_budgets = function(prv, nxt, yv, yield_type = "beta1") {
+  
+  rem = extractUser(prv, "budget")-extractUser(nxt, "expenses")
+
+  carryover = rem + extractUser(nxt, "leftover")
+  
+  curr_yield = extractUser(nxt, "yield")
+  
+  profit = yield_to_return(yield = curr_yield, yield_return = yv, type = yield_type)
+  
+  return(carryover+profit)
+  
+}
+
+count_extinctions = function(simres) {
+  
 }
 
 
@@ -109,7 +161,9 @@ trunc_res = function(simres) {
              OBSERVATION = simres[["OBSERVATION"]],
              COST = simres[["COST"]],
              ACTION = simres[["ACTION"]],
+             manager_array = simres[["manager_array"]],
              #LAND = simres[["LAND"]],
+             minimum_cost = simres[["minimum_cost"]],
              stakeholders = simres[["stakeholders"]],
              basic_output = simres[["basic_output"]])
 
@@ -117,169 +171,91 @@ trunc_res = function(simres) {
 }
 
 
-### get_user_acts()
-### 
-### Extracts a list of matrixes where each list element is a simulation, each row in a matrix is a year,
-###  and each column in a matrix is a user. Each value is the desired user parameter (currently: number 
-###  of actions taken (cull, scare, tend crops), yield, or budget.)
 
-gmse_sims = function(years = 5 , sims = 5, sim_paras) {
-
-  # Create sim ID string for storing output under:
-  sim_idx = gsub(" ", "", gsub(":", "", gsub("-", "", Sys.time())))
+###
+### extractUser() does the same as get_user_data but on a single gmse_apply() list output (single sim/year)
+extractUser = function(dat, type) {
   
-  # Check if output dir for sim run exists, if not, create it:
-  if(!dir.exists(sprintf("out/%s", sim_idx))) {
-    dir.create(sprintf("out/%s", sim_idx))
+  # Get number of stakeholders
+  n_stakeholders = dat$stakeholders
+  # Get all AGENTS data for users only (exlude manager)
+  agents = dat[["AGENTS"]][2:nrow(dat[["AGENTS"]]),]
+  # Get all ACTION data for users only (exclude manager)
+  actions = dat[["ACTION"]][,,2:(n_stakeholders+1)]
+
+  # Get costs set per user.
+  # Not used currently:
+  costs = dat[["manager_array"]][,,2:(n_stakeholders+1)]
+
+  if(type == "yield") {
+    return(agents[,16])
   }
   
-  # Save GMSE paras in output folder.
-  # gmse_paras$years = years
-  # gmse_paras$sims = sims
-  # saveRDS(gmse_paras, sprintf("out/%s/gmse_paras.Rds",sim_idx))
-   
-  res = list()
+  if(type == "budget") {
+    return(agents[,17])
+  }
   
-  for(sim in 1:sims) {
+  if(type == "crops") {
+    return(apply(actions, 3, function(x) x[2,10]))
+  }
+  
+  if(type == "kills") {
+    return(apply(actions, 3, function(x) x[1,9]))
+  }
+  
+  if(type == "scares") {
+    return(apply(actions, 3, function(x) x[1,8]))
+  }
+  
+  if(type == "all_actions") {
+    all_act = apply(actions, 3, function(x) {
+        x[1,8]+   # SCARING
+        x[1,9]+   # CULLING
+        x[1,10]+  # CASTRATION
+        x[2,10]+  # CROPPING
+        x[1,11]+  # FEEDING
+        x[1,12]+  # HELPING
+        x[1,13]   # NOTHING
+      })
+    return(all_act)
+  }
+
+  ### Returns "expenses"  
+  if(type == "expenses") {
     
-    res_year = as.list(rep(NA, years))
-    
-    sim_old <- gmse_apply(get_res = eval(sim_paras$get_res),
-                          land_dim_1 = eval(sim_paras$land_dim_1),
-                          land_dim_2 = eval(sim_paras$land_dim_2),
-                          land_ownership = eval(sim_paras$land_ownership),
-                          tend_crops = eval(sim_paras$tend_crops),
-                          scaring = eval(sim_paras$scaring),
-                          remove_pr = eval(sim_paras$remove_pr),         
-                          lambda = eval(sim_paras$lambda),             
-                          res_death_K = eval(sim_paras$res_death_K),         
-                          RESOURCE_ini = eval(sim_paras$RESOURCE_ini),       
-                          manage_target = eval(sim_paras$manage_target),
-                          res_death_type = eval(sim_paras$res_death_type),
-                          manager_budget = eval(sim_paras$manager_budget), 
-                          user_budget = eval(sim_paras$user_budget),
-                          public_land = eval(sim_paras$public_land),
-                          stakeholders = eval(sim_paras$stakeholders), 
-                          res_consume = eval(sim_paras$res_consume),  
-                          observe_type = eval(sim_paras$observe_type), 
-                          agent_view = eval(sim_paras$agent_view),
-                          agent_move = eval(sim_paras$agent_move),
-                          converge_crit = eval(sim_paras$converge_crit),
-                          ga_mingen = eval(sim_paras$ga_mingen))
-    
-    for(year in 1:years) {
-      
-      sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
-      
-      if(class(sim_new)=="try-error") {
-        if(grepl("Extinction", sim_new[1])) {
-          print(sprintf("True extinction, skipping to next sim."))
-          res_year[year:years] = "Extinction (true)"
-          break()
-        } else {
-          if(grepl("Error in estimate_abundances", sim_new[1])) {
-            print(sprintf("Observed extinction, skipping to next sim."))
-            res_year[year:years] = "Extinction (observed)"
-            break()
-          } else {
-            print(sprintf("Observed extinction, skipping to next sim."))
-            res_year[year:years] = "Extinction (observed, other error)"
-            break()
-          }
-        }
-      } else {
-        print(sprintf("Sim %d, year %d", sim, year))
-        res_year[[year]] = sim_new
-        fname = sprintf("out/%s/sim%04d_year%04d.Rds",sim_idx,sim,year)
-        saveRDS(sim_new, fname)
-        sim_old <- sim_new
-        rm(sim_new)
-        suppressMessages({gc()})
-      }
+    # Set costs > 100000 (i.e. actions not allowed) to 0 so we can calculate with it.
+    for(i in 1:dim(costs)[3]) {
+      costs[,,i][costs[,,i]>100000] = 0
     }
-    fname = sprintf("out/%s/sim%04d.Rds",sim_idx,sim)
-    res[[sim]] = res_year
-    saveRDS(res_year, fname)
+
+    expenses = costs*actions
+    expenses = expenses[,8:12,]
+    return(apply(expenses, 3, function(x) sum(x, na.rm=T)))
+  }
+  
+  ### THIS EXCLUDES "NOTHING" AS IT ASSUMES IT "COSTS" NOTHING.
+  if(type == "all_costs") {
+    all_act = apply(actions, 3, function(x) {
+      x[1,8]+   # SCARING
+        x[1,9]+   # CULLING
+        x[1,10]+  # CASTRATION
+        x[2,10]+  # CROPPING
+        x[1,11]+  # FEEDING
+        x[1,12]  # HELPING
+    })
+    return(all_act)
+  }
+  
+  # Get "leftover" budget. Should usually be zero and == "nothing" actions times minimum cost.
+  if(type == "leftover") {
+    nothing_acts = apply(actions, 3, function(x) x[1,13])
+    return(nothing_acts*gmse_paras[["minimum_cost"]])
   }
 
 }
 
 
-
-
-get_user_data = function(all_dat, type) {
-  
-  no_sims = len(all_dat)
-  no_years = max(unlist(lapply(all_dat, len)))
-  
-  dat = list()
-  
-  if(type == "culls" | type == "scares" | type == "crops") {
-    
-    for(i in 1:no_sims) {
-      # Find no. of stakeholders
-      stakeholders = all_dat[[i]][[1]]$stakeholders
-      
-      # For each year, within a sim ulation...
-      
-      udat_j = matrix(NA, ncol=stakeholders, nrow=no_years)
-      
-      for(j in 1:no_years) {
-        
-        if(class(all_dat[[i]][[j]])=="list") {
-          # Extract actions for year j in sim i
-          udat_year = all_dat[[i]][[j]]$ACTION
-          user_dat = udat_year[,,2:dim(udat_year)[3]] 
-          udat = as.vector(NULL)
-          for(k in 1:stakeholders) {
-            if(type == "culls") {
-              udat[k] = user_dat[,,k][1,9] 
-            }
-            if(type == "scares") {
-              udat[k] = user_dat[,,k][1,8]
-            }
-            if(type == "crops") {
-              udat[k] = user_dat[,,k][2,10]  
-            }
-          }
-          udat_j[j,] = udat
-        }
-      }
-      dat[[i]] = udat_j
-    }
-    return(dat)
-  }
-  
-  if(type == "yield" | type == "budget") {
-    
-    for(i in 1:no_sims) {
-      # Find no. of stakeholders
-      stakeholders = all_dat[[i]][[1]]$stakeholders
-      
-      # For each year, within a simulation...
-      
-      udat_j = matrix(NA, ncol=stakeholders, nrow=no_years)
-      
-      for(j in 1:no_years) {
-        
-        if(class(all_dat[[i]][[j]])=="list") {
-        
-          # Extract actions for year j in sim i
-          udat_year = all_dat[[i]][[j]]$AGENTS
-          if(type == "yield") {
-            udat_j[j,] = udat_year[2:nrow(udat_year),16]
-          }
-          if(type == "budget") {
-            udat_j[j,] = udat_year[2:nrow(udat_year),17]
-          }
-        }
-      }
-      dat[[i]] = udat_j
-    }
-    return(dat)    ## Returning data if type == "yield" or "budget"
-  }
-
-}
+5.19 km in miles
 
 extract_gmse = function(all_dat, extract = "resources") {
   
@@ -587,6 +563,32 @@ plot_actions = function(gmse_res, type = "mean", sumtype = "stakeholder") {
 
 }
 
+
+### plot_budgets()
+### 
+
+plot_budgets = function(gmse_res) {
+  
+  all_budgets = get_user_data(gmse_res, "budget")
+  n_stakeholders = gmse_res[[1]][[1]]$stakeholders
+  
+  # Find max and mins and set yrange limits:
+  all_max = unlist(lapply(all_budgets , max))
+  all_min = unlist(lapply(all_budgets , min))
+  hi = bufRange(all_max, end = "hi")
+  lo = bufRange(all_min, end = "lo")
+ 
+  plot(1:nrow(all_budgets[[1]]), all_budgets[[1]][,1], type = "n", ylim = c(lo,hi))
+  
+  stakeholder_cols = alpha(brewer.pal(n_stakeholders, "Paired"),0.8)
+  
+  for(i in 1:n_stakeholders) {
+    lapply(all_budgets, function(x) lines(1:nrow(x), x[,i], col = stakeholder_cols[i]) )
+  }
+
+}
+
+
 ### plot_yield()
 ### 
 
@@ -632,4 +634,94 @@ plot_yield = function(gmse_res, type = "all") {
   }
   
 }
+
+
+
+### get_user_acts()
+### 
+### Extracts a list of matrixes where each list element is a simulation, each row in a matrix is a year,
+###  and each column in a matrix is a user. Each value is the desired user parameter (currently: number 
+###  of actions taken (cull, scare, tend crops), yield, or budget.)
+
+gmse_sims = function(years = 5 , sims = 5, sim_paras) {
+  
+  # Create sim ID string for storing output under:
+  sim_idx = gsub(" ", "", gsub(":", "", gsub("-", "", Sys.time())))
+  
+  # Check if output dir for sim run exists, if not, create it:
+  if(!dir.exists(sprintf("out/%s", sim_idx))) {
+    dir.create(sprintf("out/%s", sim_idx))
+  }
+  
+  # Save GMSE paras in output folder.
+  # gmse_paras$years = years
+  # gmse_paras$sims = sims
+  # saveRDS(gmse_paras, sprintf("out/%s/gmse_paras.Rds",sim_idx))
+  
+  res = list()
+  
+  for(sim in 1:sims) {
+    
+    res_year = as.list(rep(NA, years))
+    
+    sim_old <- gmse_apply(get_res = eval(sim_paras$get_res),
+                          land_dim_1 = eval(sim_paras$land_dim_1),
+                          land_dim_2 = eval(sim_paras$land_dim_2),
+                          land_ownership = eval(sim_paras$land_ownership),
+                          tend_crops = eval(sim_paras$tend_crops),
+                          scaring = eval(sim_paras$scaring),
+                          remove_pr = eval(sim_paras$remove_pr),         
+                          lambda = eval(sim_paras$lambda),             
+                          res_death_K = eval(sim_paras$res_death_K),         
+                          RESOURCE_ini = eval(sim_paras$RESOURCE_ini),       
+                          manage_target = eval(sim_paras$manage_target),
+                          res_death_type = eval(sim_paras$res_death_type),
+                          manager_budget = eval(sim_paras$manager_budget), 
+                          user_budget = eval(sim_paras$user_budget),
+                          public_land = eval(sim_paras$public_land),
+                          stakeholders = eval(sim_paras$stakeholders), 
+                          res_consume = eval(sim_paras$res_consume),  
+                          observe_type = eval(sim_paras$observe_type), 
+                          agent_view = eval(sim_paras$agent_view),
+                          agent_move = eval(sim_paras$agent_move),
+                          converge_crit = eval(sim_paras$converge_crit),
+                          ga_mingen = eval(sim_paras$ga_mingen))
+    
+    for(year in 1:years) {
+      
+      sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
+      
+      if(class(sim_new)=="try-error") {
+        if(grepl("Extinction", sim_new[1])) {
+          print(sprintf("True extinction, skipping to next sim."))
+          res_year[year:years] = "Extinction (true)"
+          break()
+        } else {
+          if(grepl("Error in estimate_abundances", sim_new[1])) {
+            print(sprintf("Observed extinction, skipping to next sim."))
+            res_year[year:years] = "Extinction (observed)"
+            break()
+          } else {
+            print(sprintf("Observed extinction, skipping to next sim."))
+            res_year[year:years] = "Extinction (observed, other error)"
+            break()
+          }
+        }
+      } else {
+        print(sprintf("Sim %d, year %d", sim, year))
+        res_year[[year]] = sim_new
+        fname = sprintf("out/%s/sim%04d_year%04d.Rds",sim_idx,sim,year)
+        saveRDS(sim_new, fname)
+        sim_old <- sim_new
+        rm(sim_new)
+        suppressMessages({gc()})
+      }
+    }
+    fname = sprintf("out/%s/sim%04d.Rds",sim_idx,sim)
+    res[[sim]] = res_year
+    saveRDS(res_year, fname)
+  }
+  
+}
+
 

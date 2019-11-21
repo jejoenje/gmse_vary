@@ -6,6 +6,7 @@ gmse_paras <- list(
   tend_crops =      TRUE,
   tend_crop_yld =   0.9,
   scaring =         TRUE,
+  minimum_cost =    10,
   remove_pr =       0.075,       
   res_death_type =  3,
   lambda =          0.25,           
@@ -24,7 +25,7 @@ gmse_paras <- list(
   agent_move =      100,         
   converge_crit =   0.1,
   ga_mingen =       40,
-  years =           10,
+  years =           50,
   sims =            10)
 
 years = gmse_paras$years
