@@ -254,9 +254,6 @@ extractUser = function(dat, type) {
 
 }
 
-
-5.19 km in miles
-
 extract_gmse = function(all_dat, extract = "resources") {
   
   accepted_types = c("resources","observations","culls", "scares", "crops", "yield", "budget")
