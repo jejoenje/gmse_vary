@@ -12,20 +12,20 @@ source("sims/global_paras.R")
 ###################################
 ###################################
 ###################################
-sim_set_name = "nullModel-YTB1"
+sim_set_name = "nullModel-YTB2"
 ##########################
 ##############################
 ##################################
 ###################################
 
+### Initialise simulations (set output folders and paras etc)
 init_sims(sim_set_name)
 
-### Init empty list
-res = list()
+### Initialise outputs
+init_out(s = sims, y = years, users=gmse_paras[["stakeholders"]])
+
 
 for(sim in 1:sims) {
-  
-  res_year = as.list(rep(NA, years))
   
   sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                         land_dim_1 = gmse_paras$land_dim_1,
@@ -57,18 +57,16 @@ for(sim in 1:sims) {
     sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
     
     if(class(sim_new)=="try-error") {
+      store_dat(sim_new, s = sim, y = year, type = "ext")     ### Record extinction
       if(grepl("Extinction", sim_new[1])) {
         print(sprintf("True extinction, skipping to next sim."))
-        res_year[year:years] = "Extinction (true)"
         break()
       } else {
         if(grepl("Error in estimate_abundances", sim_new[1])) {
           print(sprintf("Observed extinction, skipping to next sim."))
-          res_year[year:years] = "Extinction (observed)"
           break()
         } else {
           print(sprintf("Observed extinction, skipping to next sim."))
-          res_year[year:years] = "Extinction (observed, other error)"
           break()
         }
       }
@@ -76,29 +74,24 @@ for(sim in 1:sims) {
       print(sprintf("Sim %d, year %d", sim, year))
       
       ### Set next budgets according to yields:
-      nxt_budgets = set_budgets(prv = sim_old, nxt = sim_new, yv = yield_value, yield_type = ytb_type)
+      nxt_budgets = set_budgets(prv = sim_old,           # To extract remaining budget from previous
+                                nxt = sim_new,           # Current year sim results
+                                yv = yield_value,        # Monetary return per unit yield
+                                yield_type = ytb_type)   # Function translating yield into return
       sim_new$AGENTS[2:(gmse_paras[["stakeholders"]]+1),17] = nxt_budgets
       
-      res_year[[year]] = trunc_res(sim_new)
+      store_dat(sim_new, s = sim, y = year)
+      
       sim_old <- sim_new
     }
   }
-  
-  res[[sim]] = res_year
-  
-  # Save sim/year data
-  saveRDS(res[[sim]], sprintf("%ssim%04d_%s_%s.Rds", outpath, sim, outidx, sim_set_name))
-  
 }
 
-y_lims = c(bufRange(min(extract_gmse(res, "resources"), na.rm=T), end = "lo"),
-           bufRange(max(extract_gmse(res, "resources"), na.rm=T), end = "hi"))
-par(mfrow=c(2,2))
-plot_resource(res, type="resources", sumtype = "none", ylim = y_lims)
-plot_actions(res, type = "mean")
-plot_yield(res, type = "all")
-plot_budgets(res)
+plot_gmse_sims(POP, USR)
 
+write.csv(POP, sprintf("%sPOP_%s.csv", outpath, outidx), row.names=F)
+write.csv(USR, sprintf("%sUSR_%s.csv", outpath, outidx), row.names=F)
+write.csv(EXT, sprintf("%sEXT_%s.csv", outpath, outidx), row.names=F)
 
 
 

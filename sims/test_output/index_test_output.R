@@ -87,16 +87,11 @@ for(sim in 1:sims) {
   }
 }
 
+plot_gmse_sims(POP, USR)
 
-
-# y_lims = c(bufRange(min(extract_gmse(res, "resources"), na.rm=T), end = "lo"),
-#            bufRange(max(extract_gmse(res, "resources"), na.rm=T), end = "hi"))
-# par(mfrow=c(2,2))
-# plot_resource(res, type="resources", sumtype = "none", ylim = y_lims)
-# plot_actions(res, type = "mean")
-# plot_yield(res, type = "all")
-# plot_budgets(res)
-# 
+write.csv(POP, sprintf("%sPOP_%s.csv", outpath, outidx), row.names=F)
+write.csv(USR, sprintf("%sUSR_%s.csv", outpath, outidx), row.names=F)
+write.csv(EXT, sprintf("%sEXT_%s.csv", outpath, outidx), row.names=F)
 
 
 

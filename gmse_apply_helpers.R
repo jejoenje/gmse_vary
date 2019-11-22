@@ -155,11 +155,6 @@ set_budgets = function(prv, nxt, yv, yield_type = "beta1") {
   
 }
 
-count_extinctions = function(simres) {
-  
-}
-
-
 load_sims = function(outdir = NULL, no_files = NULL) {
   sim_files = list.files(outdir)
   para_file = sim_files
@@ -701,6 +696,93 @@ plot_yield = function(gmse_res, type = "all") {
       
     }
     
+  }
+  
+}
+
+
+###
+### plot_gmse_sims()
+###
+### This function is intended to plot the results from "new style", "flat-file" gmse_apply sim outputs.
+
+
+plot_gmse_sims = function(pop, usr) {
+  
+  # Reconstruct number of sims and number of years in output:
+  s = max(pop$SIM)
+  s_years = tapply(pop$YEAR, pop$SIM, max)
+  y = max(s_years)
+  
+  # Reconstruct no. of stakeholders
+  stakeholders = max(as.numeric(names(table(usr$usr))))
+  
+  # Set up plots
+  par(mfrow=c(2,2))
+  
+  # 1. Resources
+  y_max = bufRange(pop[,"N"], end="hi",incl_val = gmse_paras$manage_target)
+  y_min = bufRange(pop[,"N"], end="lo",incl_val = gmse_paras$manage_target)
+  plot(pop$YEAR, pop$N, type="n", ylab = "Resource population", xlab = "Time step", ylim=c(y_min,y_max))
+  for(i in 1:s) {
+    lines(pop[pop["SIM"]==i,"YEAR"], pop[pop["SIM"]==i,"N"])
+  }
+  abline(h = gmse_paras$manage_target, col  = "red", lty = "dashed")
+  
+  
+  # 2. Actions
+  curacts = c("scares","kills","crops","noact")
+  pltact = subset(usr, select = c("SIM","YEAR","usr", curacts))
+  y_max = bufRange(pltact[,curacts], end="hi", buffer = 0.075)
+  y_min = bufRange(pltact[,curacts], end="lo")
+  # Calculate mean actions across simulations for each user (row) per year (column)
+  kills_mn = tapply(pltact$kills,list(pltact$usr,pltact$YEAR), function(x) mean(x, na.rm=T))
+  crops_mn = tapply(pltact$crops,list(pltact$usr,pltact$YEAR), function(x) mean(x, na.rm=T))
+  scares_mn = tapply(pltact$scares,list(pltact$usr,pltact$YEAR), function(x) mean(x, na.rm=T))
+  noact_mn = tapply(pltact$noact,list(pltact$usr,pltact$YEAR), function(x) mean(x, na.rm=T))
+  
+  act_cols = brewer.pal(5, "PRGn")
+  act_cols = act_cols[c(1,2,5)]
+  alph = 0.8
+    
+  plot(pltact$YEAR,pltact$kills,type="n", ylim=c(y_min,y_max), xlab = "Time step", ylab = "Mean stakeholder actions")
+  for(i in 1:stakeholders) {
+    lines(1:y,kills_mn[i,], col = alpha(act_cols[1],alph))
+    lines(1:y,scares_mn[i,], col = alpha(act_cols[2],alph))
+    lines(1:y,crops_mn[i,], col = alpha(act_cols[3],alph))
+  }
+  
+  legend(x = 1, y = y_max*1.05, legend = c("Culling","Scaring","Farming"), 
+         fill = act_cols, horiz = T, bty = "n", x.intersp = 0.1, text.width = c(1,1,1))
+   
+  
+  # 3. Yields
+  
+  y_range = c(bufRange(usr$yld, end = "lo"),bufRange(usr$yld, end = "hi") ) 
+  plot(usr$YEAR,usr$yld, type="n", xlab = "Time step", ylab = "Yield per user", ylim = y_range)
+  
+  stakeholder_cols = alpha(brewer.pal(stakeholders, "Paired"),0.8)
+  
+  for(u in 1:stakeholders) {
+    u_col = stakeholder_cols[u]
+    
+    for(sim in 1:s) {
+      set = usr[(usr$usr == u & usr$SIM == sim),]
+      lines(set$YEAR,set$yld, col = u_col)
+    }
+    
+  }
+  
+  # 4. Budgets
+  y_range = c(bufRange(usr$bud, end = "lo"),bufRange(usr$bud, end = "hi") ) 
+  plot(usr$YEAR,usr$bud, type="n", xlab = "Time step", ylab = "Budget per user", ylim = y_range)
+  stakeholder_cols = alpha(brewer.pal(stakeholders, "Paired"),0.8)
+  for(u in 1:stakeholders) {
+    u_col = stakeholder_cols[u]
+    for(sim in 1:s) {
+      set = usr[(usr$usr == u & usr$SIM == sim),]
+      lines(set$YEAR,set$bud, col = u_col)
+    }
   }
   
 }
