@@ -106,7 +106,6 @@ sample_budgets_ManyPoorFewRich = function(nstakeholders = 8, manager_budget = 10
   return(floor(rbeta(nstakeholders, 1, .5)*(manager_budget*scale)))
 }
 
-
 ### Converts given yield to a return for a next budget.
 yield_to_return = function(yield, yield_return, type = "direct") {
   
@@ -153,6 +152,31 @@ set_budgets = function(prv, nxt, yv, yield_type = "beta1") {
   
   return(carryover+profit)
   
+}
+
+### Set manager budget according to user budgets
+set_man_budget = function(u_buds, type = "max") {
+  allowed_types = c("max","mean","0.75","0.9","0.99")
+  
+  if(!(type %in% allowed_types)) {
+    stop(sprintf("Type '%s' not implemented, please choose from: %s", type, paste(allowed_types, collapse=", ")))
+  }
+  
+  if(type == "max") {
+    return(max(u_buds))
+  }
+  if(type == "mean") {
+    return(mean(u_buds))
+  }
+  if(type == "0.75") {
+    return(as.numeric(quantile(u_buds, probs = c(0.75))))
+  }
+  if(type == "0.9") {
+    return(as.numeric(quantile(u_buds, probs = c(0.9))))
+  }
+  if(type == "0.99") {
+    return(as.numeric(quantile(u_buds, probs = c(0.99))))
+  }
 }
 
 load_sims = function(outdir = NULL, no_files = NULL) {

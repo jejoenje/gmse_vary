@@ -4,7 +4,7 @@ gmse_paras <- list(
   land_dim_2 =      200,
   land_ownership =  TRUE, 
   tend_crops =      TRUE,
-  tend_crop_yld =   0.9,
+  tend_crop_yld =   0.9,         # 0.1, 0.3, 0.5, 0.7, 0.9*  
   scaring =         TRUE,
   minimum_cost =    10,
   remove_pr =       0.075,       
@@ -15,7 +15,7 @@ gmse_paras <- list(
   manage_target =   1000,
   manager_budget =  1000, 
   user_budget =     1000,
-  public_land =     0,           
+  public_land =     0.25,       # 0, 0.25, 0.5     
   stakeholders =    8, 
   res_consume =     0.2,          # was 0.175
   observe_type =    0,
