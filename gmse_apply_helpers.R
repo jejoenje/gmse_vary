@@ -137,6 +137,59 @@ yield_to_return = function(yield, yield_return, type = "direct") {
   
 }
 
+### set_land()
+
+set_land = function(land, s, type, hi_frac = NULL, up_frac = NULL, lo_frac = NULL) {
+  pub_land_present = FALSE
+  tland = table(land)
+
+  # If assuming equal land dist, return what was given:
+  if(type == "equal" | is.null(type) ) {
+    return(land)
+  }
+
+  if(type == "oneRich") {
+
+    if("1" %in% names(tland)) {
+      pub_land_present = TRUE
+      common_land = tland[1]
+      tland = tland[2:len(tland)]
+      names(tland) = as.character(1:len(tland))
+    } 
+    
+    pland = sum(tland)
+    if(is.null(up_frac)) up_frac = hi_frac+(hi_frac*0.07)
+    if(is.null(lo_frac)) lo_frac = hi_frac-(hi_frac*0.07)
+
+    rich_frac = rgbeta(1, mean = hi_frac, var = hi_frac/2000, min = lo_frac, max = up_frac)
+    rich_size = floor(pland*rich_frac)
+
+    rest = pland - rich_size
+
+    others = rep(NA, s-1)
+    others[1] = ceiling(rest/(s-1))
+    rest = rest-others[1]
+    for(i in 2:len(others)) {
+      others[i] = ceiling(rest/(s-i))
+      rest = rest-others[i]
+    }
+    all = c(others, rich_size)
+
+    if(pub_land_present == TRUE) {
+      all = c(common_land, all)
+    }
+    
+    all_cells = as.vector(NULL)
+    for(i in 1:len(all)) {
+      all_cells = c(all_cells, rep(i, all[i]))
+    }
+    
+    land_out = matrix(all_cells, nrow = nrow(land), ncol = ncol(land))
+    
+    return(land_out)
+  }
+}
+
 
 ### set_budgets()
 ### Takes AGENTS data frame as argument and returns a series of new budgets based on 
@@ -747,7 +800,8 @@ plot_gmse_sims = function(pop, usr) {
   # 1. Resources
   y_max = bufRange(pop[,"N"], end="hi",incl_val = gmse_paras$manage_target)
   y_min = bufRange(pop[,"N"], end="lo",incl_val = gmse_paras$manage_target)
-  plot(pop$YEAR, pop$N, type="n", ylab = "Resource population", xlab = "Time step", ylim=c(y_min,y_max))
+  plot(pop$YEAR, pop$N, type="n", ylab = "Resource population", xlab = "Time step", 
+       ylim=c(y_min,y_max), xlim = c(0, max(pop$YEAR)))
   for(i in 1:s) {
     lines(pop[pop["SIM"]==i,"YEAR"], pop[pop["SIM"]==i,"N"])
   }
@@ -769,7 +823,8 @@ plot_gmse_sims = function(pop, usr) {
   act_cols = act_cols[c(1,2,5)]
   alph = 0.8
     
-  plot(pltact$YEAR,pltact$kills,type="n", ylim=c(y_min,y_max), xlab = "Time step", ylab = "Mean stakeholder actions")
+  plot(pltact$YEAR,pltact$kills,type="n", ylim=c(y_min,y_max), 
+       xlab = "Time step", ylab = "Mean stakeholder actions", xlim = c(0, max(pltact$YEAR)))
   for(i in 1:stakeholders) {
     lines(1:y,kills_mn[i,], col = alpha(act_cols[1],alph))
     lines(1:y,scares_mn[i,], col = alpha(act_cols[2],alph))
@@ -783,7 +838,8 @@ plot_gmse_sims = function(pop, usr) {
   # 3. Yields
   
   y_range = c(bufRange(usr$yld, end = "lo"),bufRange(usr$yld, end = "hi") ) 
-  plot(usr$YEAR,usr$yld, type="n", xlab = "Time step", ylab = "Yield per user", ylim = y_range)
+  plot(usr$YEAR,usr$yld, type="n", xlab = "Time step", ylab = "Yield per user", 
+       ylim = y_range,xlim = c(0, max(usr$YEAR)))
   
   stakeholder_cols = alpha(brewer.pal(stakeholders, "Paired"),0.8)
   
@@ -799,7 +855,7 @@ plot_gmse_sims = function(pop, usr) {
   
   # 4. Budgets
   y_range = c(bufRange(usr$bud, end = "lo"),bufRange(usr$bud, end = "hi") ) 
-  plot(usr$YEAR,usr$bud, type="n", xlab = "Time step", ylab = "Budget per user", ylim = y_range)
+  plot(usr$YEAR,usr$bud, type="n", xlab = "Time step", ylab = "Budget per user", ylim = y_range, xlim = c(0, max(usr$YEAR)))
   stakeholder_cols = alpha(brewer.pal(stakeholders, "Paired"),0.8)
   for(u in 1:stakeholders) {
     u_col = stakeholder_cols[u]

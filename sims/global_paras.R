@@ -4,7 +4,7 @@ gmse_paras <- list(
   land_dim_2 =      200,
   land_ownership =  TRUE, 
   tend_crops =      TRUE,
-  tend_crop_yld =   0.9,         # 0.1, 0.3, 0.5, 0.7, 0.9*  
+  tend_crop_yld =   0.7,         # 0.1, 0.3, 0.5, 0.7*, 0.9  
   scaring =         TRUE,
   minimum_cost =    10,
   remove_pr =       0.075,       

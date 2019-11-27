@@ -18,6 +18,16 @@ sim_set_name = "nullModel-YTB4"
 ##################################
 ###################################
 
+
+###
+###### Temporary override of global para (for tests - need to remove!)    <---------------------
+gmse_paras$public_land = 0
+gmse_paras$sims = 10
+gmse_paras$years = 10
+
+sims = gmse_paras$sims
+years = gmse_paras$years
+
 ### Initialise simulations (set output folders and paras etc) 
 init_sims(sim_set_name)
 
@@ -25,8 +35,7 @@ init_sims(sim_set_name)
 init_out(s = sims, y = years, users=gmse_paras[["stakeholders"]])
 
 ### Manually set "yield-to-budget" value and save with paras:
-yield_value = 0.2
-gmse_paras$yield_value = yield_value
+gmse_paras$yield_value = 0.2
 
 for(sim in 1:sims) {
   
@@ -53,12 +62,23 @@ for(sim in 1:sims) {
                         converge_crit = gmse_paras$converge_crit,
                         ga_mingen = gmse_paras$ga_mingen)
   
+  ### Initialise user budgets (random sample but uniform)
   u_bud_sample = sample_budgets_ManyPoorFewRich()
   sim_old$AGENTS[2:(gmse_paras[["stakeholders"]]+1),17] = u_bud_sample
   
-  sim_old$AGENTS[1,17] = set_man_budget(u_bud_sample, type = man_bud_type)
+  ### Initialise manager budget (with method man_bud_type) 
+  sim_old$AGENTS[1,17] = set_man_budget(u_bud_sample, 
+                                        type = gmse_paras$man_bud_type)
   sim_old$manager_budget = sim_old$AGENTS[1,17]
   
+  ### Initialise custom land placement (this is independent of budget other than it will affect yield, and thus budgets).
+  ### Type = "equal" is the default and distributes non-public land evenly among users.
+  ### Type = "oneRich" takes a given mean proportion (hi_frac) and allocates this to one single user. Note there is some error
+  ###  around this (beta-distribution) with upper and lower bounds optionally set by up_frac and lo_frac.
+  sim_old$LAND[,,3] = set_land(sim_old$LAND[,,3], s = gmse_paras$stakeholders,
+                               type = gmse_paras$land_type, 
+                               hi_frac = gmse_paras$land_type_max_frac)
+
   for(year in 1:years) {
     
     sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
@@ -81,13 +101,14 @@ for(sim in 1:sims) {
       print(sprintf("Sim %d, year %d", sim, year))
       
       ### Set next budgets according to yields:
-      nxt_budgets = set_budgets(prv = sim_old,           # To extract remaining budget from previous
-                                nxt = sim_new,           # Current year sim results
-                                yv = yield_value,        # Monetary return per unit yield
-                                yield_type = ytb_type)   # Function translating yield into return
+      nxt_budgets = set_budgets(prv = sim_old,                      # To extract remaining budget from previous
+                                nxt = sim_new,                      # Current year sim results
+                                yv = gmse_paras$yield_value,        # Monetary return per unit yield
+                                yield_type = gmse_paras$ytb_type)   # Function translating yield into return
       sim_new$AGENTS[2:(gmse_paras[["stakeholders"]]+1),17] = nxt_budgets
       
-      sim_new$AGENTS[1,17] = set_man_budget(nxt_budgets, type = man_bud_type)
+      sim_new$AGENTS[1,17] = set_man_budget(nxt_budgets, 
+                                            type = gmse_paras$man_bud_type)
       sim_new$manager_budget = sim_new$AGENTS[1,17]
       
       store_dat(sim_new, s = sim, y = year)
