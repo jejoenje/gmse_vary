@@ -85,6 +85,7 @@ col_order = c(
   which(names(coll_para)=="land_type"),
   which(names(coll_para)=="yield_value"),
   which(names(coll_para)=="ytb_type"),
+  which(names(coll_para)=="man_bud_type"),
   which(names(coll_para)=="trend_Min."),
   which(names(coll_para)=="trend_Median"),
   which(names(coll_para)=="trend_Mean"),

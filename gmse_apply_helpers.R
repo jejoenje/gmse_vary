@@ -208,8 +208,8 @@ set_budgets = function(prv, nxt, yv, yield_type = "beta1") {
 }
 
 ### Set manager budget according to user budgets
-set_man_budget = function(u_buds, type = "max") {
-  allowed_types = c("max","mean","0.75","0.9","0.99")
+set_man_budget = function(u_buds, type = "max", fixed_budget = 1000) {
+  allowed_types = c("fixed", "max","mean","0.75","0.9","0.99")
   
   if(!(type %in% allowed_types)) {
     stop(sprintf("Type '%s' not implemented, please choose from: %s", type, paste(allowed_types, collapse=", ")))
@@ -229,6 +229,9 @@ set_man_budget = function(u_buds, type = "max") {
   }
   if(type == "0.99") {
     return(as.numeric(quantile(u_buds, probs = c(0.99))))
+  }
+  if(type == "fixed") {
+    return(fixed_budget)
   }
 }
 

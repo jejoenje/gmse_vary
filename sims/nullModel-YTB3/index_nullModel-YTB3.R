@@ -24,7 +24,7 @@ init_sims(sim_set_name)
 ### Initialise outputs
 init_out(s = sims, y = years, users=gmse_paras[["stakeholders"]])
 
-### Manually set "yield-to-budget" value and save with paras:
+### Manually set "yield-to-budget"  value and save with paras:
 yield_value = 0.8
 gmse_paras$yield_value = yield_value
 

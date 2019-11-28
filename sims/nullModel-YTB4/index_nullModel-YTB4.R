@@ -17,16 +17,15 @@ sim_set_name = "nullModel-YTB4"
 ##############################  
 ##################################
 ###################################
-
-
-###
-###### Temporary override of global para (for tests - need to remove!)    <---------------------
-gmse_paras$public_land = 0
-gmse_paras$sims = 10
-gmse_paras$years = 10
-
-sims = gmse_paras$sims
-years = gmse_paras$years
+  
+# ###
+# ###### Temporary override of global para (for tests - need to remove!)    <---------------------
+# gmse_paras$public_land = 0
+# gmse_paras$sims = 10
+# gmse_paras$years = 10
+# 
+# sims = gmse_paras$sims
+# years = gmse_paras$years
 
 ### Initialise simulations (set output folders and paras etc) 
 init_sims(sim_set_name)
