@@ -21,12 +21,28 @@ sim_set_name = "nullModel-YTB3"
 ### Initialise simulations (set output folders and paras etc) 
 init_sims(sim_set_name)
 
-### Initialise outputs
-init_out(s = sims, y = years, users=gmse_paras[["stakeholders"]])
+### Load parameter grid:
+para_grid = read.csv(paste(gsub("/out/", "", outdir),"/para_grid1.csv", sep=""), header=T)
 
-### Manually set "yield-to-budget"  value and save with paras:
-yield_value = 0.8
-gmse_paras$yield_value = yield_value
+###
+######
+#########
+############
+### Pick a row (set of values) from the para grid:
+vals = para_grid[1,]                                    ## <-------------------------
+############
+#########
+######
+###
+
+### Update the previously loaded para list with values from grid:
+gmse_paras = update_paras_from_grid(vals, gmse_paras)
+
+### Re-save updated parameter list:
+save(gmse_paras, file = para_path)
+
+### Initialise outputs (data frames for POP, EXT and USR data):
+init_out(s = sims, y = years, users=gmse_paras[["stakeholders"]])
 
 for(sim in 1:sims) {
   
@@ -56,7 +72,7 @@ for(sim in 1:sims) {
   u_bud_sample = sample_budgets_ManyPoorFewRich()
   sim_old$AGENTS[2:(gmse_paras[["stakeholders"]]+1),17] = u_bud_sample
   
-  sim_old$AGENTS[1,17] = set_man_budget(u_bud_sample, type = man_bud_type)
+  sim_old$AGENTS[1,17] = set_man_budget(u_bud_sample, type = gmse_paras$man_bud_type)
   sim_old$manager_budget = sim_old$AGENTS[1,17]
   
   for(year in 1:years) {
@@ -81,13 +97,14 @@ for(sim in 1:sims) {
       print(sprintf("Sim %d, year %d", sim, year))
       
       ### Set next budgets according to yields:
-      nxt_budgets = set_budgets(prv = sim_old,           # To extract remaining budget from previous
-                                nxt = sim_new,           # Current year sim results
-                                yv = yield_value,        # Monetary return per unit yield
-                                yield_type = ytb_type)   # Function translating yield into return
+      nxt_budgets = set_budgets(prv = sim_old,                    # To extract remaining budget from previous
+                                nxt = sim_new,                    # Current year sim results
+                                yv = gmse_paras$yield_value,      # Monetary return per unit yield
+                                yield_type = gmse_paras$ytb_type) # Function translating yield into return
       sim_new$AGENTS[2:(gmse_paras[["stakeholders"]]+1),17] = nxt_budgets
       
-      sim_new$AGENTS[1,17] = set_man_budget(nxt_budgets, type = man_bud_type)
+      sim_new$AGENTS[1,17] = set_man_budget(nxt_budgets, 
+                                            type = gmse_paras$man_bud_type)
       sim_new$manager_budget = sim_new$AGENTS[1,17]
       
       store_dat(sim_new, s = sim, y = year)

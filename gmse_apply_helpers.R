@@ -23,7 +23,8 @@ ACT_NAMES = c("scares","kills","castr","crops","feeds","helps","noact")
 
 init_sims = function(SIM_NAME) {
   
-  source(sprintf("sims/%s/paras_%s.R", SIM_NAME, SIM_NAME))
+  ### Load GLOBAL parameters
+  #source(sprintf("sims/%s/paras_%s.R", SIM_NAME, SIM_NAME))
   
   ### Set output dir
   outdir = sprintf("sims/%s/out/",SIM_NAME)
@@ -40,7 +41,21 @@ init_sims = function(SIM_NAME) {
   assign("outdir", outdir, env = globalenv())
   assign("outidx", outidx, env = globalenv())
   assign("outpath", outpath, env = globalenv())
+  assign("para_path", sprintf("%sparas_%s_%s.Rdata", outpath, outidx, SIM_NAME), env = globalenv())
   
+}
+
+update_paras_from_grid = function(vals, para_list) {
+  for(i in 1:len(vals)) {
+    
+    if(names(vals[i]) %in% names(para_list)) {
+      para_list[which(names(para_list) == names(vals[i]))] = as.vector(vals[[i]])   
+    } else {
+      para_list[[len(para_list)+1]] = as.vector(vals[[i]])
+      names(para_list)[len(para_list)] = names(vals)[i]
+    }
+  }
+  return(para_list)
 }
 
 init_out = function(s, y, users) {

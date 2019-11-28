@@ -1,7 +1,7 @@
 gmse_paras$land_type = "equal"
 #gmse_paras$yield_value = 0.2
 gmse_paras$ytb_type = "beta1"
-gmse_paras$man_bud_type = "max"
+gmse_paras$man_bud_type = "fixed"
 
 years = gmse_paras$years
 sims = gmse_paras$sims
