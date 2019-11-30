@@ -1,6 +1,3 @@
-### Null model simulation runs
-### 
-
 rm(list=ls())
 library(GMSE)
 library(scales)
@@ -17,25 +14,30 @@ sim_set_name = "nullModel-YTB4"
 ##############################  
 ##################################
 ###################################
-  
-# ###
-# ###### Temporary override of global para (for tests - need to remove!)    <---------------------
-# gmse_paras$public_land = 0
-# gmse_paras$sims = 10
-# gmse_paras$years = 10
-# 
-# sims = gmse_paras$sims
-# years = gmse_paras$years
 
 ### Initialise simulations (set output folders and paras etc) 
 init_sims(sim_set_name)
 
-### Initialise outputs
+### Load parameter grid:
+para_grid = read.csv(paste(gsub("/out/", "", outdir),"/para_grid2.csv", sep=""), header=T)
+
+### Pick a single set of paras from list of those still to be done.
+### Then re-save the list with that value changed.
+vals_idx = which(para_grid$done==0)[1]
+vals = para_grid[vals_idx,2:ncol(para_grid)]
+para_grid[vals_idx,"done"] = 1
+write.csv(para_grid, paste(gsub("/out/", "", outdir),"/para_grid2.csv", sep=""), row.names=F)
+
+### Update the previously loaded para list with values from grid:
+gmse_paras = update_paras_from_grid(vals, gmse_paras)
+
+### Re-save updated parameter list:
+save(gmse_paras, file = para_path)
+
+### Initialise outputs (data frames for POP, EXT and USR data):
 init_out(s = sims, y = years, users=gmse_paras[["stakeholders"]])
 
-### Manually set "yield-to-budget" value and save with paras:
-gmse_paras$yield_value = 0.2
-
+print(vals)
 for(sim in 1:sims) {
   
   sim_old <- gmse_apply(get_res = gmse_paras$get_res,
@@ -117,7 +119,7 @@ for(sim in 1:sims) {
   }
 }
 
-plot_gmse_sims(POP, USR)
+#plot_gmse_sims(POP, USR)
 
 write.csv(POP, sprintf("%sPOP_%s.csv", outpath, outidx), row.names=F)
 write.csv(USR, sprintf("%sUSR_%s.csv", outpath, outidx), row.names=F)
