@@ -19,7 +19,7 @@ sim_set_name = "nullModel-YTB4"
 init_sims(sim_set_name)
 
 ### Load parameter grid:
-para_grid = read.csv(paste(gsub("/out/", "", outdir),"/para_grid2.csv", sep=""), header=T)
+para_grid = read.csv(paste(gsub("/out/", "", outdir),"/para_grid3.csv", sep=""), header=T)
 
 ### Pick a single set of paras from list of those still to be done.
 ### Then re-save the list with that value changed.
