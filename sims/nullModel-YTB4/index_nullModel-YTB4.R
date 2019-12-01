@@ -26,7 +26,7 @@ para_grid = read.csv(paste(gsub("/out/", "", outdir),"/para_grid3.csv", sep=""),
 vals_idx = which(para_grid$done==0)[1]
 vals = para_grid[vals_idx,2:ncol(para_grid)]
 para_grid[vals_idx,"done"] = 1
-write.csv(para_grid, paste(gsub("/out/", "", outdir),"/para_grid2.csv", sep=""), row.names=F)
+write.csv(para_grid, paste(gsub("/out/", "", outdir),"/para_grid3.csv", sep=""), row.names=F)
 
 ### Update the previously loaded para list with values from grid:
 gmse_paras = update_paras_from_grid(vals, gmse_paras)
