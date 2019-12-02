@@ -28,7 +28,7 @@ trd_ext_plots = function(dat, type = "mean", pub_land = 0, max_frac = 0.5, colla
   
   ### Split data by man_bud_type (only looking at the two for now):
   dat_mbt_fixed = dat[dat$man_bud_type=="fixed",]
-  dat_mbt_max = dat[dat$man_bud_type=="max",]
+  dat_mbt_max = dat[dat$man_bud_type=="mean",]
   
   ### Set up plotting area:
   par(oma=c(3,3,4,0))
@@ -105,25 +105,25 @@ trd_ext_plots = function(dat, type = "mean", pub_land = 0, max_frac = 0.5, colla
     par(mar=c(2,3,2,2))
     barplot(plotval ~ yield_value, data = dat_mbt_fixed, beside = T, ylim = c(0, 1.25),
             xaxt ="n", xlab="", col = col_trd)
-    axis(1, at = c(2.5,6.5,10.5,14.5), labels = F)
+    axis(1, at = c(1,2,3,4), labels = F)
     abline(h = 1, col = "red", lty = "dashed")
     
     par(mar=c(2,2,2,3))
     barplot(plotval ~ yield_value, data = dat_mbt_max, beside = T, ylim = c(0, 1.25),
             xaxt = "n", yaxt = "n", xlab="", ylab = "", col = col_trd)
-    axis(1, at = c(2.5,6.5,10.5,14.5), labels = F)
+    axis(1, at = c(1,2,3,4), labels = F)
     axis(2, at = c(0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2), labels = F)
     abline(h = 1, col = "red", lty = "dashed")
     
     par(mar=c(3,3,1,2))
     barplot(EXT ~ yield_value, data = dat_mbt_fixed, beside = T, 
             ylim = c(0, 100), col = col_ext)
-    axis(1, at = c(2.5,6.5,10.5,14.5), labels = F)
+    axis(1, at = c(1,2,3,4), labels = F)
     
     par(mar=c(3,2,1,3))
     barplot(EXT ~ yield_value, 
             data = dat_mbt_max, beside = T, ylim = c(0,100), yaxt = "n", col = col_ext)
-    axis(1, at = c(2.5,6.5,10.5,14.5), labels = F)
+    axis(1, at = c(1,2,3,4), labels = F)
     axis(2, at = c(0,20,40,60,80,100), labels = F)
     
     mtext(outer = T, "Yield return", 1, line = 1, cex = 1.25)
