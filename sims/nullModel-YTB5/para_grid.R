@@ -4,8 +4,8 @@ para_grid = expand.grid(done = 0,
                          public_land = c(0, 0.25, 0.5),
                          man_bud_type = c("fixed"),   ## man_bud_type = c("fixed","mean","max")
                          land_type = "oneRich",
-                         land_type_max_frac = 0.25,
+                         land_type_max_frac = 0.75,
                          ytb_type = "beta1" 
                          )
 
-write.csv(para_grid, paste(gsub("/out/", "", outdir),"/para_grid5.csv", sep=""), row.names=F)
+write.csv(para_grid, paste(gsub("/out/", "", outdir),"/para_grid6.csv", sep=""), row.names=F)
