@@ -18,7 +18,7 @@ sim_set_name = "nullModel-YTB5"
 ### Initialise simulations (set output folders and paras etc) 
 init_sims(sim_set_name)
 
-### Load parameter grid:  
+### Load parameter grid:    
 para_grid = read.csv(paste(gsub("/out/", "", outdir),"/para_grid6.csv", sep=""), header=T)
 
 ### Pick a single set of paras from list of those still to be done.
