@@ -12,21 +12,21 @@ source("sims/global_paras.R")
 sim_set_name = "nullModel-YTB5"
 ##########################
 ##############################  
-##################################
+##################################  
 ###################################
 
 ### Initialise simulations (set output folders and paras etc) 
 init_sims(sim_set_name)
 
-### Load parameter grid:
-para_grid = read.csv(paste(gsub("/out/", "", outdir),"/para_grid5.csv", sep=""), header=T)
+### Load parameter grid:  
+para_grid = read.csv(paste(gsub("/out/", "", outdir),"/para_grid6.csv", sep=""), header=T)
 
 ### Pick a single set of paras from list of those still to be done.
 ### Then re-save the list with that value changed.
 vals_idx = which(para_grid$done==0)[1]
 vals = para_grid[vals_idx,2:ncol(para_grid)]
 para_grid[vals_idx,"done"] = 1
-write.csv(para_grid, paste(gsub("/out/", "", outdir),"/para_grid5.csv", sep=""), row.names=F)
+write.csv(para_grid, paste(gsub("/out/", "", outdir),"/para_grid6.csv", sep=""), row.names=F)
 
 ### Update the previously loaded para list with values from grid:
 gmse_paras = update_paras_from_grid(vals, gmse_paras)
