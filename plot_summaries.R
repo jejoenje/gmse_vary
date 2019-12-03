@@ -25,7 +25,7 @@ out = subset(out, select = c("idx",
                              ))
 
 
-plot_trend = function(dat, tcy=NULL, pl=NULL, mbt=NULL, lt=NULL, ltmax=NULL, col="GnBu", yaxt = "s", cex.axis = 1.5,
+plot_trend = function(dat, y, tcy=NULL, pl=NULL, mbt=NULL, lt=NULL, ltmax=NULL, col="GnBu", yaxt = "s", cex.axis = 1.5,
                       xlab="",ylab="", cex.lab = 1.5) {
   
   if(is.null(dat)) stop("Missing data!")
@@ -48,10 +48,13 @@ plot_trend = function(dat, tcy=NULL, pl=NULL, mbt=NULL, lt=NULL, ltmax=NULL, col
     if(is.null(col)) col = "GnBu"
     
     mycols = tail(brewer.pal(3, col),1)
-    
+  
+    if(y == "trend_mean") ydata = d$trend_Mean
+    if(y == "ext_perc") ydata = d$EXT
+      
     #par(oma=c(0,0,0,0))
-    par(mar=c(4.5,4.5,0.5,0.5))
-    barplot(d$trend_Mean ~ d$yield_value + d$tend_crop_yld, names = d$yield_value, 
+    par(mar=c(4.5,4.5,1.5,0.5))
+    barplot(ydata ~ d$yield_value + d$tend_crop_yld, names = d$yield_value, 
             beside =T, col = mycols, yaxt = yaxt, cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab,
             ylab = ylab, xlab=xlab, space = 0.1)  
   }
@@ -69,7 +72,10 @@ plot_trend = function(dat, tcy=NULL, pl=NULL, mbt=NULL, lt=NULL, ltmax=NULL, col
     mycols = tail(brewer.pal(6, col), len(tcy))
     mycols = rep(mycols, each = nrow(d)/len(tcy))
     
-    plotdat = barplot(d$trend_Mean ~ d$yield_value + d$tend_crop_yld, beside =T, col = mycols, xaxt = "n", yaxt = yaxt)  
+    if(y == "trend_mean") ydata = d$trend_Mean
+    if(y == "ext_perc") ydata = d$EXT
+    
+    plotdat = barplot(ydata ~ d$yield_value + d$tend_crop_yld, beside =T, col = mycols, xaxt = "n", yaxt = yaxt)  
     
     for(i in 1:len(tcy)) {
       axis(1, at = plotdat[,i], labels = unique(d$yield_value), tick = F)
@@ -84,9 +90,12 @@ plot_trend = function(dat, tcy=NULL, pl=NULL, mbt=NULL, lt=NULL, ltmax=NULL, col
 }
 
 
-par(mfrow=c(1,1))
-plot_trend(dat = out, tcy = 0.2, pl = 0, mbt = "fixed", lt = "oneRich", ltmax = 0.5, col="GnBu", 
+par(mfrow=c(1,2))
+plot_trend(dat = out, y = "trend_mean", tcy = 0.2, pl = 0, mbt = "fixed", lt = "oneRich", ltmax = 0.5, col="GnBu", 
            xlab = "Yield return", ylab = "Mean population trend")
+plot_trend(dat = out, y = "ext_perc", tcy = 0.2, pl = 0, mbt = "fixed", lt = "oneRich", ltmax = 0.5, col="Oranges", 
+           xlab = "Yield return", ylab = "% Extinction")
+
 
 plot_trend(dat = out, tcy = 0.2, pl = 0, mbt = "mean", lt = "oneRich", ltmax = 0.5, col="GnBu")
 plot_trend(dat = out, tcy = 0.2, pl = 0, mbt = "max", lt = "oneRich", ltmax = 0.5, col="GnBu")
