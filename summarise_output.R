@@ -10,7 +10,7 @@ source("gmse_apply_helpers.R")
 ### nullModel-YTB2
 ###
 ### This sim set varies the YTB value (yield value) from 0.2 to 0.8, with manager_budget set as 1000 (constant).
-outdir = "sims/nullModel-YTB3/out/"
+outdir = "sims/nullModel-YTB7/out/"
 outfolders = list.files(outdir)
 
 ### Collate sim output
@@ -47,7 +47,7 @@ for(i in 1:len(outfolders)) {
   ### Find sims with more than 3 years:
   incl_sims = as.vector(lapply(tapply(POP$N, POP$SIM, function(x) !is.na(x)),sum)>3)
   incl_sims = as.numeric(levels(factor(POP$SIM))[incl_sims])
-  POP_est = POP[POP$SIM %in% incl_sims,]
+  POP_est = POP[POP$SIM %in% incl_sims,] 
   
   POP_est$sYEAR = scale(POP_est$YEAR)
   POP_est$fSIM = factor(POP_est$SIM)
@@ -101,7 +101,7 @@ oth_col = which(!((1:ncol(coll_para)) %in% col_order))
 col_order = c(col_order, oth_col)
 coll_para = coll_para[,col_order]
 
-write.csv(coll_para, "sims/sims_summary_YTB3.csv", row.names=F)
+write.csv(coll_para, "sims/sims_summary_YTB7.csv", row.names=F)
 
 
 
