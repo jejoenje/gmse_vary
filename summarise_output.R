@@ -10,7 +10,7 @@ source("gmse_apply_helpers.R")
 ### nullModel-YTB2
 ###
 ### This sim set varies the YTB value (yield value) from 0.2 to 0.8, with manager_budget set as 1000 (constant).
-outdir = "sims/nullModel-YTB4/out/"
+outdir = "sims/nullModel-YTB3/out/"
 outfolders = list.files(outdir)
 
 ### Collate sim output
@@ -85,6 +85,7 @@ col_order = c(
   which(names(coll_para)=="idx"),
   which(names(coll_para)=="sims"),
   which(names(coll_para)=="years"),
+  which(names(coll_para)=="tend_crop_yield"),
   which(names(coll_para)=="land_type"),
   which(names(coll_para)=="yield_value"),
   which(names(coll_para)=="ytb_type"),
@@ -100,7 +101,7 @@ oth_col = which(!((1:ncol(coll_para)) %in% col_order))
 col_order = c(col_order, oth_col)
 coll_para = coll_para[,col_order]
 
-
+write.csv(coll_para, "sims/sims_summary_YTB3.csv", row.names=F)
 
 
 
