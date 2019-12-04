@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Predicting the effect of stakeholder variability in natural resource management: using the GMSE R package</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Jeroen Minderman (jeroen.minderman2@stir.ac.uk)" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="metropolis_jm.css" type="text/css" />
+    <link rel="stylesheet" href="metropolis_jm-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class:title-slide
+
+.header[
+.font150[**Predicting the effect of stakeholder variability in natural resource management: using the GMSE R package**]
+]
+
+
+.footnote[
+&lt;div style="text-align: left"&gt; 
+&lt;img src="https://sticsdotorg.files.wordpress.com/2016/03/confoobio-stacked-logo.png?w=300&amp;h=300" width="25%" /&gt;
+  
+&lt;/div&gt;
+&lt;div style="text-align: right"&gt; 
+.font150[ 
+**Jeroen Minderman**&lt;br&gt;
+[jeroen.minderman2@stir.ac.uk](jeroen.minderman2@stir.ac.uk)&lt;br&gt;
+[https://github.com/jejoenje](https://github.com/jejoenje)
+]
+&lt;/div&gt;
+]
+
+---
+# Introduction: .font90[*Increasing populations, increasing pressures*]...
+
+.pull-left[
+
+&lt;div style="text-align: right"&gt; 
+.font120[ [Living Planet Index (2018)](http://www.livingplanetindex.org/projects?main_page_project=LivingPlanetReport&amp;home_flag=1) ]
+&lt;/div&gt;
+&lt;div style="text-align: right"&gt; 
+&lt;img src="pics/Worldpop_LPI_icons.jpg" width="70%" /&gt;
+&lt;img src="pics/LPI_footprint_combined.jpg" width="70%" /&gt;
+&lt;/div&gt;  
+
+]
+
+.pull-right[
+  
+&lt;img src="https://live.staticflickr.com/8622/16470271775_9127343827_z.jpg" width="65%" /&gt;
+
+&lt;img src="pics/goosehunter.jpg" width="65%" /&gt;
+]
+  
+---
+
+# Introduction: .font90[*Management Strategy Evaluation*]
+
+.left-column75[
+&lt;div style="text-align: center"&gt; 
+&lt;img src="pics/MSE1.png" width="80%" /&gt;
+
+.font120[
+  
+  From [Bunnefeld *et al*. (2011)](dx.doi.org/10.1016/j.tree.2011.05.003)]
+&lt;/div&gt;
+]
+
+.right-column25[
+
+{{content}}
+
+&lt;img src="https://live.staticflickr.com/4842/45580281184_6adf8b370c_k.jpg" width="100%" /&gt;
+--
+
+{{content}}
+
+&lt;img src="pics/goosehunter.jpg" width="100%" /&gt;
+]
+
+---
+
+# Introduction: .font90[*.. however, variation matters*]
+
+.pull-left[
+&lt;div style="text-align: right"&gt; 
+&lt;img src="https://live.staticflickr.com/6007/5969571025_883acf26fd_k.jpg" width="60%" /&gt;
+   
+&lt;img src="https://live.staticflickr.com/28/54237852_9983ba6d5f_k.jpg" width="60%" /&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;div style="text-align: left"&gt; 
+&lt;img src="https://live.staticflickr.com/8652/15147528554_031c034c65_4k.jpg" width="75%" /&gt;
+
+&lt;img src="https://live.staticflickr.com/1505/24607172362_0a95f68a1e_4k.jpg" width="75%" /&gt;
+&lt;/div&gt;
+]
+
+&lt;div style="text-align: center"&gt; 
+.font120[.. but most MSE approaches do not (cannot) account for this]
+&lt;/div&gt;
+
+---
+
+# Introduction: .font90[*.. and equity may be related to biodiversity loss*]
+
+.pull-left[
+&lt;div style="text-align: right"&gt; 
+&lt;img src="pics/Holland_Fig2.jpg" width="80%" /&gt;
+&lt;/div&gt;
+&lt;div style="text-align: center"&gt; 
+.font110[Holland *et al*. (2009)&lt;br&gt;**A Cross-National Analysis of How Economic Inequality Predicts Biodiversity Loss**&lt;br&gt;[Cons Biol 23(5)]( https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1523-1739.2009.01207.x)]
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;img src="pics/Mikkelson_Fig1a.png" width="90%" /&gt;
+&lt;div style="text-align: center"&gt; 
+.font110[Mikkelson *et al*. (2007)&lt;br&gt;**Economic Inequality Predicts Biodiversity Loss**&lt;br&gt;[PLoS ONE 2(5): e444]( https://doi.org/10.1371/journal.pone.0000444]
+&lt;/div&gt;
+)
+]
+
+---
+
+# Aims
+
+.left-column25[
+&lt;img src="https://jejoenje.shinyapps.io/ggmse1/_w_bc0eeeab/GMSE_logo_name.png" width="75%" /&gt;
+
+&lt;img src="pics/icon_coll_bigger.jpg" width="75%" /&gt;
+]
+
+.right-column75[
+
+.font120[
+1. **Introduce GMSE** as flexible and extensible platform for simulating population management  
+  
+  .font90[Brief overview of methods, capabilities, etc...]
+
+2. Use GMSE to **test effect of stakeholder variation** on population management. 
+
+  .font90[Does inequity in wealth and land ownership affect extinction risk?]
+
+
+]
+
+]
+
+---
+
+.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
