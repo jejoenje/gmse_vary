@@ -1,0 +1,28 @@
+---
+title: "BES presentation text"
+author: "Jeroen Minderman"
+date: "04/12/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction 1
+
+## Introduction 2: MSE
+
+
+
+
+## Aims
+
+In this presentation, I aim to to do a couple of different things. First, I will introduce GMSE, or Generalised MSE,
+which my colleagues have developed as an R package. I will provide a brief overview of its purpose, the methods it uses,
+and how it may be used. 
+Second, I will demonstrate GMSE's capabilities by exploring the effect of variation in stakeholders - particulary in
+terms of wealth and land ownership - on the management of harvested populations.
+Specifically, by doing the latter, I will show how GMSE can be used flexibly to understand mechanisms of conservation
+management where other management models are perhaps too simplistic or inflexible.
+
