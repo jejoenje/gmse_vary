@@ -14,7 +14,11 @@ out4 = read.csv("sims/sims_summary_YTB4.csv", header=T)
 out5 = read.csv("sims/sims_summary_YTB5.csv", header=T)
 #out5_fullpara = out5[,(names(out5) %in% names(fullpara))]
 
-out = rbind(out3,out4,out5)
+out6 = read.csv("sims/sims_summary_YTB6.csv", header=T)
+out7 = read.csv("sims/sims_summary_YTB7.csv", header=T)
+out8 = read.csv("sims/sims_summary_YTB8.csv", header=T)
+
+out = rbind(out3,out4,out5, out6, out7, out8)
 
 done = merge(fullpara, out, by = names(fullpara), all.x=TRUE, all.y=FALSE)
 
