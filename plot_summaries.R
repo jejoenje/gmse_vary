@@ -24,13 +24,17 @@ out = subset(out, select = c("idx",
                              "EXT_first"
                              ))
 
+tcy = 0.2
+pl = 0
+mbt = "mean"
+
 plot_trend = function(dat, y, tcy=NULL, pl=NULL, mbt=NULL, lt=NULL, ltmax=NULL, col="GnBu", yaxt = "s", cex.axis = 1.5,
                       xlab="",ylab="", cex.lab = 1.5, ylim = NULL) {
   
   if(is.null(dat)) stop("Missing data!")
   
   paras_names = c("tcy", "pl", "mbt", "lt", "ltmax")
-  check_paras = c(is.null(tcy), is.null(pl), is.null(mbt), is.null(lt), is.null(ltmax))
+  check_paras = c(is.null(tcy), is.null(pl), is.null(mbt), is.null(lt))
   if(sum(check_paras)>0) {
     missing = paste(paras_names[check_paras],collapse = ", ")
     stop(paste("Missing input parameters:", missing))
@@ -38,12 +42,22 @@ plot_trend = function(dat, y, tcy=NULL, pl=NULL, mbt=NULL, lt=NULL, ltmax=NULL, 
   
   if(len(tcy)==1) {
     
-    d = dat[dat$tend_crop_yld==tcy & 
-              dat$public_land==pl & 
-              dat$man_bud_type==mbt & 
-              dat$land_type==lt & 
-              dat$land_type_max_frac==ltmax,]
+    # Create selector which allows for ltmax to be NULL (if null, ignore it)
     
+    if(is.null(ltmax)) {
+      d = dat[dat$tend_crop_yld==tcy & 
+                dat$public_land==pl & 
+                dat$man_bud_type==mbt & 
+                dat$land_type==lt,]
+    } 
+    if(!is.null(ltmax)) {
+      d = dat[dat$tend_crop_yld==tcy & 
+                dat$public_land==pl & 
+                dat$man_bud_type==mbt & 
+                dat$land_type==lt & 
+                dat$land_type_max_frac==ltmax,]
+    }
+        
     if(is.null(col)) col = "GnBu"
     
     mycols = tail(brewer.pal(3, col),1)
@@ -61,6 +75,48 @@ plot_trend = function(dat, y, tcy=NULL, pl=NULL, mbt=NULL, lt=NULL, ltmax=NULL, 
   }
 
 }
+
+par(oma=c(2,2,2,2))
+par(mfrow=c(3,2))
+
+lt = "equal"
+ltmax = NULL
+plot_trend(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
+           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
+plot_trend(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
+           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
+
+lt = "oneRich"
+ltmax = 0.25
+plot_trend(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
+           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
+plot_trend(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
+           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
+
+
+lt = "oneRich"
+ltmax = 0.5
+plot_trend(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
+           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
+plot_trend(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
+           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
+
+
+
+par(mfrow=c(2,2))
+plot_trend(dat = out, y = "trend_mean", tcy = 0.2, pl = 0, mbt = "mean", lt = "oneRich", col="GnBu", ltmax = 0.5,
+           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.1))
+plot_trend(dat = out, y = "ext_perc", tcy = 0.2, pl = 0, mbt = "mean", lt = "oneRich", col="Oranges", ltmax = 0.5,
+           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
+
+plot_trend(dat = out, y = "trend_mean", tcy = 0.2, pl = 0.5, mbt = "mean", lt = "oneRich", col="GnBu", ltmax = 0.5,
+           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.1))
+plot_trend(dat = out, y = "ext_perc", tcy = 0.2, pl = 0.5, mbt = "mean", lt = "oneRich", col="Oranges", ltmax = 0.5,
+           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
+
+
+
+
 
 
 par(mfrow=c(1,2))
@@ -202,6 +258,7 @@ trd_ext_plots = function(dat, type = "mean", mbt = "max", pub_land = 0, max_frac
   
   
 }
+
 
 
 ### List available values:

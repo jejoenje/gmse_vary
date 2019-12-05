@@ -7,18 +7,34 @@ fullpara$done = NULL
 
 out3 = read.csv("sims/sims_summary_YTB3.csv", header=T)
 out3$land_type_max_frac = NA
+nrow(out3[names(fullpara)]); nrow(unique(out3[names(fullpara)]))
+
 
 out4 = read.csv("sims/sims_summary_YTB4.csv", header=T)
 #out4_fullpara = out4[,(names(out4) %in% names(fullpara))]
+nrow(out4[names(fullpara)]); nrow(unique(out4[names(fullpara)]))
 
 out5 = read.csv("sims/sims_summary_YTB5.csv", header=T)
 #out5_fullpara = out5[,(names(out5) %in% names(fullpara))]
+nrow(out5[names(fullpara)]); nrow(unique(out5[names(fullpara)]))
 
 out6 = read.csv("sims/sims_summary_YTB6.csv", header=T)
+nrow(out6[names(fullpara)]); nrow(unique(out6[names(fullpara)]))
+out6 = out6[row.names(unique(out6[names(fullpara)])),]
+
 out7 = read.csv("sims/sims_summary_YTB7.csv", header=T)
+nrow(out7[names(fullpara)]); nrow(unique(out7[names(fullpara)]))
+
 out8 = read.csv("sims/sims_summary_YTB8.csv", header=T)
+nrow(out8[names(fullpara)]); nrow(unique(out8[names(fullpara)]))
 
 out = rbind(out3,out4,out5, out6, out7, out8)
+
+### Check for duplicates:
+nrow(out[,names(fullpara)])
+nrow(unique(out[,names(fullpara)]))
+out = out[row.names(unique(out[,names(fullpara)])),]
+
 
 done = merge(fullpara, out, by = names(fullpara), all.x=TRUE, all.y=FALSE)
 
