@@ -28,7 +28,13 @@ nrow(out7[names(fullpara)]); nrow(unique(out7[names(fullpara)]))
 out8 = read.csv("sims/sims_summary_YTB8.csv", header=T)
 nrow(out8[names(fullpara)]); nrow(unique(out8[names(fullpara)]))
 
-out = rbind(out3,out4,out5, out6, out7, out8)
+out9 = read.csv("sims/sims_summary_YTB9.csv", header=T)
+nrow(out9[names(fullpara)]); nrow(unique(out9[names(fullpara)]))
+
+out10 = read.csv("sims/sims_summary_YTB10.csv", header=T)
+nrow(out10[names(fullpara)]); nrow(unique(out10[names(fullpara)]))
+
+out = rbind(out3,out4,out5, out6, out7, out8, out9, out10)
 
 ### Check for duplicates:
 nrow(out[,names(fullpara)])
