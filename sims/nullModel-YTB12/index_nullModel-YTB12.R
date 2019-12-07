@@ -79,7 +79,7 @@ for(sim in 1:sims) {
   sim_old$LAND[,,3] = set_land(sim_old$LAND[,,3], s = gmse_paras$stakeholders,
                                type = gmse_paras$land_type, 
                                hi_frac = gmse_paras$land_type_max_frac)
-
+  
   for(year in 1:years) {
     
     sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
