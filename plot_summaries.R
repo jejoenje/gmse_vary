@@ -2,7 +2,12 @@
 rm(list=ls())
 
 library(RColorBrewer)
+library(scales)
 source("helpers.R")
+source("plot_trend_yrtn.R")
+source("plot_summary.R")
+source("plot_pop.R")
+source("load_out.R")
 
 out = read.csv("sims/sims_done.csv", header=T)
 
@@ -24,85 +29,6 @@ out = subset(out, select = c("idx",
                              "EXT_first"
                              ))
 
-
-plot_trend_yrtn = function(dat, y, tcy=NULL, pl=NULL, mbt=NULL, lt=NULL, ltmax=NULL, col="GnBu", yaxt = "s", cex.axis = 1.5,
-                      xlab="",ylab="", cex.lab = 1.5, ylim = NULL) {
-  
-  if(is.null(dat)) stop("Missing data!")
-  
-  paras_names = c("tcy", "pl", "mbt", "lt", "ltmax")
-  check_paras = c(is.null(tcy), is.null(pl), is.null(mbt), is.null(lt))
-  if(sum(check_paras)>0) {
-    missing = paste(paras_names[check_paras],collapse = ", ")
-    stop(paste("Missing input parameters:", missing))
-  }
-  
-  # Create selector which allows for ltmax to be NULL (if null, ignore it)
-  
-  if(is.null(ltmax)) {
-    d = dat[dat$tend_crop_yld==tcy & 
-              dat$public_land==pl & 
-              dat$man_bud_type==mbt & 
-              dat$land_type==lt,]
-  } 
-  if(!is.null(ltmax)) {
-    d = dat[dat$tend_crop_yld==tcy & 
-              dat$public_land==pl & 
-              dat$man_bud_type==mbt & 
-              dat$land_type==lt & 
-              dat$land_type_max_frac==ltmax,]
-  }
-  
-  if(is.null(col)) col = "GnBu"
-  
-  mycols = tail(brewer.pal(3, col),1)
-  
-  if(y == "trend_mean") ydata = d$trend_Mean
-  if(y == "ext_perc") ydata = d$EXT
-  
-  if(y == "trends") {
-    dfiles = as.vector(d$idx)
-    pop_dat = matrix(NA, ncol = nrow(d), nrow=100) 
-    for(i in 1:len(dfiles)) {
-      dfolder = unlist(strsplit(dfiles[i],"_"))[2]
-      dfolder = paste("sims",dfolder,"out",dfiles[i],sep="/")
-      outfiles = list.files(dfolder)
-      pop_file = outfiles[grep("POP", outfiles)]
-      i_dat = read.csv(paste(dfolder,pop_file,sep="/"), header=T)
-      pop_mean = tapply(i_dat$N, i_dat$YEAR, function(x) mean(x, na.rm=T))
-      pop_dat[,i] = as.vector(pop_mean)
-    }
-    
-    colrange = tail(brewer.pal(8, col), ncol(pop_dat))
-    colrange = colrange[order(colrange, decreasing=T)]
-    par(mar=c(4.5,4.5,1.5,0.5))
-    if(is.null(ylim)) { ylim = c(0,max(pop_dat)) }
-    if(is.null(ylab)) { ylab = "Mean population trend" }
-    if(is.null(xlab)) { xlab = "year" }
-    plot(1:nrow(pop_dat), pop_dat[,1], type = "n", ylim=ylim, xlab = xlab, ylab = ylab, 
-         cex.axis = cex.axis, cex.lab = cex.lab)
-    for(i in 1:ncol(pop_dat)) {
-      lines(1:len(pop_dat[,i]), pop_dat[,i], col = colrange[i], lwd = 3)
-    }
-      
-  } else {
-    if(is.null(ylim)) ylim = c(0, max(ydata)*1.125)
-    
-    #par(oma=c(0,0,0,0))
-    par(mar=c(4.5,4.5,1.5,0.5))
-    barplot(ydata ~ d$yield_value + d$tend_crop_yld, names = d$yield_value, 
-            beside =T, col = mycols, yaxt = yaxt, cex.axis = cex.axis, cex.names = cex.axis, cex.lab = cex.lab,
-            ylab = ylab, xlab=xlab, space = 0.1, ylim = ylim)    
-  }
-  
-  
-  
-  
-  
-  
-  
-}
-
 tcy = 0.2
 pl = 0
 mbt = "fixed"
@@ -113,7 +39,7 @@ par(mfrow=c(3,3))
 lt = "equal"
 ltmax = NULL
 plot_trend_yrtn(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
-           xlab = "Year", ylab = "Mean population trend", ylim = c(0,1200))
+           xlab = "Year", ylab = "Mean population size", ylim = c(0,1200))
 plot_trend_yrtn(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
            xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
 plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
@@ -122,7 +48,7 @@ plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = l
 lt = "oneRich"
 ltmax = 0.25
 plot_trend_yrtn(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
-           xlab = "Year", ylab = "Mean population trend", ylim = c(0,1200))
+           xlab = "Year", ylab = "Mean population size", ylim = c(0,1200))
 plot_trend_yrtn(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
            xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
 plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
@@ -131,127 +57,51 @@ plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = l
 lt = "oneRich"
 ltmax = 0.5
 plot_trend_yrtn(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
-           xlab = "Year", ylab = "Mean population trend", ylim = c(0,1200))
+           xlab = "Year", ylab = "Mean population size", ylim = c(0,1200))
 plot_trend_yrtn(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
            xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
 plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
            xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
 
-par(mfrow=c(2,2))
-plot_trend_yrtn(dat = out, y = "trend_mean", tcy = 0.2, pl = 0, mbt = "mean", lt = "oneRich", col="GnBu", ltmax = 0.5,
-           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.1))
-plot_trend_yrtn(dat = out, y = "ext_perc", tcy = 0.2, pl = 0, mbt = "mean", lt = "oneRich", col="Oranges", ltmax = 0.5,
-           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
-
-plot_trend_yrtn(dat = out, y = "trend_mean", tcy = 0.2, pl = 0.5, mbt = "mean", lt = "oneRich", col="GnBu", ltmax = 0.5,
-           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.1))
-plot_trend_yrtn(dat = out, y = "ext_perc", tcy = 0.2, pl = 0.5, mbt = "mean", lt = "oneRich", col="Oranges", ltmax = 0.5,
-           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
 
 
-dat = out
 tcy = 0.2
 pl = 0
-mbt = "mean"
+mbt = "fixed"
+yv = 0.4
 
-plot_summary = function(dat, y = "mean_trend", 
-                        tcy = NULL, pl = NULL, mbt = NULL, yv = NULL, col = "RdBu", ylim = NULL, ylab = "", xlab = "",
-                        cex.lab = 1.5, cex.axis = 1.5) {
-  
-  if(is.null(dat)) stop("Missing data!")
-  
-  paras_names = c("tcy", "pl", "mbt", "yv")
-  check_paras = c(is.null(tcy), is.null(pl), is.null(mbt), is.null(yv))
-  if(sum(check_paras)>0) {
-    missing = paste(paras_names[check_paras],collapse = ", ")
-    stop(paste("Missing input parameters:", missing))
-  }
- 
-  d = dat[dat$tend_crop_yld==tcy & dat$yield_value==yv & dat$public_land==pl & dat$man_bud_type==mbt,]
-  
-  colrange = brewer.pal(9, col)
-  colrange = colrange[order(1:len(colrange),decreasing=T)]
-  colrange = c(colrange[1], tail(colrange, 3))
-  
-  par(mar=c(4.5,4.5,1.5,0.5))
-  barlabs = c("Equal", d$land_type_max_frac[d$land_type!="equal"])
-  
-  if(y == "ext_perc") yval = d$EXT
-  if(y == "mean_trend") yval = d$trend_Mean
-  
-  if(y == "trends") {
-    dfiles = as.vector(d$idx)
-    # THIS PLOTS ALL LINES
+# Plotting control
+a = 0.5 # Alpha level for line colors
+s = 1 # Fraction of lines to plot
+# Set colour range
+# colrange = brewer.pal(9, "BrBG")
+# colrange = colrange[order(1:len(colrange),decreasing=T)]
+# colrange = c(colrange[1], tail(colrange, 3))
+colrange = rep("black",4)
 
-    pop_dat = list()
-    for(i in 1:len(dfiles)) {
-      dfolder = unlist(strsplit(dfiles[i],"_"))[2]
-      dfolder = paste("sims",dfolder,"out",dfiles[i],sep="/")
-      outfiles = list.files(dfolder)
-      pop_file = outfiles[grep("POP", outfiles)]
-      i_dat = read.csv(paste(dfolder,pop_file,sep="/"), header=T)
-      pop_dat[[i]] = i_dat
-    }
-    lo = min(unlist(lapply(pop_dat, function(x) min(x, na.rm=T) )))
-    hi = max(unlist(lapply(pop_dat, function(x) max(x, na.rm=T) )))
-    ylims = c(lo,hi)
+par(mfrow=c(2,2))
+par(mar = c(3,2,0,0))
+dat = out
+d = dat[dat$tend_crop_yld==tcy & 
+          dat$yield_value==yv & 
+          dat$public_land==pl & 
+          dat$man_bud_type==mbt,]
+plot_pop(dfile = d$idx[d$land_type=="equal"], col = alpha(colrange[1],a), s = s, ylim = c(0,1300))
+text(x = 90, y = 1200, "Equal", cex = 1.5)
 
-    plot(pop_dat[[1]]$YEAR, pop_dat[[1]]$N, ylim = ylims, type = "n")
+d = d[!is.na(d$land_type_max_frac),]
+plot_pop(dfile = d$idx[d$land_type_max_frac==0.25], col = alpha(colrange[2],a), s = s, yaxt = "n", ylim = c(0,1300))
+text(x = 90, y = 1200, "0.25", cex = 1.5)
 
-    for(i in 1:nrow(d)) {
-      i_dat = pop_dat[[i]]
-      for(j in 1:nlevels(factor(i_dat$SIM))) {
-        i_dat_j = i_dat[i_dat$SIM == j,]
-        lines(i_dat_j$YEAR, i_dat_j$N, col = alpha(colrange[i], 0.5))
-      }
-    }
-    
-    # ### Attempt at summarising trends:
-    # #
-    # dfiles = as.vector(d$idx)
-    # pop_mns = matrix(NA, ncol = nrow(d), nrow=100)
-    # pop_los = matrix(NA, ncol = nrow(d), nrow=100)
-    # pop_his = matrix(NA, ncol = nrow(d), nrow=100)
-    # for(i in 1:len(dfiles)) {
-    #   dfolder = unlist(strsplit(dfiles[i],"_"))[2]
-    #   dfolder = paste("sims",dfolder,"out",dfiles[i],sep="/")
-    #   outfiles = list.files(dfolder)
-    #   pop_file = outfiles[grep("POP", outfiles)]
-    #   i_dat = read.csv(paste(dfolder,pop_file,sep="/"), header=T)
-    #   i_dat$N[is.na(i_dat$N)] = 0
-    #   pop_mn = tapply(i_dat$N, i_dat$YEAR, function(x) mean(x, na.rm=T))
-    #   pop_lo = tapply(i_dat$N, i_dat$YEAR, function(x) quantile(x, probs = 0.75, na.rm=T))
-    #   pop_hi = tapply(i_dat$N, i_dat$YEAR, function(x) quantile(x, probs = 0.25, na.rm=T))
-    #   pop_mns[,i] = as.vector(pop_mn)
-    #   pop_los[,i] = as.vector(pop_lo)
-    #   pop_his[,i] = as.vector(pop_hi)
-    # }
-    # plot(1:nrow(pop_mns), pop_mns[,1], type = "n", ylim = c(0, max(pop_his)))
-    # for(i in 1:ncol(pop_mns)) {
-    #   xvals = 1:len(pop_his[,i])
-    #   polygon( c(xvals,rev(xvals)),
-    #            c(pop_los[,i],rev(pop_his[,i])),
-    #            col = alpha(colrange[i],0.5), border = FALSE)
-    # }
-    # for(i in 1:ncol(pop_mns)) {
-    #   xvals = 1:len(pop_his[,i])
-    #   lines(xvals, pop_mns[,i], col = colrange[i], lwd = 2,
-    #         xlab = xlab, ylab = ylab, cex.axis = cex.axis, cex.lab = cex.lab)
-    # }
-    # legend(x = 85, y = 1100, legend = c("Equal", "0.25", "0.5", "0.75"), fill = colrange)
-    # 
-  } else {
-    if(is.null(ylim)) ylim = c(0,max(yval))
-    
-    pdata = barplot(yval, names = barlabs, col = colrange, ylab = ylab, ylim = ylim, 
-                    cex.axis = cex.axis, cex.names = cex.lab)
-    
-    mtext("Land distribution", side = 1, line = 4, cex = cex.lab)  
-  }
-  
-  
-  
-}
+plot_pop(dfile = d$idx[d$land_type_max_frac==0.5], col = alpha(colrange[3],a), s = s, ylim = c(0,1300))
+text(x = 90, y = 1200, "0.50", cex = 1.5)
+
+plot_pop(dfile = d$idx[d$land_type_max_frac==0.75], col = alpha(colrange[4],a), s = s, yaxt = "n", ylim = c(0,1300))
+text(x = 90, y = 1200, "0.75", cex = 1.5)
+
+
+
+
 
 
 par(mfrow=c(2,3))
@@ -263,7 +113,6 @@ plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, co
 mbt = "max"
 plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
 
-
 mbt = "fixed"
 plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
 mbt = "mean"
@@ -274,34 +123,30 @@ plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, 
 
 
 
-mbt = "fixed"
-plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100), 
-             xlab = "Year", ylab = "Population size")
+
+
+par(mfrow=c(2,2))
+par(mar=c(3,3,0,0))
+tcy = 0.2
+pl = 0
 mbt = "mean"
-plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100), 
-             xlab = "Year", ylab = "Population size")
-mbt = "max"
-plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100), 
-             xlab = "Year", ylab = "Population size")
+yv = 0.4
+dat = out
+d = dat[dat$tend_crop_yld==tcy & 
+          dat$yield_value==yv & 
+          dat$public_land==pl & 
+          dat$man_bud_type==mbt,]
+plot_pop(dfile = d$idx[d$land_type=="equal"], col = alpha("black",0.5), s = 1)
+d = d[!is.na(d$land_type_max_frac),]
+plot_pop(dfile = d$idx[d$land_type_max_frac==0.25], col = alpha("black",0.5), s = 1)
+plot_pop(dfile = d$idx[d$land_type_max_frac==0.5], col = alpha("black",0.5), s = 1)
+plot_pop(dfile = d$idx[d$land_type_max_frac==0.75], col = alpha("black",0.5), s = 1)
 
 
+par(mfrow=c(1,1))
+plot_pop(dfile = d$idx[d$land_type=="equal"], col = alpha("black",0.5), s = 1)
 
-
-
-
-par(mfrow=c(1,2))
-plot_trend(dat = out, y = "trend_mean", tcy = 0.2, pl = 0, mbt = "fixed", lt = "oneRich", ltmax = 0.5, col="GnBu", 
-           xlab = "Yield return", ylab = "Mean population trend")
-plot_trend(dat = out, y = "ext_perc", tcy = 0.2, pl = 0, mbt = "fixed", lt = "oneRich", ltmax = 0.5, col="Oranges", 
-           xlab = "Yield return", ylab = "% Extinction")
-
-
-plot_trend(dat = out, tcy = 0.2, pl = 0, mbt = "mean", lt = "oneRich", ltmax = 0.5, col="GnBu")
-plot_trend(dat = out, tcy = 0.2, pl = 0, mbt = "max", lt = "oneRich", ltmax = 0.5, col="GnBu")
-
-
-
-
+plot_pop(dfile = as.vector(d$idx[d$land_type_max_frac==0.25])[2], col = alpha("black",0.5), s = 1)
 
 
 ### 
