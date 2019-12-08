@@ -29,45 +29,48 @@ out = subset(out, select = c("idx",
                              "EXT_first"
                              ))
 
+
+### This plots summary trend statistics & extinction against varying yield-value, which we dont have yet
+###  (for YTB12 only)
+###
+# tcy = 0.2
+# pl = 0
+# mbt = "fixed"
+# 
+# par(oma=c(2,2,2,2))
+# par(mfrow=c(3,3))
+# 
+# lt = "equal"
+# ltmax = NULL
+# plot_trend_yrtn(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
+#            xlab = "Year", ylab = "Mean population size", ylim = c(0,1200))
+# plot_trend_yrtn(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
+#            xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
+# plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
+#            xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
+# 
+# lt = "oneRich"
+# ltmax = 0.25
+# plot_trend_yrtn(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
+#            xlab = "Year", ylab = "Mean population size", ylim = c(0,1200))
+# plot_trend_yrtn(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
+#            xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
+# plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
+#            xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
+# 
+# lt = "oneRich"
+# ltmax = 0.5
+# plot_trend_yrtn(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
+#            xlab = "Year", ylab = "Mean population size", ylim = c(0,1200))
+# plot_trend_yrtn(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
+#            xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
+# plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
+#            xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
+
+
 tcy = 0.2
 pl = 0
-mbt = "fixed"
-
-par(oma=c(2,2,2,2))
-par(mfrow=c(3,3))
-
-lt = "equal"
-ltmax = NULL
-plot_trend_yrtn(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
-           xlab = "Year", ylab = "Mean population size", ylim = c(0,1200))
-plot_trend_yrtn(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
-           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
-plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
-           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
-
-lt = "oneRich"
-ltmax = 0.25
-plot_trend_yrtn(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
-           xlab = "Year", ylab = "Mean population size", ylim = c(0,1200))
-plot_trend_yrtn(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
-           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
-plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
-           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
-
-lt = "oneRich"
-ltmax = 0.5
-plot_trend_yrtn(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
-           xlab = "Year", ylab = "Mean population size", ylim = c(0,1200))
-plot_trend_yrtn(dat = out, y = "trend_mean", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="GnBu", ltmax = ltmax,
-           xlab = "Yield return", ylab = "Mean population trend", ylim = c(0,1.2))
-plot_trend_yrtn(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, lt = lt, col="Reds", ltmax = ltmax,
-           xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
-
-
-
-tcy = 0.2
-pl = 0
-mbt = "fixed"
+mbt = "mean"
 yv = 0.4
 
 # Plotting control
@@ -101,9 +104,6 @@ text(x = 90, y = 1200, "0.75", cex = 1.5)
 
 
 
-
-
-
 par(mfrow=c(2,3))
 yv = 0.4
 mbt = "fixed"
@@ -114,39 +114,16 @@ mbt = "max"
 plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
 
 mbt = "fixed"
-plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,20))
 mbt = "mean"
-plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,20))
 mbt = "max"
-plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,20))
 
 
 
 
 
-
-par(mfrow=c(2,2))
-par(mar=c(3,3,0,0))
-tcy = 0.2
-pl = 0
-mbt = "mean"
-yv = 0.4
-dat = out
-d = dat[dat$tend_crop_yld==tcy & 
-          dat$yield_value==yv & 
-          dat$public_land==pl & 
-          dat$man_bud_type==mbt,]
-plot_pop(dfile = d$idx[d$land_type=="equal"], col = alpha("black",0.5), s = 1)
-d = d[!is.na(d$land_type_max_frac),]
-plot_pop(dfile = d$idx[d$land_type_max_frac==0.25], col = alpha("black",0.5), s = 1)
-plot_pop(dfile = d$idx[d$land_type_max_frac==0.5], col = alpha("black",0.5), s = 1)
-plot_pop(dfile = d$idx[d$land_type_max_frac==0.75], col = alpha("black",0.5), s = 1)
-
-
-par(mfrow=c(1,1))
-plot_pop(dfile = d$idx[d$land_type=="equal"], col = alpha("black",0.5), s = 1)
-
-plot_pop(dfile = as.vector(d$idx[d$land_type_max_frac==0.25])[2], col = alpha("black",0.5), s = 1)
 
 
 ### 

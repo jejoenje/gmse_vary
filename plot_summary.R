@@ -31,24 +31,32 @@ plot_summary = function(dat, y = "mean_trend",
     
     pop_dat = list()
     for(i in 1:len(dfiles)) {
-      dfolder = unlist(strsplit(dfiles[i],"_"))[2]
-      dfolder = paste("sims",dfolder,"out",dfiles[i],sep="/")
-      outfiles = list.files(dfolder)
-      pop_file = outfiles[grep("POP", outfiles)]
-      i_dat = read.csv(paste(dfolder,pop_file,sep="/"), header=T)
-      pop_dat[[i]] = i_dat
+      if(!is.na(dfiles[i])) {
+        dfolder = unlist(strsplit(dfiles[i],"_"))[2]
+        dfolder = paste("sims",dfolder,"out",dfiles[i],sep="/")
+        outfiles = list.files(dfolder)
+        pop_file = outfiles[grep("POP", outfiles)]
+        i_dat = read.csv(paste(dfolder,pop_file,sep="/"), header=T)
+        pop_dat[[i]] = i_dat  
+      } else {
+        pop_dat[[i]] = NULL
+      }
+      
     }
-    lo = min(unlist(lapply(pop_dat, function(x) min(x, na.rm=T) )))
-    hi = max(unlist(lapply(pop_dat, function(x) max(x, na.rm=T) )))
+    lo = suppressWarnings({min(unlist(lapply(pop_dat, function(x) min(x, na.rm=T) )))})
+    hi = suppressWarnings({max(unlist(lapply(pop_dat, function(x) max(x, na.rm=T) )))})
     ylims = c(lo,hi)
     
-    plot(pop_dat[[1]]$YEAR, pop_dat[[1]]$N, ylim = ylims, type = "n")
+    yrs = max(unlist(lapply(pop_dat, function(x) { if(!is.null(x)) max(x$YEAR) })))    
+    plot(1:yrs, rep(1, yrs), ylim = ylims, type = "n")
     
     for(i in 1:nrow(d)) {
       i_dat = pop_dat[[i]]
-      for(j in 1:nlevels(factor(i_dat$SIM))) {
-        i_dat_j = i_dat[i_dat$SIM == j,]
-        lines(i_dat_j$YEAR, i_dat_j$N, col = alpha(colrange[i], 0.5))
+      if(!is.null(i_dat)) {
+        for(j in 1:nlevels(factor(i_dat$SIM))) {
+          i_dat_j = i_dat[i_dat$SIM == j,]
+          lines(i_dat_j$YEAR, i_dat_j$N, col = alpha(colrange[i], 0.5))
+        }  
       }
     }
     

@@ -24,23 +24,39 @@ class:title-slide
 .header[
 .font150[**Predicting the effect of stakeholder variability in natural resource management: using the GMSE R package**]
 ]
-
-
-.footnote[
-<div style="text-align: left"> 
-```{r, out.width = "25%", fig.retina = 2, echo=FALSE}
-knitr::include_graphics("https://sticsdotorg.files.wordpress.com/2016/03/confoobio-stacked-logo.png?w=300&h=300")
-```   
+<br>
+<div class="row">
+  <div class="column"; style="width: 100%; text-align: center">
+    <img src = "pics/goosehunter.jpg" width = "20%">
+    <img src = "https://live.staticflickr.com/255/19760068178_8ce2ccf7e8_k.jpg" width="22%">
+    <img src = "https://live.staticflickr.com/1505/24607172362_0a95f68a1e_4k.jpg" width="27%">
+    <img src = "https://live.staticflickr.com/5242/5354145821_f55a1a8ea8_h.jpg" width="20%">
+    <br>
+  </div>
+  <br>
+  
+  <div class="column"; style="width: 5%; float: left">
+  </div>
+  <div class="column"; style="width: 60%; float: left; align-items:center; justify-content:center;">
+    <img src = "pics/stirling_logo.svg" width = "30%" hspace = "20">
+    <img src = "pics/GMSE_logo_name.jpg" width = "25%" hspace = "20">
+    <img src = "pics/erc.png" width = "15%" hspace = "20">
+  </div>
+  <div class="column"; style="width: 30%; float: right; text-align: left">
+    <b>Dr Jeroen Minderman</b><br>
+    <a href="mailto:jeroen.minderman2@stir.ac.uk">jeroen.minderman2@stir.ac.uk</a><br>
+    Dr Brad Duthie<br>
+    Prof Nils Bunnefeld<br>
+  </div>
+  <div class="column"; style="width: 5%; float: right">
+  </div>
+  
+  <div class="column"; style="width: 10%; float: right; text-align: left; padding-left: 20px; padding-right: 20px">
+    <br>
+  </div>
   
 </div>
-<div style="text-align: right"> 
-.font150[ 
-**Jeroen Minderman**<br>
-[jeroen.minderman2@stir.ac.uk](jeroen.minderman2@stir.ac.uk)<br>
-[https://github.com/jejoenje](https://github.com/jejoenje)
-]
-</div>
-]
+
 
 ---
 # Introduction: .font90[*Increasing populations, increasing pressures*]...

@@ -43,7 +43,6 @@ gmse_paras$land_type_max_frac = NA
 sim_old$LAND[,,3] = set_land(sim_old$LAND[,,3], s = gmse_paras$stakeholders,
                              type = gmse_paras$land_type,
                              hi_frac = gmse_paras$land_type_max_frac)
-
 table(sim_old$LAND[,,3])
 N = len(names(table(sim_old$LAND[,,3])))
 image(x = sim_old$LAND[,,3], col = brewer.pal(N, "BrBG"), xaxt = "n", yaxt = "n");

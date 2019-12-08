@@ -317,6 +317,39 @@ trunc_res = function(simres) {
 }
 
 
+### Takes a single $LAND list and calculates PRODUCTION for each user
+calcProd = function(land) {
+  
+  # Enumerate all users in input:
+  all_users = names(table(land[,,3]))
+  
+  production = as.vector(NULL)
+  for(i in 1:len(all_users)) {
+    production = c(production, sum(land[,,3][which(land[,,3]==all_users[i])]))
+  }
+  return(production)
+}
+
+
+### Takes $LAND, $RESOURCE and $res_consume and calculates YIELD, which is production
+###  minus damage by resource
+calcProd_damage = function(res, land, res_consume) {
+  
+  res_count = matrix(0, nrow = nrow(land[,,3]), ncol = ncol(land[,,3]) )
+  
+  for(i in 1:nrow(res)) {
+    res_count[res[i,5],res[i,5]] = res_count[res[i,5],res[i,5]]+1
+  }
+  ### Update production with damage by resource:
+  land[,,2] = land[,,2]*(gmse_paras$res_consume^res_count)
+  
+  ### Calculate reduced production:
+  return(calcProd(land))
+  
+}
+
+
+
 
 ###
 ### extractUser() does the same as get_user_data but on a single gmse_apply() list output (single sim/year)
