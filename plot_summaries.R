@@ -68,6 +68,28 @@ out = subset(out, select = c("idx",
 #            xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
 
 
+
+
+
+par(mfrow=c(2,3))
+yv = 0.6
+mbt = "fixed"
+plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+mbt = "mean"
+plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+mbt = "max"
+plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+
+mbt = "fixed"
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+mbt = "mean"
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+mbt = "max"
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+
+
+par(mfrow=c(2,2))
+
 tcy = 0.2
 pl = 0
 mbt = "mean"
@@ -77,12 +99,8 @@ yv = 0.4
 a = 0.5 # Alpha level for line colors
 s = 1 # Fraction of lines to plot
 # Set colour range
-# colrange = brewer.pal(9, "BrBG")
-# colrange = colrange[order(1:len(colrange),decreasing=T)]
-# colrange = c(colrange[1], tail(colrange, 3))
 colrange = rep("black",4)
 
-par(mfrow=c(2,2))
 par(mar = c(3,2,0,0))
 dat = out
 d = dat[dat$tend_crop_yld==tcy & 
@@ -104,22 +122,36 @@ text(x = 90, y = 1200, "0.75", cex = 1.5)
 
 
 
+mbt = "fixed"
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+mbt = "mean"
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+mbt = "max"
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+
+
+
+
+
 par(mfrow=c(2,3))
-yv = 0.4
+yv = 0.8
 mbt = "fixed"
-plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+plot_summary(dat = out, y = "mean_trend", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "RdBu", ylim = c(0,1.5))
+abline(h = 1, lty = "dashed", col = "red")
 mbt = "mean"
-plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+plot_summary(dat = out, y = "mean_trend", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "RdBu", ylim = c(0,1.5))
+abline(h = 1, lty = "dashed", col = "red")
 mbt = "max"
-plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
+plot_summary(dat = out, y = "mean_trend", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "RdBu", ylim = c(0,1.5))
+abline(h = 1, lty = "dashed", col = "red")
+
 
 mbt = "fixed"
-plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,20))
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
 mbt = "mean"
-plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,20))
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
 mbt = "max"
-plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,20))
-
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
 
 
 

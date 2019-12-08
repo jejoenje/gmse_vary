@@ -9,14 +9,95 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## 
+## 1. Title
 
-1. Increasing human pops; increasing conflicts, increasing need for evidence-based management of populations
+Hello everyone and thank you very much for the opportunity to present this work. What I will be talking about here is
+part of the work that is ongoing in the ConFooBio group at Stirling University. I should stress that the results I'll be
+presenting are still very much a work in progress, and that this is very much a collaborative project - in particular, I
+should make mention of Brad Duthie who has been responsible for the development of the modelling platform I am using
+here.
 
-2. MSE models provide promising tool for helping with such management
+## 2. Introduction (1)
 
-3. However, most MSE frameworks limiting in ability to account for variation in stakeholders - in particularly decision
-making processes but also in terms of stakeholder properties
+It should be no news to anyone in this room that with rapidly increasing world populations - the image here on the left
+is from the recent Living Planet Index report - anthropogenic pressures on the planet are also increasing rapidly. In
+particular, exploitation of natural resources is a significantly component of this. This could of course take the form
+of extraction of resources such as timber, it also includes concurrent growth demand for food production through
+agriculture, harvesting of animal populations, and also control of animal populations that may hinder crop productions.
+In other words, the extent of conflicts between human interest in natural resources, and the conservation of animal
+populations is growing.
+
+## 3. Introduction (2)
+
+As a consequence of such conflicts, the need for, and interest in, effective management of socio-economic systems has
+increased in recent years. Management strategy evaluation approaches, which consist of conceptual frameworks for
+management of systems in which stakeholders - both resource users and managers - interact with natural resources,
+provide a toolbox for such management. I don't intend to go into much detail about these in general here, but suffice to
+say that they have their origins in fisheries management, where resource populations (such as fish stocks) are observed
+through monitoring; these observations are then used by a manager to set certain harvesting limits (for example a
+harvest control rule). These rules in turn affect how users (for example fishers) exploit the resource populations,
+which feeds back into new observations.
+In recent years, attempts have been made to apply such MSE approaches to non-fisheries systems, such as terrestrial
+herbivores.
+
+## 4. Introduction (3)
+
+However, what almost all existing modelling frameworks for such socio-economic systems are lacking, are easy ways to
+take account of, and include variability among stakeholders. This is obviously important on many different spatial
+scales - individual farmers or farms for example often have highly variable financial means - propery sizes, budgets, or
+even extent of possible farming activities will vary. Although it is intuitively clear that such variation will affect
+the extent to which such stakeholders affect natural resources, most implementations of MSE cannot account for this.
+
+## 5. Introduction (4)
+
+This is potentially an important shortcoming, because from previous studies we know that socio-political variation can
+affect biodiversity conservation.
+On a global level, for example, these two different studies by Holland et al and Mikkelson et al. both show the effect
+of country-level differences in measures of economic inequality (here measured as the Gini-index) on species threat
+status. Specifically, as economic inequality increases, both analyses suggest that a greater number of species are at
+greater risk of extinctions.
+Thus, it is clear that effect socio-ecological management frameworks need to be able to account for variation in
+inequality among stakeholders.
+
+## 6. Aims
+
+So, that brings me to the aims of the current talk.
+They are two-fold.
+First, I intend to introduce GMSE, or Generalise MSE. This is a highly flexible and extensible modelling framework for MSE, which was developed over the last few years in the ConFooBio group at Stirling University. Although I unfortunately will not nearly have enough time here to introduce all of the detail of GMSE, I will give a very quick overview of its methodologies and potential.
+As a practical demonstration of this, I will then briefly use GMSE to briefly explore the effect of economic inequality on the management of an exploited populatiion. This is still very much a work in progress and is not intended as a final answer, but it will hopefully provide you with a good impression of the power and flexibility of GMSE as a tool.
+
+## 7. GMSE (1)
+
+So, GMSE - as said, this is a specific implementation of a MSE framework. As such, it follows the rough outline we have
+already seen, and consists of four main component models. The natural resource is modelled, which is observed through an
+observation model, feeds into a manager model, and then into a user model. Users' decision affect the resource, after
+which the cycle starts again.
+In GMSE, each of these four models are entirely customisable, but by default they are individually-based and spatially explicit. 
+In the default set up, it is easiest to conceptualise as users being farmers which aim to maximise yield from their
+crop, and  the manager being a government setting a target resource population which they are trying to maintain. The
+resource population would be animals which can damage crop yield.
+Actions taken by users may or may not affect the resource population - examples are farming, killing resources or
+scaring resources (which moves the resource away from a farmers' land).
+In each time step, costs for each of these actions are set by the manager as a function of both their budget, and the
+distance between the current population level and the target.
+In turn, users choose their action based on their likely effect on yield and their cost. 
+
+As said, I don't have time to go into much detail here, but GMSE is available as an R package with extensive documentation, including many examples.
+
+## 8. Simualtion scenarios
+
+Instead, what I will do here, is provide you with a specific example of using GMSE to explore the effect of variation among stakeholders.
+As a general set up, with mostly use the default GMSE setup, but specifically simulating a resource population undermanagement, which negatively affects crop yield. 
+Possible user actions are limited to farming, killing resources or scaring resources off their land.
+It is important to note that such user actions can only affect resources on their own land - they can't kill on land owned by others. 
+Here, I have simulated a sample of 8 users.
+
+In addition to this basic GMSE set up, I have here introduced variation among stakeholders in terms of both budget and yield.
+Specifically, the users' budget in each time step is a function of the yield they achieve; for simplicity, here I has implemented this as a simple linear function with a little bit of variation around it.
+In addition to this, I vary land distribution in four different scenarios - one following the default GMSE land distribution, where each user simply has an equal share of the landscape, and three where the land distribution is increasingly uneven - from 25% of the landscape belonging to a single user, to 50% to 75%.
+This variation in land ownership will obviously have consequences for both potential yield, but also potential effect on the resource population.
+
+
 
 4. At same time, much recent evidence that social equality has important repurcussions for conservation success, but
 current modelling approaches have not explored this to a great extent.

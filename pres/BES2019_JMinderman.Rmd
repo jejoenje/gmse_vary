@@ -35,22 +35,20 @@ class:title-slide
   </div>
   <br>
   
-  <div class="column"; style="width: 5%; float: left">
+  <div class="column"; style="width: 10%; float: left">
+  <br>
   </div>
-  <div class="column"; style="width: 60%; float: left; align-items:center; justify-content:center;">
+  <div class="column"; style="width: 50%; float: left; align-items:center; justify-content:center;">
     <img src = "pics/stirling_logo.svg" width = "30%" hspace = "20">
     <img src = "pics/GMSE_logo_name.jpg" width = "25%" hspace = "20">
     <img src = "pics/erc.png" width = "15%" hspace = "20">
   </div>
   <div class="column"; style="width: 30%; float: right; text-align: left">
     <b>Dr Jeroen Minderman</b><br>
-    <a href="mailto:jeroen.minderman2@stir.ac.uk">jeroen.minderman2@stir.ac.uk</a><br>
+    <a href="mailto:jeroen.minderman2@stir.ac.uk"><i>(jeroen.minderman2@stir.ac.uk)</i></a><br>
     Dr Brad Duthie<br>
     Prof Nils Bunnefeld<br>
   </div>
-  <div class="column"; style="width: 5%; float: right">
-  </div>
-  
   <div class="column"; style="width: 10%; float: right; text-align: left; padding-left: 20px; padding-right: 20px">
     <br>
   </div>
@@ -105,16 +103,32 @@ knitr::include_graphics("pics/MSE1.png")
 ]
 
 .right-column25[
+```{r, out.width = "100%", fig.retina = 2, echo=FALSE}
+knitr::include_graphics("https://live.staticflickr.com/4842/45580281184_6adf8b370c_k.jpg")
+```
+]
 
-{{content}}
+---
+
+# Introduction: .font90[*Management Strategy Evaluation*]
+
+.left-column75[
+<div style="text-align: center"> 
+```{r, out.width = "80%", fig.retina = 2, echo=FALSE}
+knitr::include_graphics("pics/MSE1.png")
+```   
+
+.font120[
+  
+  From [Bunnefeld *et al*. (2011)](dx.doi.org/10.1016/j.tree.2011.05.003)]
+</div>
+]
+
+.right-column25[
 
 ```{r, out.width = "100%", fig.retina = 2, echo=FALSE}
 knitr::include_graphics("https://live.staticflickr.com/4842/45580281184_6adf8b370c_k.jpg")
 ```
---
-
-{{content}}
-
 ```{r, out.width = "100%", fig.retina = 2, echo=FALSE}
 knitr::include_graphics("pics/goosehunter.jpg")
 ```
@@ -135,6 +149,7 @@ knitr::include_graphics("https://live.staticflickr.com/28/54237852_9983ba6d5f_k.
 ```
 </div>
 ]
+--
 
 .pull-right[
 <div style="text-align: left"> 
@@ -218,10 +233,11 @@ knitr::include_graphics("pics/gmse_main_chart.png")
 ]
 
 .pull-right[
-```{r, out.width = "50%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
+```{r, out.width = "45%", fig.retina = 2, echo=FALSE, fig.align = "left"}
 knitr::include_graphics("pics/GMSE_logo_name.jpg")
 ```   
-**[https://bradduthie.github.io/gmse/](https://bradduthie.github.io/gmse/)**
+  
+Duthie et al. (2018) *Methods in Ecology & Evolution*. **[DOI: 10.1111/2041-210X.13091](http://doi.wiley.com/10.1111/2041-210X.13091)**
 
 - Individual-based & spatially explicit
 - **"Manager"**: .red[**maintain resource**]
@@ -249,10 +265,11 @@ knitr::include_graphics("pics/gmse_typical3.jpg")
 ]
 
 .pull-right[
-```{r, out.width = "50%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
+```{r, out.width = "45%", fig.retina = 2, echo=FALSE, fig.align = "left"}
 knitr::include_graphics("pics/GMSE_logo_name.jpg")
 ```   
-**[https://bradduthie.github.io/gmse/](https://bradduthie.github.io/gmse/)**
+  
+Duthie et al. (2018) *Methods in Ecology & Evolution*. **[DOI: 10.1111/2041-210X.13091](http://doi.wiley.com/10.1111/2041-210X.13091)**
 
 - Individual-based & spatially explicit
 - **"Manager"**: .red[**maintain resource**]
@@ -262,10 +279,7 @@ knitr::include_graphics("pics/GMSE_logo_name.jpg")
 - Cost of each action set by manager
   
 - Available as an [**R package**](https://cran.r-project.org/web/packages/GMSE/index.html) 
-
 ]
-
-
 
 ---
 
@@ -286,6 +300,7 @@ knitr::include_graphics("https://live.staticflickr.com/2215/1516678360_d34081e14
 - Users can farm, kill resources on their land, or "scare" resources off their land  
 - All land is "privately" owned; users can only kill on their own land  
 ]
+--
 
 .pull-right[
 ## Stakeholder variation
