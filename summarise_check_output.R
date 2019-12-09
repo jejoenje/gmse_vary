@@ -50,9 +50,9 @@ out17 = read.csv("sims/sims_summary_YTB17.csv", header=T)
 
 out = rbind(out, out15, out16)
 
-# YTB18 has tcy = 0.4 / yv = 0.2-0.8
+# YTB18 has tcy = 0.4 / yv = 0.4
 
-# YTB19 has tcy 0.4, res_consume = 0.5 and yv 0.2-0.8
+# YTB19 has tcy 0.4, res_consume = 0.5 and yv 0.2-0.8 
 
 
 ### Check for duplicates:
