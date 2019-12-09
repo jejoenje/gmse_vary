@@ -2,10 +2,10 @@
 
 rm(list=ls())
 
-fullpara = read.csv("sims/para_grid_all.csv", header = T)
+fullpara = read.csv("sims/para_grid_temp.csv", header = T)
 fullpara$done = NULL
 
-#out = as.data.frame(NULL)
+out = as.data.frame(NULL)
 
 #######
 ### YTB3 - YTB11 all simulations using buggy version of set_land(), so the following are to
@@ -34,13 +34,26 @@ fullpara$done = NULL
 # out = rbind(out3,out4,out5, out6, out7, out8, out9, out10)
 
 ######
-### From YTB12 onwards are sims with revised set_land()
-out12 = read.csv("sims/sims_summary_YTB12.csv", header=T)
-out13 = read.csv("sims/sims_summary_YTB13.csv", header=T)
-out14 = read.csv("sims/sims_summary_YTB14.csv", header=T)
+### From YTB12-YTB14 onwards are sims with revised set_land()
+# out12 = read.csv("sims/sims_summary_YTB12.csv", header=T)
+# out13 = read.csv("sims/sims_summary_YTB13.csv", header=T)
+# out14 = read.csv("sims/sims_summary_YTB14.csv", header=T)
 
+######
+### From YTB15 onwards are sims with revised set_land() function and now 
+###  setting initial (sim_old) budgets AFTER setting land ownership
+###  (so starting with different values at time 0)
 
-out = rbind(out12, out13, out14)
+out15 = read.csv("sims/sims_summary_YTB15.csv", header=T)
+out16 = read.csv("sims/sims_summary_YTB16.csv", header=T)
+out17 = read.csv("sims/sims_summary_YTB17.csv", header=T)
+
+out = rbind(out, out15, out16)
+
+# YTB18 has tcy = 0.4 / yv = 0.2-0.8
+
+# YTB19 has tcy 0.4, res_consume = 0.5 and yv 0.2-0.8
+
 
 ### Check for duplicates:
 nrow(out[,names(fullpara)])

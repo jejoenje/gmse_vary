@@ -1,6 +1,6 @@
 para_grid1 = expand.grid(done = 0,
-                         yield_value = c(0.4),
-                         tend_crop_yld = c(0.4),
+                         yield_value = c(0.2,0.4,0.6,0.8),
+                         tend_crop_yld = c(0.2),
                          public_land = c(0),
                          man_bud_type = c("fixed","mean","max"),
                          land_type = c("oneRich"),
@@ -9,8 +9,8 @@ para_grid1 = expand.grid(done = 0,
                          )
 
 para_grid2 = expand.grid(done = 0,
-                         yield_value = c(0.4),
-                         tend_crop_yld = c(0.4),
+                         yield_value = c(0.2,0.4,0.6,0.8),
+                         tend_crop_yld = c(0.2),
                          public_land = c(0),
                          man_bud_type = c("fixed","mean","max"),
                          land_type = c("equal"),
@@ -20,4 +20,4 @@ para_grid2 = expand.grid(done = 0,
 
 para_grid = rbind(para_grid1, para_grid2)
 
-write.csv(para_grid, "sims/nullModel-YTB18/para_grid.csv", row.names=F)
+write.csv(para_grid, "sims/para_grid_temp.csv", row.names=F)

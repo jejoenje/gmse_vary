@@ -68,12 +68,14 @@ out = subset(out, select = c("idx",
 #            xlab = "Yield return", ylab = "% Extinctions", ylim = c(0,100))
 
 
-
-
-
 par(mfrow=c(2,3))
-yv = 0.6
+yv = 0.4
+tcy = 0.2
+pl = 0
 mbt = "fixed"
+out[out$yield_value==yv & out$tend_crop_yld==tcy & out$public_land==pl & out$man_bud_type==mbt,]
+
+
 plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
 mbt = "mean"
 plot_summary(dat = out, y = "trends", tcy = tcy, pl = pl, mbt = mbt, yv = yv, col = "BrBG", ylim = c(0,100))
