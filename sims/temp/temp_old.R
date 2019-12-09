@@ -4,6 +4,7 @@ library(scales)
 library(RColorBrewer)
 source("helpers.R")
 source("gmse_apply_helpers.R")
+rm(set_land)
 source("sims/global_paras.R")
 
 ###################################
@@ -56,32 +57,49 @@ sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       converge_crit = gmse_paras$converge_crit,
                       ga_mingen = gmse_paras$ga_mingen)
 
+mycols = brewer.pal(9, "BrBG")
+mycols = c(mycols[which(mycols=="#F5F5F5")],mycols[which(mycols!="#F5F5F5")])
+
+jpeg("pres/pics/land_example_old.jpg", width = 800, height = 800)
+
+par(mfrow=c(2,2))
+
+source("set_land_old.R")
+
 gmse_paras$land_type = "equal"
 gmse_paras$land_type_max_frac = 0
-
-s = len(names(table(sim_old$LAND[,,3])))
-image(x = sim_old$LAND[,,3], col = brewer.pal(s,"BrBG"), xaxt = "n", yaxt = "n")
+sim_old$LAND[,,3] = set_land(sim_old$LAND[,,3], s = gmse_paras$stakeholders,
+                             type = gmse_paras$land_type, 
+                             hi_frac = gmse_paras$land_type_max_frac)
+table(sim_old$LAND[,,3])
+cols = mycols[as.numeric(names(table(sim_old$LAND[,,3])))]
+image(x = sim_old$LAND[,,3], col = cols, xaxt = "n", yaxt = "n")
 
 gmse_paras$land_type = "oneRich"
 gmse_paras$land_type_max_frac = 0.25
-
 sim_old$LAND[,,3] = set_land(sim_old$LAND[,,3], s = gmse_paras$stakeholders,
                              type = gmse_paras$land_type, 
                              hi_frac = gmse_paras$land_type_max_frac)
-s = len(names(table(sim_old$LAND[,,3])))
-image(x = sim_old$LAND[,,3], col = brewer.pal(s,"BrBG"), xaxt = "n", yaxt = "n")
+table(sim_old$LAND[,,3])
+cols = mycols[as.numeric(names(table(sim_old$LAND[,,3])))]
+image(x = sim_old$LAND[,,3], col = cols, xaxt = "n", yaxt = "n")
+
+gmse_paras$land_type = "oneRich"
+gmse_paras$land_type_max_frac = 0.5
+sim_old$LAND[,,3] = set_land(sim_old$LAND[,,3], s = gmse_paras$stakeholders,
+                             type = gmse_paras$land_type, 
+                             hi_frac = gmse_paras$land_type_max_frac)
+table(sim_old$LAND[,,3])
+cols = mycols[as.numeric(names(table(sim_old$LAND[,,3])))]
+image(x = sim_old$LAND[,,3], col = cols, xaxt = "n", yaxt = "n")
 
 gmse_paras$land_type = "oneRich"
 gmse_paras$land_type_max_frac = 0.75
-
 sim_old$LAND[,,3] = set_land(sim_old$LAND[,,3], s = gmse_paras$stakeholders,
                              type = gmse_paras$land_type, 
                              hi_frac = gmse_paras$land_type_max_frac)
-s = len(names(table(sim_old$LAND[,,3])))
-image(x = sim_old$LAND[,,3], col = brewer.pal(s,"BrBG"), xaxt = "n", yaxt = "n")
+table(sim_old$LAND[,,3])
+cols = mycols[as.numeric(names(table(sim_old$LAND[,,3])))]
+image(x = sim_old$LAND[,,3], col = cols, xaxt = "n", yaxt = "n")
 
-
-
-
-
-
+dev.off()

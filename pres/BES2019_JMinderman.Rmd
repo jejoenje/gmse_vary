@@ -319,9 +319,31 @@ knitr::include_graphics("pics/land_dist_examples.jpg")
 
 # Results (1)
 
+```{r, out.width = "100%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/old_out_summary.jpg")
+```   
+
 ---
 
 # Results (2)
+
+```{r, out.width = "50%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/land_example_old.jpg")
+```   
+
+---
+
+# Results (3)
+
+```{r, out.width = "50%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/land_example_new.jpg")
+```   
+
+---
+
+```{r, out.width = "100%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/new_out_summary.jpg")
+```   
 
 ---
 
