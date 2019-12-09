@@ -28,72 +28,73 @@ plot_summary = function(dat, y = "mean_trend",
   if(y == "trends") {
     dfiles = as.vector(d$idx)
     # THIS PLOTS ALL LINES
-    
-    pop_dat = list()
-    for(i in 1:len(dfiles)) {
-      if(!is.na(dfiles[i])) {
-        dfolder = unlist(strsplit(dfiles[i],"_"))[2]
-        dfolder = paste("sims",dfolder,"out",dfiles[i],sep="/")
-        outfiles = list.files(dfolder)
-        pop_file = outfiles[grep("POP", outfiles)]
-        i_dat = read.csv(paste(dfolder,pop_file,sep="/"), header=T)
-        pop_dat[[i]] = i_dat  
-      } else {
-        pop_dat[[i]] = NULL
-      }
-      
-    }
-    lo = suppressWarnings({min(unlist(lapply(pop_dat, function(x) min(x, na.rm=T) )))})
-    hi = suppressWarnings({max(unlist(lapply(pop_dat, function(x) max(x, na.rm=T) )))})
-    ylims = c(lo,hi)
-    
-    yrs = max(unlist(lapply(pop_dat, function(x) { if(!is.null(x)) max(x$YEAR) })))    
-    plot(1:yrs, rep(1, yrs), ylim = ylims, type = "n")
-    
-    for(i in 1:nrow(d)) {
-      i_dat = pop_dat[[i]]
-      if(!is.null(i_dat)) {
-        for(j in 1:nlevels(factor(i_dat$SIM))) {
-          i_dat_j = i_dat[i_dat$SIM == j,]
-          lines(i_dat_j$YEAR, i_dat_j$N, col = alpha(colrange[i], 0.5))
-        }  
-      }
-    }
-    
-    # ### Attempt at summarising trends:
-    # #
-    # dfiles = as.vector(d$idx)
-    # pop_mns = matrix(NA, ncol = nrow(d), nrow=100)
-    # pop_los = matrix(NA, ncol = nrow(d), nrow=100)
-    # pop_his = matrix(NA, ncol = nrow(d), nrow=100)
+    #
+    # pop_dat = list()
     # for(i in 1:len(dfiles)) {
-    #   dfolder = unlist(strsplit(dfiles[i],"_"))[2]
-    #   dfolder = paste("sims",dfolder,"out",dfiles[i],sep="/")
-    #   outfiles = list.files(dfolder)
-    #   pop_file = outfiles[grep("POP", outfiles)]
-    #   i_dat = read.csv(paste(dfolder,pop_file,sep="/"), header=T)
-    #   i_dat$N[is.na(i_dat$N)] = 0
-    #   pop_mn = tapply(i_dat$N, i_dat$YEAR, function(x) mean(x, na.rm=T))
-    #   pop_lo = tapply(i_dat$N, i_dat$YEAR, function(x) quantile(x, probs = 0.75, na.rm=T))
-    #   pop_hi = tapply(i_dat$N, i_dat$YEAR, function(x) quantile(x, probs = 0.25, na.rm=T))
-    #   pop_mns[,i] = as.vector(pop_mn)
-    #   pop_los[,i] = as.vector(pop_lo)
-    #   pop_his[,i] = as.vector(pop_hi)
+    #   if(!is.na(dfiles[i])) {
+    #     dfolder = unlist(strsplit(dfiles[i],"_"))[2]
+    #     dfolder = paste("sims",dfolder,"out",dfiles[i],sep="/")
+    #     outfiles = list.files(dfolder)
+    #     pop_file = outfiles[grep("POP", outfiles)]
+    #     i_dat = read.csv(paste(dfolder,pop_file,sep="/"), header=T)
+    #     pop_dat[[i]] = i_dat  
+    #   } else {
+    #     pop_dat[[i]] = NULL
+    #   }
+    #   
     # }
-    # plot(1:nrow(pop_mns), pop_mns[,1], type = "n", ylim = c(0, max(pop_his)))
+    # lo = suppressWarnings({min(unlist(lapply(pop_dat, function(x) min(x, na.rm=T) )))})
+    # hi = suppressWarnings({max(unlist(lapply(pop_dat, function(x) max(x, na.rm=T) )))})
+    # ylims = c(lo,hi)
+    # 
+    # yrs = max(unlist(lapply(pop_dat, function(x) { if(!is.null(x)) max(x$YEAR) })))    
+    # plot(1:yrs, rep(1, yrs), ylim = ylims, type = "n")
+    # 
+    # for(i in 1:nrow(d)) {
+    #   i_dat = pop_dat[[i]]
+    #   if(!is.null(i_dat)) {
+    #     for(j in 1:nlevels(factor(i_dat$SIM))) {
+    #       i_dat_j = i_dat[i_dat$SIM == j,]
+    #       lines(i_dat_j$YEAR, i_dat_j$N, col = alpha(colrange[i], 0.5))
+    #     }  
+    #   }
+    # }
+    
+    ### Attempt at summarising trends:
+    #
+    dfiles = as.vector(d$idx)
+    pop_mns = matrix(NA, ncol = nrow(d), nrow=100)
+    pop_los = matrix(NA, ncol = nrow(d), nrow=100)
+    pop_his = matrix(NA, ncol = nrow(d), nrow=100)
+    for(i in 1:len(dfiles)) {
+      dfolder = unlist(strsplit(dfiles[i],"_"))[2]
+      dfolder = paste("sims",dfolder,"out",dfiles[i],sep="/")
+      outfiles = list.files(dfolder)
+      pop_file = outfiles[grep("POP", outfiles)]
+      i_dat = read.csv(paste(dfolder,pop_file,sep="/"), header=T)
+      i_dat$N[is.na(i_dat$N)] = 0
+      pop_mn = tapply(i_dat$N, i_dat$YEAR, function(x) mean(x, na.rm=T))
+      pop_lo = tapply(i_dat$N, i_dat$YEAR, function(x) quantile(x, probs = 0.75, na.rm=T))
+      pop_hi = tapply(i_dat$N, i_dat$YEAR, function(x) quantile(x, probs = 0.25, na.rm=T))
+      pop_mns[,i] = as.vector(pop_mn)
+      pop_los[,i] = as.vector(pop_lo)
+      pop_his[,i] = as.vector(pop_hi)
+    }
+    if(is.null(ylim)) { ylim = c(0, max(pop_his)) }
+    plot(1:nrow(pop_mns), pop_mns[,1], type = "n", ylim = ylim)
     # for(i in 1:ncol(pop_mns)) {
     #   xvals = 1:len(pop_his[,i])
     #   polygon( c(xvals,rev(xvals)),
     #            c(pop_los[,i],rev(pop_his[,i])),
     #            col = alpha(colrange[i],0.5), border = FALSE)
     # }
-    # for(i in 1:ncol(pop_mns)) {
-    #   xvals = 1:len(pop_his[,i])
-    #   lines(xvals, pop_mns[,i], col = colrange[i], lwd = 2,
-    #         xlab = xlab, ylab = ylab, cex.axis = cex.axis, cex.lab = cex.lab)
-    # }
-    # legend(x = 85, y = 1100, legend = c("Equal", "0.25", "0.5", "0.75"), fill = colrange)
-    # 
+    for(i in 1:ncol(pop_mns)) {
+      xvals = 1:len(pop_his[,i])
+      lines(xvals, pop_mns[,i], col = colrange[i], lwd = 2,
+            xlab = xlab, ylab = ylab, cex.axis = cex.axis, cex.lab = cex.lab)
+    }
+    legend(x = 85, y = ylim[2], legend = c("Equal", "0.25", "0.5", "0.75"), fill = colrange)
+
   } else {
     if(is.null(ylim)) ylim = c(0,max(yval))
     

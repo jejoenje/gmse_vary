@@ -17,7 +17,7 @@ output:
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-source("land_dist_plot.R")
+#source("land_dist_plot.R")
 ```
 class:title-slide
 
@@ -319,31 +319,71 @@ knitr::include_graphics("pics/land_dist_examples.jpg")
 
 # Results (1)
 
+## Increasing inequality = .red[***decreases***] extinction risk??
+
+.pull-left[
 ```{r, out.width = "100%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
-knitr::include_graphics("pics/old_out_summary.jpg")
+knitr::include_graphics("pics/perc_extinctions_1.jpg")
 ```   
+]
+
+.pull-right[
+```{r, out.width = "100%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/pop_trends_1.jpg")
+```   
+]
+
 
 ---
 
 # Results (2)
 
-```{r, out.width = "50%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
-knitr::include_graphics("pics/land_example_old.jpg")
+## Increasing inequality = .red[**budgets severely limited**] for some..
+
+.pull-left[
+```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/perc_extinctions_1.jpg")
 ```   
+]
+
+.pull-right[
+```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/budgets_1.jpg")
+```   
+]
 
 ---
 
 # Results (3)
 
-```{r, out.width = "50%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
-knitr::include_graphics("pics/land_example_new.jpg")
-```   
+## Limited budgets, limited power = *de facto* population refuges
 
+.pull-left[
+```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/perc_extinctions_1.jpg")
+```   
+]
+
+.pull-right[
+```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/land_anim1/example_1.gif")
+```   
+]
 ---
 
-```{r, out.width = "100%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
-knitr::include_graphics("pics/new_out_summary.jpg")
+# Results (4)
+
+.pull-left[
+```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/land_anim1/res_dist001.png")
 ```   
+]
+
+.pull-right[
+```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/land_anim1/res_dist041.png")
+```   
+]
 
 ---
 

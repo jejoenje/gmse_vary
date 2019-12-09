@@ -2,9 +2,9 @@ rm(list=ls())
 library(GMSE)
 library(RColorBrewer)
 library(scales)
-source("../sims/global_paras.R")
-source("../gmse_apply_helpers.R")
-source("../helpers.R")
+source("sims/global_paras.R")
+source("gmse_apply_helpers.R")
+source("helpers.R")
 
 PUB_LAND = 0
 
@@ -31,7 +31,7 @@ sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       converge_crit = gmse_paras$converge_crit,
                       ga_mingen = gmse_paras$ga_mingen)
 
-jpeg("pics/land_dist_examples.jpg", quality = 100, height = 800, width = 800)
+jpeg("pres/pics/land_dist_examples.jpg", quality = 100, height = 800, width = 800)
 
 par(mfrow=c(2,2))
 par(mar = c(2,2,4,2))
@@ -80,3 +80,19 @@ image(x = sim_old$LAND[,,3], col = brewer.pal(N, "BrBG"), xaxt = "n", yaxt = "n"
 mtext("75%", side = 3, line = 0.5, cex = cex.labels)
 
 dev.off()
+
+
+jpeg("pres/pics/land_dist_example75.jpg", quality = 100, height = 600, width = 600)
+par(mfrow=c(1,1))
+par(mar = c(2,2,2,2))
+par(oma=c(0,0,0,0))
+gmse_paras$land_type = "oneRich"
+gmse_paras$land_type_max_frac = 0.75
+sim_old$LAND[,,3] = set_land(sim_old$LAND[,,3], s = gmse_paras$stakeholders,
+                             type = gmse_paras$land_type, 
+                             hi_frac = gmse_paras$land_type_max_frac)
+table(sim_old$LAND[,,3])
+N = len(names(table(sim_old$LAND[,,3])))
+image(x = sim_old$LAND[,,3], col = brewer.pal(N, "BrBG"), xaxt = "n", yaxt = "n");
+dev.off()
+

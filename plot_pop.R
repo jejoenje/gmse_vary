@@ -33,9 +33,14 @@ plot_pop = function(dfile, col = "Black", ylim = NULL, s = NULL,
     p_i[1,"N"] = 1000
     p_i$YEAR = 1:len(p_i$YEAR)
     
+    lwd_i = 1
+    
     if( i %in% plotflag ) {
-      if( sum(p_i$N==0)>0 ) { col_i = alpha("red", 0.5) } 
-      lines(p_i$YEAR, p_i$N, col = col_i, lwd = 1.5)
+      if( sum(p_i$N==0)>0 ) { 
+          col_i = alpha("red", 0.5) 
+          lwd_i = 3
+        } 
+      lines(p_i$YEAR, p_i$N, col = col_i, lwd = lwd_i)
     }
   }
 }

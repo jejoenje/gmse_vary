@@ -61,4 +61,4 @@ done = merge(fullpara, out, by = names(fullpara), all.x=TRUE, all.y=FALSE)
 nrow(done)
 sum(!is.na(done$idx))
 
-write.csv(done, "sims/sims_done_new.csv", row.names=F)
+write.csv(done, "sims/sims_done_new1.csv", row.names=F)

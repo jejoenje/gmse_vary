@@ -9,7 +9,7 @@ source("plot_summary.R")
 source("plot_pop.R")
 source("load_out.R")
 
-out = read.csv("sims/sims_done.csv", header=T)
+out = read.csv("sims/sims_done_new1.csv", header=T)
 
 ### Subsetting columns of interest:
 
@@ -28,6 +28,75 @@ out = subset(out, select = c("idx",
                              "EXT",
                              "EXT_first"
                              ))
+
+jpeg("pres/pics/pop_trends_1.jpg", width = 600, height = 600)
+tcy = 0.2
+yv = 0.4
+pl = 0
+mbt = "mean"
+d = out[out$yield_value==yv & out$tend_crop_yld==tcy & out$public_land==pl & out$man_bud_type==mbt,]
+#colrange = rep("black",4)
+colrange = brewer.pal(9, "BrBG")
+colrange = colrange[order(1:len(colrange),decreasing=T)]
+colrange = c(colrange[1], tail(colrange, 3))
+s = 1
+a = 0.5
+par(oma=c(3,3,0,0))
+par(mfrow=c(2,2))
+par(mar = c(2.5,2.5,1,1))
+plot_pop(dfile = d$idx[d$land_type=="equal"], 
+         col = alpha(colrange[1],a), s = s, yaxt = "s", ylim = c(0,1300), cex.lab = 2)
+text(x = 90, y = 1200, "Equal", cex = 2)
+plot_pop(dfile = d$idx[d$land_type=="oneRich" & d$land_type_max_frac==0.25], 
+         col = alpha(colrange[2],a), s = s, yaxt = "n", ylim = c(0,1300), cex.lab = 2)
+text(x = 90, y = 1200, "0.25", cex = 2)
+plot_pop(dfile = d$idx[d$land_type=="oneRich" & d$land_type_max_frac==0.50], 
+         col = alpha(colrange[3],a), s = s, yaxt = "s", ylim = c(0,1300), cex.lab = 2)
+text(x = 90, y = 1200, "0.5", cex = 2)
+plot_pop(dfile = d$idx[d$land_type=="oneRich" & d$land_type_max_frac==0.75], 
+         col = alpha(colrange[4],a), s = s, yaxt = "n", ylim = c(0,1300), cex.lab = 2)
+text(x = 90, y = 1200, "0.75", cex = 2)
+mtext("Year", side =1, outer =T, line =1, cex = 2)
+mtext("Populaion size", side = 2, outer = T, line = 1, cex = 2)
+dev.off()
+
+jpeg("pres/pics/perc_extinctions_1.jpg", width = 600, height = 600)
+par(mfrow=c(1,1))
+par(oma=c(3,3,0,0))
+par(mar=c(3,2,1,1))
+plot_summary(dat = out, y = "ext_perc", tcy = tcy, mbt = mbt, pl = pl, yv = yv, 
+             col = "BrBG", ylim = c(0,6))
+mtext("% extinctions", side = 2, line =3, cex =1.75)
+mtext("(Increasing inequality)", side = 1, line = 5.5, cex =1.5)
+dev.off()
+
+jpeg("pres/pics/budgets_1.jpg", width = 600, height = 600, quality = 100)
+d = out[out$yield_value==yv & out$tend_crop_yld==tcy & out$public_land==pl & out$man_bud_type==mbt,]
+d
+colrange = brewer.pal(9, "BrBG")
+colrange = colrange[order(1:len(colrange),decreasing=T)]
+colrange = c(colrange[1], tail(colrange, 3))
+par(mfrow=c(2,2))
+par(oma=c(4,4,0,0))
+par(mar=c(2,1,1,1))
+plot_budgets(d$idx[1], col = colrange[1])
+text(x = 10, y = 4500, "Equal", cex = 2)
+par(mar=c(2,1.8,1,0.2))
+plot_budgets(d$idx[2], col = colrange[2])
+text(x = 10, y = 5700, "0.25", cex = 2)
+par(mar=c(1,1,1,1))
+plot_budgets(d$idx[3], col = colrange[3], ylim = c(0,12000))
+text(x = 10, y = 11000, "0.50", cex = 2)
+par(mar=c(1,1.8,1,0.2))
+plot_budgets(d$idx[4], col = colrange[4], ylim = c(0, 17000))
+text(x = 10, y = 15500, "0.75", cex = 2)
+mtext("Year", side = 1, line = 2, outer = T, cex = 2)
+mtext("Users' budget", side = 2, line = 2, outer = T, cex = 2)
+dev.off()
+
+
+
+
 
 
 ### This plots summary trend statistics & extinction against varying yield-value, which we dont have yet
