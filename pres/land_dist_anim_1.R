@@ -9,6 +9,7 @@ source("place_resource.R")
 
 load("sims/nullModel-YTB20/out/20191209161759_nullModel-YTB20/RES_20191209161759.Rdata")
 load("sims/nullModel-YTB20/out/20191209161759_nullModel-YTB20/paras_20191209161759_nullModel-YTB20.Rdata")
+POP = read.csv("sims/nullModel-YTB20/out/20191209161759_nullModel-YTB20/POP_20191209161759.csv")
 
 sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       land_dim_1 = gmse_paras$land_dim_1,
@@ -36,27 +37,34 @@ sim_old$LAND[,,3] = set_land(sim_old$LAND[,,3], s = gmse_paras$stakeholders,
                              type = gmse_paras$land_type, 
                              hi_frac = gmse_paras$land_type_max_frac)
 
-outdir = "pres/pics/land_anim1"
+outdir = "pres/pics/anim1" 
 
-for(i in 1:len(RES[[1]])) {
+for(i in 1:len(RES[[1]])) {                     ## Example SIM 1 only
 
-  png(file=sprintf("%s/res_dist%03d.png", outdir, i), width=600, height=600)
+  pop1 = POP[POP$SIM==1,]       
+  
+  png(file=sprintf("%s/res_dist_pop%03d.png", outdir, i), width=1200, height=600)
+    par(mfrow=c(1,2))
     par(oma=c(4,0,0,0))
-    par(mar=c(0,0,0,0))
+    par(mar=c(1,1,1,1))
     image(x = sim_old$LAND[,,3], col = brewer.pal(gmse_paras$stakeholders, "BrBG"), xaxt = "n", yaxt = "n");
     res_pos = place_resource(RES[[1]][[i]], ld1 = gmse_paras$land_dim_1, ld2 = gmse_paras$land_dim_2)
     image(x = res_pos, col = "black", add = T)
+  
+    par(mar=c(4,5,1,1))
+    plot(pop1$YEAR, pop1$N, type = "n", ylim = c(0, max(pop1$N)), cex.lab = 2, cex.axis = 2, 
+         ylab = "Population size", xlab = "Year")
+    lines(pop1[pop1$YEAR==c(1:(i+1)),"YEAR"],pop1[pop1$YEAR==c(1:(i+1)),"N"], lwd = 3)
+    
     mtext(sprintf("Year %d", i), side = 1, line = 2, outer = T, cex = 2)
   dev.off()
   
 }
-
+curwd = getwd()
 setwd(paste(".", outdir, sep = "/"))
-system("convert -delay 40 *.png example_1.gif")
-system("ffmpeg -f gif -i example_1.gif example_1.mp4")
+system("convert -delay 30 *.png anim_1.gif")
+system("ffmpeg -f gif -i anim_1.gif anim_1.mp4")
 setwd(curwd)
-
-
 
 
 

@@ -356,66 +356,100 @@ knitr::include_graphics("pics/budgets_1.jpg")
 
 # Results (3)
 
-## Limited budgets, limited power = *de facto* population refuges
+## Limited budgets, .red[**limited power = *de facto* population refuges**]
 
-.pull-left[
-```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
-knitr::include_graphics("pics/perc_extinctions_1.jpg")
-```   
+.left-column[
+  <div class="row"; style="text-align: center; color: black">
+    <br>
+    <br>
+    <b>Unequal</b> distribution (75%)
+  </div>
+  <div class="row"; style="text-align: center; color: black">
+    <br><br><br><br><br>
+    <b>Equal</b> distribution
+  </div>
 ]
 
-.pull-right[
-```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
-knitr::include_graphics("pics/land_anim1/example_1.gif")
+.right-column[
+```{r, out.width = "60%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/anim1/anim_1.gif")
 ```   
-]
----
-
-# Results (4)
-
-.pull-left[
-```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
-knitr::include_graphics("pics/land_anim1/res_dist001.png")
-```   
-]
-
-.pull-right[
-```{r, out.width = "100%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
-knitr::include_graphics("pics/land_anim1/res_dist041.png")
+```{r, out.width = "60%", fig.retina = 3, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/anim2/anim_2.gif")
 ```   
 ]
 
 ---
 
-# Conclusions: .. so what?
---
+# Results (3a)
 
-.pull-left[
-```{r, out.width = "65%", fig.retina = 2, echo=FALSE, fig.align = "right"}
-knitr::include_graphics("pics/grauniad_scottish_land_header.jpg")
-```
-<div style="text-align: right; font-size: 75%;">
-<a href="https://www.theguardian.com/uk-news/2013/aug/10/scotland-land-rights">(The Observer, August 2013)</a>
-</div>
-```{r, out.width = "60%", fig.retina = 2, echo=FALSE, fig.align = "right"}
-knitr::include_graphics("https://i.guim.co.uk/img/static/sys-images/Guardian/Pix/maps_and_graphs/2013/8/12/1376299018660/Scotland-map-blue2.png?width=620&quality=85&auto=format&fit=max&s=4d1449193ee171dedf186c49f80ae8ec")
-``` 
-]
---
+## Limited budgets, .red[**limited power = *de facto* population refuges**]
 
-.pull-right[
-## ... and globally
-```{r, out.width = "100%", fig.retina = 2, echo=FALSE, fig.align = "left"}
-knitr::include_graphics("pics/Dashboard 1.png")
+.font120[Unequal land distribution (75% to 1)]   
+
+```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+knitr::include_graphics("pics/unequal_dist_start.png")
 ```
-<div style="text-align: center; font-size: 75%;">
-<a href="https://inequality.org/facts/global-inequality/">https://inequality.org/facts/global-inequality/</a>
-</div>
-]
+```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+knitr::include_graphics("pics/unequal_pop.png")
+```
+```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+knitr::include_graphics("pics/unequal_dist_end.png")
+```
+
+---
+
+# Results (3b)
+
+## Equal land = .red[**equal power = all users can affect resource**]  
+
+.font120[Equal land distribution]   
+
+```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+knitr::include_graphics("pics/equal_dist_start.png")
+```
+```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+knitr::include_graphics("pics/equal_pop.png")
+```
+```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+knitr::include_graphics("pics/equal_dist_end.png")
+```
 
 ---
 
 # Conclusions & discussion
+
+.pull-left[
+<div style="text-align: center"> 
+```{r, out.width = "50%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
+knitr::include_graphics("pics/perc_extinctions_1.jpg")
+```  
+<br>
+```{r, out.width = "40%", fig.retina = 2, echo=FALSE}
+knitr::include_graphics("pics/Holland_Fig2.jpg")
+```
+```{r, out.width = "40%", fig.retina = 2, echo=FALSE}
+knitr::include_graphics("pics/Mikkelson_Fig1a.png")
+```
+</div>
+]
+
+.pull-right[
+### <b>Contradiction</b>?
+
+- Current model clearly "toy" example...
+- But does highlight need for accounting for complexity:
+- .. many factors affect efquality - biodiversity relationship.
+
+<p>
+
+- GMSE highly flexible; 
+- .. current model can (will!) be developed further
+  - More realistic yield function (e.g. diminishing returns)
+  - Societal change
+  - ...
+
+]
 
 ---
 
@@ -449,9 +483,10 @@ knitr::include_graphics("https://sticsdotorg.files.wordpress.com/2016/03/self_sq
 <a href="https://www.stir.ac.uk/people/256882">Jeremy Cusack</a><br>
 <a href="https://www.stir.ac.uk/people/257356">Lynsey Bunnefeld</a><br>
 <a href="https://www.stir.ac.uk/people/257474">Sarobidy Rakotonarivo</a><br>  
-<a href="https://sti-cs.org/rocio-pozo/">Rocio Pozo</a><br>
 <a href="https://www.stir.ac.uk/people/256518">Isabel Jones</a><br>  
 <a href="https://wherethewildthingslive.co.uk/about-the-author/">Isla Hodgson</a><br><br>
+<a href="https://sti-cs.org/rocio-pozo/">Rocio Pozo</a><br>
+<a href="https://sti-cs.org/lovisa-nilsson/">Lovisa Nilsson</a><br>
 ```{r, out.width = "40%", fig.retina = 2, echo=FALSE}
 knitr::include_graphics("https://www.stir.ac.uk/webcomponents/dist/css/images/logos/logo.svg")
 ```
@@ -470,9 +505,22 @@ knitr::include_graphics("https://sticsdotorg.files.wordpress.com/2019/06/image.p
 
 ]
 
+---
 
+---
 
+# Conclusions & Discussion?
+--
 
-
+.pull-left[
+```{r, out.width = "65%", fig.retina = 2, echo=FALSE, fig.align = "right"}
+knitr::include_graphics("pics/grauniad_scottish_land_header.jpg")
+```
+<div style="text-align: right; font-size: 75%;">
+<a href="https://www.theguardian.com/uk-news/2013/aug/10/scotland-land-rights">(The Observer, August 2013)</a>
+</div>
+```{r, out.width = "60%", fig.retina = 2, echo=FALSE, fig.align = "right"}
+knitr::include_graphics("https://i.guim.co.uk/img/static/sys-images/Guardian/Pix/maps_and_graphs/2013/8/12/1376299018660/Scotland-map-blue2.png?width=620&quality=85&auto=format&fit=max&s=4d1449193ee171dedf186c49f80ae8ec")
+``` 
 
 ---
