@@ -313,30 +313,6 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 
 ---
 
-# Results (3a)
-
-## Limited budgets, .red[**limited power = *de facto* population refuges**]
-
-.font120[Unequal land distribution (75% to 1)]   
-
-&lt;img src="pics/unequal_dist_start.png" width="32%" /&gt;
-&lt;img src="pics/unequal_pop.png" width="32%" /&gt;
-&lt;img src="pics/unequal_dist_end.png" width="32%" /&gt;
-
----
-
-# Results (3b)
-
-## Equal land = .red[**equal power = all users can affect resource**]  
-
-.font120[Equal land distribution]   
-
-&lt;img src="pics/equal_dist_start.png" width="32%" /&gt;
-&lt;img src="pics/equal_pop.png" width="32%" /&gt;
-&lt;img src="pics/equal_dist_end.png" width="32%" /&gt;
-
----
-
 # Conclusions &amp; discussion
 
 .pull-left[
@@ -349,18 +325,20 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 ]
 
 .pull-right[
-### &lt;b&gt;Why&lt;/b&gt;?
+### &lt;b&gt;Counterintuitive?&lt;/b&gt;
 
 - Current model clearly "toy" example...
-- But does highlight need for accounting for complexity:
-- .. many factors affect efquality - biodiversity relationship.
+- Equality - biodiversity relation is complex.
+- Models need ability to account for this!
+- Many factors affect equality:biodiversity relationship.
 
 &lt;p&gt;
 
 - GMSE highly flexible; 
-- .. current model can (will!) be developed further
-  - More realistic yield function (e.g. diminishing returns)
-  - Societal change
+- Can be extended as needed, e.g. 
+  - More realistic yield function
+  - Resource selection functions
+  - Further complex land distribution..
   - ...
 
 ]
@@ -387,17 +365,18 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 &lt;/div&gt;&lt;br&gt;
 &lt;div style="float: right; width: 45%; text-align: center;"&gt;
 &lt;/div&gt;
-
-&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;p&gt;
+&lt;p&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
 &lt;div style="text-align: center"&gt;
 &lt;a href="https://www.stir.ac.uk/people/256882"&gt;Jeremy Cusack&lt;/a&gt;&lt;br&gt;
 &lt;a href="https://www.stir.ac.uk/people/257356"&gt;Lynsey Bunnefeld&lt;/a&gt;&lt;br&gt;
 &lt;a href="https://www.stir.ac.uk/people/257474"&gt;Sarobidy Rakotonarivo&lt;/a&gt;&lt;br&gt;  
 &lt;a href="https://www.stir.ac.uk/people/256518"&gt;Isabel Jones&lt;/a&gt;&lt;br&gt;  
-&lt;a href="https://wherethewildthingslive.co.uk/about-the-author/"&gt;Isla Hodgson&lt;/a&gt;&lt;br&gt;&lt;br&gt;
+&lt;a href="https://wherethewildthingslive.co.uk/about-the-author/"&gt;Isla Hodgson&lt;/a&gt;&lt;br&gt;
 &lt;a href="https://sti-cs.org/rocio-pozo/"&gt;Rocio Pozo&lt;/a&gt;&lt;br&gt;
-&lt;a href="https://sti-cs.org/lovisa-nilsson/"&gt;Lovisa Nilsson&lt;/a&gt;&lt;br&gt;
-&lt;img src="https://www.stir.ac.uk/webcomponents/dist/css/images/logos/logo.svg" width="40%" /&gt;
+&lt;a href="https://sti-cs.org/lovisa-nilsson/"&gt;Lovisa Nilsson&lt;/a&gt;
+&lt;p&gt;
+&lt;img src="https://www.stir.ac.uk/webcomponents/dist/css/images/logos/logo.svg" width="25%" /&gt;
 &lt;/div&gt;
 ]
 
@@ -408,20 +387,6 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 &lt;img src="https://sticsdotorg.files.wordpress.com/2019/06/image.png?w=960" width="40%" style="display: block; margin: auto;" /&gt;
 
 ]
-
----
-
----
-
-# Conclusions &amp; Discussion?
---
-
-.pull-left[
-&lt;img src="pics/grauniad_scottish_land_header.jpg" width="65%" style="display: block; margin: auto 0 auto auto;" /&gt;
-&lt;div style="text-align: right; font-size: 75%;"&gt;
-&lt;a href="https://www.theguardian.com/uk-news/2013/aug/10/scotland-land-rights"&gt;(The Observer, August 2013)&lt;/a&gt;
-&lt;/div&gt;
-&lt;img src="https://i.guim.co.uk/img/static/sys-images/Guardian/Pix/maps_and_graphs/2013/8/12/1376299018660/Scotland-map-blue2.png?width=620&amp;quality=85&amp;auto=format&amp;fit=max&amp;s=4d1449193ee171dedf186c49f80ae8ec" width="60%" style="display: block; margin: auto 0 auto auto;" /&gt;
 
 ---
     </textarea>
@@ -471,24 +436,7 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();
-// adds .remark-code-has-line-highlighted class to <pre> parent elements
-// of code chunks containing highlighted lines with class .remark-code-line-highlighted
-(function(d) {
-  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
-  const preParents = [];
-  const findPreParent = function(line, p = 0) {
-    if (p > 1) return null; // traverse up no further than grandparent
-    const el = line.parentElement;
-    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
-  };
-
-  for (let line of hlines) {
-    let pre = findPreParent(line);
-    if (pre && !preParents.includes(pre)) preParents.push(pre);
-  }
-  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
-})(document);</script>
+})();</script>
 
 <script>
 (function() {

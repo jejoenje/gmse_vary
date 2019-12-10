@@ -161,7 +161,7 @@ class:title-slide
 # Aims
 
 .left-column25[
-&lt;img src="https://jejoenje.shinyapps.io/ggmse1/_w_bc0eeeab/GMSE_logo_name.png" width="75%" /&gt;
+&lt;img src="pics/GMSE_logo_name.png" width="75%" /&gt;
 
 &lt;img src="pics/icon_coll_bigger.jpg" width="75%" /&gt;
 ]
@@ -207,36 +207,12 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 ]
 
 ---
-# Generalised Management Strategy Evaluation (2)
-
-.pull-left[
-&lt;div style="text-align: center"&gt;
-&lt;img src="pics/gmse_typical1.jpg" width="80%" /&gt;
-&lt;img src="pics/gmse_typical3.jpg" width="80%" /&gt;
-&lt;/div&gt;
-]
-
-.pull-right[
-&lt;img src="pics/GMSE_logo_name.jpg" width="45%" style="display: block; margin: auto auto auto 0;" /&gt;
-  
-Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-210X.13091](http://doi.wiley.com/10.1111/2041-210X.13091)**
-
-- Individual-based &amp; spatially explicit
-- **"Manager"**: .red[**maintain resource**]
-- **"Users"**: .red[**maximise yield**]  
-  .font90[("resource" may negatively affect yield)]
-- "Users" can choose to e.g. farm, kill resources, etc.
-- Cost of each action set by manager
-  
-- Available as an [**R package**](https://cran.r-project.org/web/packages/GMSE/index.html) 
-]
-
----
 
 # Simulation scenarios
 
 .pull-left[
-## General set-up
+### &lt;b&gt;General set-up&lt;/b&gt;
+&lt;br&gt;
 &lt;div style="text-align: center"&gt;
 &lt;img src="https://live.staticflickr.com/255/19760068178_8ce2ccf7e8_k.jpg" width="40%" /&gt;
 &lt;img src="https://live.staticflickr.com/2215/1516678360_d34081e144_k.jpg" width="40%" /&gt;
@@ -246,17 +222,13 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 - Users can farm, kill resources on their land, or "scare" resources off their land  
 - All land is "privately" owned; users can only kill on their own land  
 ]
---
 
 .pull-right[
-## Stakeholder variation
+### &lt;b&gt;Stakeholder variation&lt;/b&gt;
 
 - Budgets ~ yield
 - Land distribution varied:
-
 &lt;img src="pics/land_dist_examples.jpg" width="75%" /&gt;
-
-
 ]
 
 ---
@@ -294,23 +266,27 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 
 ## Limited budgets, .red[**limited power = *de facto* population refuges**]
 
-.font120[Unequal land distribution (75% to 1)]   
+.left-column[
+  &lt;div class="row"; style="text-align: center; color: black"&gt;
+    &lt;br&gt;
+    &lt;br&gt;
+    &lt;b&gt;Unequal&lt;/b&gt; distribution (75%)
+  &lt;/div&gt;
+  &lt;div class="row"; style="text-align: center; color: black"&gt;
+    &lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+    &lt;b&gt;Equal&lt;/b&gt; distribution
+  &lt;/div&gt;
+]
 
-&lt;img src="pics/unequal_dist_start.png" width="32%" /&gt;
-&lt;img src="pics/unequal_pop.png" width="32%" /&gt;
-&lt;img src="pics/unequal_dist_end.png" width="32%" /&gt;
-
----
-
-# Results (3)
-
-## Equal land = .red[**equal power = all users can affect resource**]  
-
-.font120[Equal land distribution]   
-
-&lt;img src="pics/equal_dist_start.png" width="32%" /&gt;
-&lt;img src="pics/equal_pop.png" width="32%" /&gt;
-&lt;img src="pics/equal_dist_end.png" width="32%" /&gt;
+.right-column[
+&lt;img src="pics/unequal_dist_start.png" width="29%" /&gt;
+&lt;img src="pics/unequal_pop.png" width="29%" /&gt;
+&lt;img src="pics/unequal_dist_end.png" width="29%" /&gt;
+&lt;br&gt;
+&lt;img src="pics/equal_dist_start.png" width="29%" /&gt;
+&lt;img src="pics/equal_pop.png" width="29%" /&gt;
+&lt;img src="pics/equal_dist_end.png" width="29%" /&gt;
+]
 
 ---
 
@@ -326,18 +302,20 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 ]
 
 .pull-right[
-### &lt;b&gt;Contradiction&lt;/b&gt;?
+### &lt;b&gt;Counterintuitive?&lt;/b&gt;
 
 - Current model clearly "toy" example...
-- But does highlight need for accounting for complexity:
-- .. many factors affect efquality - biodiversity relationship.
+- Equality - biodiversity relation is complex.
+- Models need ability to account for this!
+- Many factors affect equality:biodiversity relationship.
 
 &lt;p&gt;
 
 - GMSE highly flexible; 
-- .. current model can (will!) be developed further
-  - More realistic yield function (e.g. diminishing returns)
-  - Societal change
+- Can be extended as needed, e.g. 
+  - More realistic yield function
+  - Resource selection functions
+  - Further complex land distribution..
   - ...
 
 ]
@@ -364,8 +342,8 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 &lt;/div&gt;&lt;br&gt;
 &lt;div style="float: right; width: 45%; text-align: center;"&gt;
 &lt;/div&gt;
-
-&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;p&gt;
+&lt;p&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
 &lt;div style="text-align: center"&gt;
 &lt;a href="https://www.stir.ac.uk/people/256882"&gt;Jeremy Cusack&lt;/a&gt;&lt;br&gt;
 &lt;a href="https://www.stir.ac.uk/people/257356"&gt;Lynsey Bunnefeld&lt;/a&gt;&lt;br&gt;
@@ -375,7 +353,7 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 &lt;a href="https://sti-cs.org/rocio-pozo/"&gt;Rocio Pozo&lt;/a&gt;&lt;br&gt;
 &lt;a href="https://sti-cs.org/lovisa-nilsson/"&gt;Lovisa Nilsson&lt;/a&gt;
 &lt;p&gt;
-&lt;img src="https://www.stir.ac.uk/webcomponents/dist/css/images/logos/logo.svg" width="40%" /&gt;
+&lt;img src="https://www.stir.ac.uk/webcomponents/dist/css/images/logos/logo.svg" width="25%" /&gt;
 &lt;/div&gt;
 ]
 
@@ -383,7 +361,7 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 &lt;div style="text-align: center"&gt;
 &lt;img src="https://sticsdotorg.files.wordpress.com/2016/03/confoobio-stacked-logo.png?w=300&amp;h=300" width="50%" style="display: block; margin: auto;" /&gt;
 &lt;br&gt;
-&lt;img src="https://sticsdotorg.files.wordpress.com/2019/06/image.png?w=960" width="30%" style="display: block; margin: auto;" /&gt;
+&lt;img src="https://sticsdotorg.files.wordpress.com/2019/06/image.png?w=960" width="40%" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -435,24 +413,7 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     deleted = true;
   });
-})();
-// adds .remark-code-has-line-highlighted class to <pre> parent elements
-// of code chunks containing highlighted lines with class .remark-code-line-highlighted
-(function(d) {
-  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
-  const preParents = [];
-  const findPreParent = function(line, p = 0) {
-    if (p > 1) return null; // traverse up no further than grandparent
-    const el = line.parentElement;
-    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
-  };
-
-  for (let line of hlines) {
-    let pre = findPreParent(line);
-    if (pre && !preParents.includes(pre)) preParents.push(pre);
-  }
-  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
-})(document);</script>
+})();</script>
 
 <script>
 (function() {

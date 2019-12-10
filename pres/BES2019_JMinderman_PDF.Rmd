@@ -198,7 +198,7 @@ knitr::include_graphics("pics/Mikkelson_Fig1a.png")
 
 .left-column25[
 ```{r, out.width = "75%", fig.retina = 2, echo=FALSE}
-knitr::include_graphics("https://jejoenje.shinyapps.io/ggmse1/_w_bc0eeeab/GMSE_logo_name.png")
+knitr::include_graphics("pics/GMSE_logo_name.png")
 ```   
 
 ```{r, out.width = "75%", fig.retina = 2, echo=FALSE}
@@ -251,42 +251,12 @@ Duthie et al. (2018) *Methods in Ecology & Evolution*. **[DOI: 10.1111/2041-210X
 ]
 
 ---
-# Generalised Management Strategy Evaluation (2)
-
-.pull-left[
-<div style="text-align: center">
-```{r, out.width = "80%", fig.retina = 2, echo=FALSE}
-knitr::include_graphics("pics/gmse_typical1.jpg")
-```   
-```{r, out.width = "80%", fig.retina = 2, echo=FALSE}
-knitr::include_graphics("pics/gmse_typical3.jpg")
-```   
-</div>
-]
-
-.pull-right[
-```{r, out.width = "45%", fig.retina = 2, echo=FALSE, fig.align = "left"}
-knitr::include_graphics("pics/GMSE_logo_name.jpg")
-```   
-  
-Duthie et al. (2018) *Methods in Ecology & Evolution*. **[DOI: 10.1111/2041-210X.13091](http://doi.wiley.com/10.1111/2041-210X.13091)**
-
-- Individual-based & spatially explicit
-- **"Manager"**: .red[**maintain resource**]
-- **"Users"**: .red[**maximise yield**]  
-  .font90[("resource" may negatively affect yield)]
-- "Users" can choose to e.g. farm, kill resources, etc.
-- Cost of each action set by manager
-  
-- Available as an [**R package**](https://cran.r-project.org/web/packages/GMSE/index.html) 
-]
-
----
 
 # Simulation scenarios
 
 .pull-left[
-## General set-up
+### <b>General set-up</b>
+<br>
 <div style="text-align: center">
 ```{r, out.width = "40%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
 knitr::include_graphics("https://live.staticflickr.com/255/19760068178_8ce2ccf7e8_k.jpg")
@@ -300,19 +270,15 @@ knitr::include_graphics("https://live.staticflickr.com/2215/1516678360_d34081e14
 - Users can farm, kill resources on their land, or "scare" resources off their land  
 - All land is "privately" owned; users can only kill on their own land  
 ]
---
 
 .pull-right[
-## Stakeholder variation
+### <b>Stakeholder variation</b>
 
 - Budgets ~ yield
 - Land distribution varied:
-
 ```{r, out.width = "75%", fig.retina = 2, echo=FALSE, fig.align = "centre"}
 knitr::include_graphics("pics/land_dist_examples.jpg")
 ```   
-
-
 ]
 
 ---
@@ -358,35 +324,39 @@ knitr::include_graphics("pics/budgets_1.jpg")
 
 ## Limited budgets, .red[**limited power = *de facto* population refuges**]
 
-.font120[Unequal land distribution (75% to 1)]   
+.left-column[
+  <div class="row"; style="text-align: center; color: black">
+    <br>
+    <br>
+    <b>Unequal</b> distribution (75%)
+  </div>
+  <div class="row"; style="text-align: center; color: black">
+    <br><br><br><br><br>
+    <b>Equal</b> distribution
+  </div>
+]
 
-```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+.right-column[
+```{r, out.width = "29%", fig.retina = 3, echo=FALSE}
 knitr::include_graphics("pics/unequal_dist_start.png")
 ```
-```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+```{r, out.width = "29%", fig.retina = 3, echo=FALSE}
 knitr::include_graphics("pics/unequal_pop.png")
 ```
-```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+```{r, out.width = "29%", fig.retina = 3, echo=FALSE}
 knitr::include_graphics("pics/unequal_dist_end.png")
 ```
-
----
-
-# Results (3)
-
-## Equal land = .red[**equal power = all users can affect resource**]  
-
-.font120[Equal land distribution]   
-
-```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+<br>
+```{r, out.width = "29%", fig.retina = 3, echo=FALSE}
 knitr::include_graphics("pics/equal_dist_start.png")
 ```
-```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+```{r, out.width = "29%", fig.retina = 3, echo=FALSE}
 knitr::include_graphics("pics/equal_pop.png")
 ```
-```{r, out.width = "32%", fig.retina = 3, echo=FALSE}
+```{r, out.width = "29%", fig.retina = 3, echo=FALSE}
 knitr::include_graphics("pics/equal_dist_end.png")
 ```
+]
 
 ---
 
@@ -408,18 +378,20 @@ knitr::include_graphics("pics/Mikkelson_Fig1a.png")
 ]
 
 .pull-right[
-### <b>Contradiction</b>?
+### <b>Counterintuitive?</b>
 
 - Current model clearly "toy" example...
-- But does highlight need for accounting for complexity:
-- .. many factors affect efquality - biodiversity relationship.
+- Equality - biodiversity relation is complex.
+- Models need ability to account for this!
+- Many factors affect equality:biodiversity relationship.
 
 <p>
 
 - GMSE highly flexible; 
-- .. current model can (will!) be developed further
-  - More realistic yield function (e.g. diminishing returns)
-  - Societal change
+- Can be extended as needed, e.g. 
+  - More realistic yield function
+  - Resource selection functions
+  - Further complex land distribution..
   - ...
 
 ]
@@ -450,8 +422,8 @@ knitr::include_graphics("https://sticsdotorg.files.wordpress.com/2016/03/self_sq
 </div><br>
 <div style="float: right; width: 45%; text-align: center;">
 </div>
-
-<br><br><br><p>
+<p>
+<br><br><br><br>
 <div style="text-align: center">
 <a href="https://www.stir.ac.uk/people/256882">Jeremy Cusack</a><br>
 <a href="https://www.stir.ac.uk/people/257356">Lynsey Bunnefeld</a><br>
@@ -461,7 +433,7 @@ knitr::include_graphics("https://sticsdotorg.files.wordpress.com/2016/03/self_sq
 <a href="https://sti-cs.org/rocio-pozo/">Rocio Pozo</a><br>
 <a href="https://sti-cs.org/lovisa-nilsson/">Lovisa Nilsson</a>
 <p>
-```{r, out.width = "40%", fig.retina = 2, echo=FALSE}
+```{r, out.width = "25%", fig.retina = 2, echo=FALSE}
 knitr::include_graphics("https://www.stir.ac.uk/webcomponents/dist/css/images/logos/logo.svg")
 ```
 </div>
@@ -473,11 +445,10 @@ knitr::include_graphics("https://www.stir.ac.uk/webcomponents/dist/css/images/lo
 knitr::include_graphics("https://sticsdotorg.files.wordpress.com/2016/03/confoobio-stacked-logo.png?w=300&h=300")
 ```
 <br>
-```{r, out.width = "30%", fig.retina = 2, echo=FALSE, fig.align='center'}
+```{r, out.width = "40%", fig.retina = 2, echo=FALSE, fig.align='center'}
 knitr::include_graphics("https://sticsdotorg.files.wordpress.com/2019/06/image.png?w=960")
 ```   
 
 ]
 
 ---
-
