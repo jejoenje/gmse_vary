@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Predicting the effect of stakeholder variability in natural resource management: using the GMSE R package</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Jeroen Minderman (jeroen.minderman2@stir.ac.uk)" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+    <link rel="stylesheet" href="metropolis_jm.css" type="text/css" />
+    <link rel="stylesheet" href="metropolis_jm-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+class:title-slide
+
+.header[
+.font150[**Predicting the effect of stakeholder variability in natural resource management: using the GMSE R package**]
+]
+&lt;br&gt;
+&lt;div class="row"&gt;
+  &lt;div class="column"; style="width: 100%; text-align: center"&gt;
+    &lt;img src = "pics/goosehunter.jpg" width = "20%"&gt;
+    &lt;img src = "https://live.staticflickr.com/255/19760068178_8ce2ccf7e8_k.jpg" width="22%"&gt;
+    &lt;img src = "https://live.staticflickr.com/1505/24607172362_0a95f68a1e_4k.jpg" width="27%"&gt;
+    &lt;img src = "https://live.staticflickr.com/5242/5354145821_f55a1a8ea8_h.jpg" width="20%"&gt;
+    &lt;br&gt;
+  &lt;/div&gt;
+  &lt;br&gt;
+  
+  &lt;div class="column"; style="width: 10%; float: left"&gt;
+  &lt;br&gt;
+  &lt;/div&gt;
+  &lt;div class="column"; style="width: 50%; float: left; align-items:center; justify-content:center;"&gt;
+    &lt;img src = "pics/stirling_logo.svg" width = "30%" hspace = "20"&gt;
+    &lt;img src = "pics/GMSE_logo_name.jpg" width = "25%" hspace = "20"&gt;
+    &lt;img src = "pics/erc.png" width = "15%" hspace = "20"&gt;
+  &lt;/div&gt;
+  &lt;div class="column"; style="width: 30%; float: right; text-align: left"&gt;
+    &lt;b&gt;Dr Jeroen Minderman&lt;/b&gt;&lt;br&gt;
+    &lt;a href="mailto:jeroen.minderman2@stir.ac.uk"&gt;&lt;i&gt;(jeroen.minderman2@stir.ac.uk)&lt;/i&gt;&lt;/a&gt;&lt;br&gt;
+    Dr Brad Duthie&lt;br&gt;
+    Prof Nils Bunnefeld&lt;br&gt;
+  &lt;/div&gt;
+  &lt;div class="column"; style="width: 10%; float: right; text-align: left; padding-left: 20px; padding-right: 20px"&gt;
+    &lt;br&gt;
+  &lt;/div&gt;
+  
+&lt;/div&gt;
+
+
+---
+# Introduction: .font90[*Increasing populations, increasing pressures*]...
+
+.pull-left[
+
+&lt;div style="text-align: right"&gt; 
+.font120[ [Living Planet Index (2018)](http://www.livingplanetindex.org/projects?main_page_project=LivingPlanetReport&amp;home_flag=1) ]
+&lt;/div&gt;
+&lt;div style="text-align: right"&gt; 
+&lt;img src="pics/Worldpop_LPI_icons.jpg" width="70%" /&gt;
+&lt;img src="pics/LPI_footprint_combined.jpg" width="70%" /&gt;
+&lt;/div&gt;  
+
+]
+
+.pull-right[
+  
+&lt;img src="https://live.staticflickr.com/8622/16470271775_9127343827_z.jpg" width="65%" /&gt;
+
+&lt;img src="pics/goosehunter.jpg" width="65%" /&gt;
+]
+  
+---
+
+# Introduction: .font90[*Management Strategy Evaluation*]
+
+.left-column75[
+&lt;div style="text-align: center"&gt; 
+&lt;img src="pics/MSE1.png" width="80%" /&gt;
+
+.font120[
+  
+  From [Bunnefeld *et al*. (2011)](dx.doi.org/10.1016/j.tree.2011.05.003)]
+&lt;/div&gt;
+]
+
+.right-column25[
+&lt;img src="https://live.staticflickr.com/4842/45580281184_6adf8b370c_k.jpg" width="100%" /&gt;
+]
+
+---
+
+# Introduction: .font90[*Management Strategy Evaluation*]
+
+.left-column75[
+&lt;div style="text-align: center"&gt; 
+&lt;img src="pics/MSE1.png" width="80%" /&gt;
+
+.font120[
+  
+  From [Bunnefeld *et al*. (2011)](dx.doi.org/10.1016/j.tree.2011.05.003)]
+&lt;/div&gt;
+]
+
+.right-column25[
+
+&lt;img src="https://live.staticflickr.com/4842/45580281184_6adf8b370c_k.jpg" width="100%" /&gt;
+&lt;img src="pics/goosehunter.jpg" width="100%" /&gt;
+]
+
+---
+
+# Introduction: .font90[*.. however, variation matters*]
+
+.pull-left[
+&lt;div style="text-align: right"&gt; 
+&lt;img src="https://live.staticflickr.com/6007/5969571025_883acf26fd_k.jpg" width="60%" /&gt;
+   
+&lt;img src="https://live.staticflickr.com/28/54237852_9983ba6d5f_k.jpg" width="60%" /&gt;
+&lt;/div&gt;
+]
+--
+
+.pull-right[
+&lt;div style="text-align: left"&gt; 
+&lt;img src="https://live.staticflickr.com/8652/15147528554_031c034c65_4k.jpg" width="75%" /&gt;
+
+&lt;img src="https://live.staticflickr.com/1505/24607172362_0a95f68a1e_4k.jpg" width="75%" /&gt;
+&lt;/div&gt;
+]
+
+&lt;div style="text-align: center"&gt; 
+.font120[.. but most MSE approaches do not (cannot) account for this]
+&lt;/div&gt;
+
+---
+
+# Introduction: .font90[*.. and equity may be related to biodiversity loss*]
+
+.pull-left[
+&lt;div style="text-align: right"&gt; 
+&lt;img src="pics/Holland_Fig2.jpg" width="80%" /&gt;
+&lt;/div&gt;
+&lt;div style="text-align: center"&gt; 
+.font110[Holland *et al*. (2009)&lt;br&gt;**A Cross-National Analysis of How Economic Inequality Predicts Biodiversity Loss**&lt;br&gt;[Cons Biol 23(5)]( https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1523-1739.2009.01207.x)]
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;img src="pics/Mikkelson_Fig1a.png" width="90%" /&gt;
+&lt;div style="text-align: center"&gt; 
+.font110[Mikkelson *et al*. (2007)&lt;br&gt;**Economic Inequality Predicts Biodiversity Loss**&lt;br&gt;[PLoS ONE 2(5): e444]( https://doi.org/10.1371/journal.pone.0000444]
+&lt;/div&gt;
+)
+]
+
+---
+
+# Aims
+
+.left-column25[
+&lt;img src="https://jejoenje.shinyapps.io/ggmse1/_w_bc0eeeab/GMSE_logo_name.png" width="75%" /&gt;
+
+&lt;img src="pics/icon_coll_bigger.jpg" width="75%" /&gt;
+]
+
+.right-column75[
+
+.font120[
+1. **Introduce GMSE** as flexible and extensible platform for simulating population management  
+  
+  .font90[Brief overview of methods, capabilities, etc...]
+
+2. Use GMSE to **test effect of stakeholder variation** on population management. 
+
+  .font90[Does inequity in wealth and land ownership affect extinction risk?]
+
+
+]
+
+]
+
+---
+# Generalised Management Strategy Evaluation (1)
+
+.pull-left[
+&lt;img src="pics/gmse_main_chart.png" width="100%" /&gt;
+
+]
+
+.pull-right[
+&lt;img src="pics/GMSE_logo_name.jpg" width="45%" style="display: block; margin: auto auto auto 0;" /&gt;
+  
+Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-210X.13091](http://doi.wiley.com/10.1111/2041-210X.13091)**
+
+- Individual-based &amp; spatially explicit
+- **"Manager"**: .red[**maintain resource**]
+- **"Users"**: .red[**maximise yield**]  
+  .font90[("resource" may negatively affect yield)]
+- "Users" can choose to e.g. farm, kill resources, etc.
+- Cost of each action set by manager
+  
+- Available as an [**R package**](https://cran.r-project.org/web/packages/GMSE/index.html) 
+
+]
+
+---
+# Generalised Management Strategy Evaluation (2)
+
+.pull-left[
+&lt;div style="text-align: center"&gt;
+&lt;img src="pics/gmse_typical1.jpg" width="80%" /&gt;
+&lt;img src="pics/gmse_typical3.jpg" width="80%" /&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;img src="pics/GMSE_logo_name.jpg" width="45%" style="display: block; margin: auto auto auto 0;" /&gt;
+  
+Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-210X.13091](http://doi.wiley.com/10.1111/2041-210X.13091)**
+
+- Individual-based &amp; spatially explicit
+- **"Manager"**: .red[**maintain resource**]
+- **"Users"**: .red[**maximise yield**]  
+  .font90[("resource" may negatively affect yield)]
+- "Users" can choose to e.g. farm, kill resources, etc.
+- Cost of each action set by manager
+  
+- Available as an [**R package**](https://cran.r-project.org/web/packages/GMSE/index.html) 
+]
+
+---
+
+# Simulation scenarios
+
+.pull-left[
+## General set-up
+&lt;div style="text-align: center"&gt;
+&lt;img src="https://live.staticflickr.com/255/19760068178_8ce2ccf7e8_k.jpg" width="40%" /&gt;
+&lt;img src="https://live.staticflickr.com/2215/1516678360_d34081e144_k.jpg" width="40%" /&gt;
+&lt;/div&gt;
+
+- Resource population exploits crops (i.e. negatively affects users' yield)  
+- Users can farm, kill resources on their land, or "scare" resources off their land  
+- All land is "privately" owned; users can only kill on their own land  
+]
+--
+
+.pull-right[
+## Stakeholder variation
+
+- Budgets ~ yield
+- Land distribution varied:
+
+&lt;img src="pics/land_dist_examples.jpg" width="75%" /&gt;
+
+
+]
+
+---
+
+# Results (1)
+
+## Increasing inequality = .red[***decreases***] extinction risk??
+
+.pull-left[
+&lt;img src="pics/perc_extinctions_1.jpg" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="pics/pop_trends_1.jpg" width="100%" /&gt;
+]
+
+
+---
+
+# Results (2)
+
+## Increasing inequality = .red[**budgets severely limited**] for some..
+
+.pull-left[
+&lt;img src="pics/perc_extinctions_1.jpg" width="100%" /&gt;
+]
+
+.pull-right[
+&lt;img src="pics/budgets_1.jpg" width="100%" /&gt;
+]
+
+---
+
+# Results (3)
+
+## Limited budgets, .red[**limited power = *de facto* population refuges**]
+
+.left-column[
+  &lt;div class="row"; style="text-align: center; color: black"&gt;
+    &lt;br&gt;
+    &lt;br&gt;
+    &lt;b&gt;Unequal&lt;/b&gt; distribution (75%)
+  &lt;/div&gt;
+  &lt;div class="row"; style="text-align: center; color: black"&gt;
+    &lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+    &lt;b&gt;Equal&lt;/b&gt; distribution
+  &lt;/div&gt;
+]
+
+.right-column[
+&lt;img src="pics/anim1/anim_1.gif" width="60%" /&gt;
+&lt;img src="pics/anim2/anim_2.gif" width="60%" /&gt;
+]
+
+---
+
+# Results (3a)
+
+## Limited budgets, .red[**limited power = *de facto* population refuges**]
+
+.font120[Unequal land distribution (75% to 1)]   
+
+&lt;img src="pics/unequal_dist_start.png" width="32%" /&gt;
+&lt;img src="pics/unequal_pop.png" width="32%" /&gt;
+&lt;img src="pics/unequal_dist_end.png" width="32%" /&gt;
+
+---
+
+# Results (3b)
+
+## Equal land = .red[**equal power = all users can affect resource**]  
+
+.font120[Equal land distribution]   
+
+&lt;img src="pics/equal_dist_start.png" width="32%" /&gt;
+&lt;img src="pics/equal_pop.png" width="32%" /&gt;
+&lt;img src="pics/equal_dist_end.png" width="32%" /&gt;
+
+---
+
+# Conclusions &amp; discussion
+
+.pull-left[
+&lt;div style="text-align: center"&gt; 
+&lt;img src="pics/perc_extinctions_1.jpg" width="50%" /&gt;
+&lt;br&gt;
+&lt;img src="pics/Holland_Fig2.jpg" width="40%" /&gt;
+&lt;img src="pics/Mikkelson_Fig1a.png" width="40%" /&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+### &lt;b&gt;Contradiction&lt;/b&gt;?
+
+- Current model clearly "toy" example...
+- But does highlight need for accounting for complexity:
+- .. many factors affect efquality - biodiversity relationship.
+
+&lt;p&gt;
+
+- GMSE highly flexible; 
+- .. current model can (will!) be developed further
+  - More realistic yield function (e.g. diminishing returns)
+  - Societal change
+  - ...
+
+]
+
+---
+
+# Thank you!
+
+.pull-left[
+
+&lt;div style="float: left; width: 45%;"&gt;
+&lt;img src="https://sticsdotorg.files.wordpress.com/2016/03/photo1.jpeg" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;div style="text-align: center"&gt;
+&lt;a href="https://www.stir.ac.uk/people/257162"&gt;&lt;b&gt;Nils Bunnefeld&lt;/b&gt;&lt;/a&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div style="float: right; width: 45%;"&gt;
+&lt;img src="https://sticsdotorg.files.wordpress.com/2016/03/self_sq.jpg?w=277&amp;h=278" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;div style="text-align: center"&gt;
+&lt;a href="http://bradduthie.github.io/"&gt;&lt;b&gt;Brad Duthie&lt;/b&gt;&lt;/a&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;br&gt;
+&lt;div style="float: left; width: 45%; text-align: center;"&gt;
+&lt;/div&gt;&lt;br&gt;
+&lt;div style="float: right; width: 45%; text-align: center;"&gt;
+&lt;/div&gt;
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;p&gt;
+&lt;div style="text-align: center"&gt;
+&lt;a href="https://www.stir.ac.uk/people/256882"&gt;Jeremy Cusack&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://www.stir.ac.uk/people/257356"&gt;Lynsey Bunnefeld&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://www.stir.ac.uk/people/257474"&gt;Sarobidy Rakotonarivo&lt;/a&gt;&lt;br&gt;  
+&lt;a href="https://www.stir.ac.uk/people/256518"&gt;Isabel Jones&lt;/a&gt;&lt;br&gt;  
+&lt;a href="https://wherethewildthingslive.co.uk/about-the-author/"&gt;Isla Hodgson&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://sti-cs.org/rocio-pozo/"&gt;Rocio Pozo&lt;/a&gt;&lt;br&gt;
+&lt;a href="https://sti-cs.org/lovisa-nilsson/"&gt;Lovisa Nilsson&lt;/a&gt;
+&lt;p&gt;
+&lt;img src="https://www.stir.ac.uk/webcomponents/dist/css/images/logos/logo.svg" width="40%" /&gt;
+&lt;/div&gt;
+]
+
+.pull-right[
+&lt;div style="text-align: center"&gt;
+&lt;img src="https://sticsdotorg.files.wordpress.com/2016/03/confoobio-stacked-logo.png?w=300&amp;h=300" width="50%" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;
+&lt;img src="https://sticsdotorg.files.wordpress.com/2019/06/image.png?w=960" width="40%" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Conclusions &amp; Discussion?
+--
+
+.pull-left[
+&lt;img src="pics/grauniad_scottish_land_header.jpg" width="65%" style="display: block; margin: auto 0 auto auto;" /&gt;
+&lt;div style="text-align: right; font-size: 75%;"&gt;
+&lt;a href="https://www.theguardian.com/uk-news/2013/aug/10/scotland-land-rights"&gt;(The Observer, August 2013)&lt;/a&gt;
+&lt;/div&gt;
+&lt;img src="https://i.guim.co.uk/img/static/sys-images/Guardian/Pix/maps_and_graphs/2013/8/12/1376299018660/Scotland-map-blue2.png?width=620&amp;quality=85&amp;auto=format&amp;fit=max&amp;s=4d1449193ee171dedf186c49f80ae8ec" width="60%" style="display: block; margin: auto 0 auto auto;" /&gt;
+
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

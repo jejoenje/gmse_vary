@@ -4,7 +4,7 @@ gmse_paras <- list(
   land_dim_2 =      200,
   land_ownership =  TRUE, 
   tend_crops =      TRUE,
-  tend_crop_yld =   0.9,
+  tend_crop_yld =   0.9, 
   scaring =         TRUE,
   minimum_cost =    10,
   remove_pr =       0.075,       
@@ -15,7 +15,7 @@ gmse_paras <- list(
   manage_target =   1000,
   manager_budget =  1000, 
   user_budget =     1000,
-  public_land =     0,           
+  public_land =     0,       
   stakeholders =    8, 
   res_consume =     0.2,          # was 0.175
   observe_type =    0,
@@ -25,8 +25,8 @@ gmse_paras <- list(
   agent_move =      100,         
   converge_crit =   0.1,
   ga_mingen =       40,
-  years =           50,
-  sims =            10)
+  years =           100,
+  sims =            100)
 
 years = gmse_paras$years
 sims = gmse_paras$sims

@@ -3,6 +3,14 @@
 .RData
 .Ruserdata
 gmse_vary.Rproj
-sims/varyBudget/
-sims/*/out/
 out/
+sims/nullModel/
+sims/nullModel-YTB1/
+sims/nullModel-YTB2/
+sims/nullModel-YTB3-backup/
+sims/test_output/
+sims/varyBudget/
+sims/varyBudget-1/
+sims/varyBudget-2/
+sims/varyBudget-3/
+

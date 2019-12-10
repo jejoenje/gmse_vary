@@ -2,6 +2,10 @@
 ### 
 ### 
 
+### Some constants:
+### 
+ACT_NAMES = c("scares","kills","castr","crops","feeds","helps","noact")
+
 ### Initialises simulations following a specific SIM_NAME (a scenario defined by a set of parameters).
 ### 
 ### Assumes a strict folder structure for outputs as well as a specific name for input parameters:
@@ -19,7 +23,8 @@
 
 init_sims = function(SIM_NAME) {
   
-  source(sprintf("sims/%s/paras_%s.R", SIM_NAME, SIM_NAME))
+  ### Load GLOBAL parameters
+  #source(sprintf("sims/%s/paras_%s.R", SIM_NAME, SIM_NAME))
   
   ### Set output dir
   outdir = sprintf("sims/%s/out/",SIM_NAME)
@@ -32,10 +37,75 @@ init_sims = function(SIM_NAME) {
   dir.create(outpath)
   ### Save current parameters to output dir (note Rdata file to separate from Rds sim files)
   save(gmse_paras, file=sprintf("%sparas_%s_%s.Rdata", outpath, outidx, SIM_NAME))
- 
+  
   assign("outdir", outdir, env = globalenv())
   assign("outidx", outidx, env = globalenv())
   assign("outpath", outpath, env = globalenv())
+  assign("para_path", sprintf("%sparas_%s_%s.Rdata", outpath, outidx, SIM_NAME), env = globalenv())
+  
+}
+
+update_paras_from_grid = function(vals, para_list) {
+  for(i in 1:len(vals)) {
+    
+    if(names(vals[i]) %in% names(para_list)) {
+      para_list[which(names(para_list) == names(vals[i]))] = as.vector(vals[[i]])   
+    } else {
+      para_list[[len(para_list)+1]] = as.vector(vals[[i]])
+      names(para_list)[len(para_list)] = names(vals)[i]
+    }
+  }
+  return(para_list)
+}
+
+init_out = function(s, y, users) {
+  
+  POP = expand.grid(SIM=c(1:sims), YEAR=c(1:years))
+  POP = POP[order(POP[,"SIM"],POP[,"YEAR"]),]
+  POP["N"] = NA
+  POP["N_OBS"] = NA
+  assign("POP", POP, env = globalenv())
+  
+  USR = expand.grid(usr = c(1:users), YEAR=c(1:years), SIM=c(1:sims))
+  USR = subset(USR, select=c("SIM","YEAR","usr"))
+  USR["yld"] = NA
+  USR["bud"] = NA
+  acts = as.data.frame(matrix(NA, nrow=nrow(USR), ncol=7))
+  names(acts) = ACT_NAMES
+  USR = cbind(USR, acts)
+  assign("USR", USR, env = globalenv())
+  
+  EXT = expand.grid(SIM = c(1:sims))
+  EXT["status"] = FALSE
+  EXT["year"] = NA
+  assign("EXT", EXT, env = globalenv())
+  
+}
+
+store_dat = function(dat, s, y, type = "normal") {
+  
+  if(type=="normal") {
+    ### Extract and save population data
+    POP[which(POP["SIM"]==s & POP["YEAR"]==y),"N"] = dat[["basic_output"]][["resource_results"]]
+    POP[which(POP["SIM"]==s & POP["YEAR"]==y),"N_OBS"] = dat[["basic_output"]][["observation_results"]]
+    assign("POP", POP, env = globalenv())
+    
+    ### Extract and save action data per user (looping through each action)
+    for(i in 1:len(ACT_NAMES)) {
+      n = ACT_NAMES[i]
+      USR[which(USR["SIM"]==s & USR["YEAR"]==y),n] = extractUser(dat, n)
+    }
+    ### Extract and save yield data:
+    USR[which(USR["SIM"]==s & USR["YEAR"]==y),"yld"] = extractUser(sim_new, "yield")
+    ### Extract and save budget data (NOTE THAT THIS SHOULD BE DONE AFTER "UPDATING" A BUDGET, IF DESIRED:
+    USR[which(USR["SIM"]==s & USR["YEAR"]==y),"bud"] = extractUser(sim_new, "budget")
+    
+    assign("USR", USR, env = globalenv())  
+  } else {
+    EXT[which(EXT["SIM"]==s),"status"] = TRUE
+    EXT[which(EXT["SIM"]==s),"year"] = y
+    assign("EXT", EXT, env = globalenv())  
+  }
   
 }
 
@@ -50,7 +120,6 @@ init_sims = function(SIM_NAME) {
 sample_budgets_ManyPoorFewRich = function(nstakeholders = 8, manager_budget = 1000, scale = 1) {
   return(floor(rbeta(nstakeholders, 1, .5)*(manager_budget*scale)))
 }
-
 
 ### Converts given yield to a return for a next budget.
 yield_to_return = function(yield, yield_return, type = "direct") {
@@ -83,6 +152,60 @@ yield_to_return = function(yield, yield_return, type = "direct") {
   
 }
 
+### set_land()
+
+set_land = function(land, s, type, hi_frac = NULL, up_frac = NULL, lo_frac = NULL) {
+  pub_land_present = FALSE
+  tland = table(land)
+  
+  # If assuming equal land dist, return what was given:
+  if(type == "equal" | is.null(type) ) {
+    return(land)
+  }
+  
+  if(type == "oneRich") {
+    
+    if("1" %in% names(tland)) {
+      pub_land_present = TRUE
+      common_land = tland[1]
+      tland = tland[2:len(tland)]
+      #names(tland) = as.character(1:len(tland))
+    } 
+    
+    pland = sum(tland)
+    if(is.null(up_frac)) up_frac = hi_frac+(hi_frac*0.07)
+    if(is.null(lo_frac)) lo_frac = hi_frac-(hi_frac*0.07)
+    
+    rich_frac = rgbeta(1, mean = hi_frac, var = hi_frac/2000, min = lo_frac, max = up_frac)
+    rich_size = floor(pland*rich_frac)
+    
+    rest = pland - rich_size
+    
+    others = rest/(s-1)
+    others = floor(others)
+    
+    all = c(rich_size, rep(others, s-1))
+    all[1] = all[1]+(pland-sum(all))
+    
+    if(pub_land_present == TRUE) {
+      all = c(common_land, all)
+      all_cells = as.vector(NULL)
+      for(i in 1:len(all)) {
+        all_cells = c(all_cells, rep(i, all[i]))
+      }
+    } else {
+      all_cells = as.vector(NULL)
+      for(i in 1:len(all)) {
+        all_cells = c(all_cells, rep(i+1, all[i]))
+      }  
+    }
+    
+    land_out = matrix(all_cells, nrow = nrow(land), ncol = ncol(land))
+    
+    return(land_out)
+  }
+}
+
 
 ### set_budgets()
 ### Takes AGENTS data frame as argument and returns a series of new budgets based on 
@@ -100,10 +223,33 @@ set_budgets = function(prv, nxt, yv, yield_type = "beta1") {
   
 }
 
-count_extinctions = function(simres) {
+### Set manager budget according to user budgets
+set_man_budget = function(u_buds, type = "max", fixed_budget = 1000) {
+  allowed_types = c("fixed", "max","mean","0.75","0.9","0.99")
   
+  if(!(type %in% allowed_types)) {
+    stop(sprintf("Type '%s' not implemented, please choose from: %s", type, paste(allowed_types, collapse=", ")))
+  }
+  
+  if(type == "max") {
+    return(max(u_buds))
+  }
+  if(type == "mean") {
+    return(mean(u_buds))
+  }
+  if(type == "0.75") {
+    return(as.numeric(quantile(u_buds, probs = c(0.75))))
+  }
+  if(type == "0.9") {
+    return(as.numeric(quantile(u_buds, probs = c(0.9))))
+  }
+  if(type == "0.99") {
+    return(as.numeric(quantile(u_buds, probs = c(0.99))))
+  }
+  if(type == "fixed") {
+    return(fixed_budget)
+  }
 }
-
 
 load_sims = function(outdir = NULL, no_files = NULL) {
   sim_files = list.files(outdir)
@@ -171,6 +317,39 @@ trunc_res = function(simres) {
 }
 
 
+### Takes a single $LAND list and calculates PRODUCTION for each user
+calcProd = function(land) {
+  
+  # Enumerate all users in input:
+  all_users = names(table(land[,,3]))
+  
+  production = as.vector(NULL)
+  for(i in 1:len(all_users)) {
+    production = c(production, sum(land[,,3][which(land[,,3]==all_users[i])]))
+  }
+  return(production)
+}
+
+
+### Takes $LAND, $RESOURCE and $res_consume and calculates YIELD, which is production
+###  minus damage by resource
+calcProd_damage = function(res, land, res_consume) {
+  
+  res_count = matrix(0, nrow = nrow(land[,,3]), ncol = ncol(land[,,3]) )
+  
+  for(i in 1:nrow(res)) {
+    res_count[res[i,5],res[i,5]] = res_count[res[i,5],res[i,5]]+1
+  }
+  ### Update production with damage by resource:
+  land[,,2] = land[,,2]*(gmse_paras$res_consume^res_count)
+  
+  ### Calculate reduced production:
+  return(calcProd(land))
+  
+}
+
+
+
 
 ###
 ### extractUser() does the same as get_user_data but on a single gmse_apply() list output (single sim/year)
@@ -207,6 +386,23 @@ extractUser = function(dat, type) {
     return(apply(actions, 3, function(x) x[1,8]))
   }
   
+  if(type == "castr") {
+    return(apply(actions, 3, function(x) x[1,10]))
+  }
+  
+  if(type == "feeds") {
+    return(apply(actions, 3, function(x) x[1,11]))
+  }
+  
+  if(type == "helps") {
+    return(apply(actions, 3, function(x) x[1,12]))
+  }
+  
+  if(type == "noact") {
+    return(apply(actions, 3, function(x) x[1,13]))
+  }
+  
+  ### 'all_actions' returns the total number of actions per user.
   if(type == "all_actions") {
     all_act = apply(actions, 3, function(x) {
         x[1,8]+   # SCARING
@@ -233,6 +429,7 @@ extractUser = function(dat, type) {
     return(apply(expenses, 3, function(x) sum(x, na.rm=T)))
   }
   
+  ### 'all_costs' returns total costs per user.
   ### THIS EXCLUDES "NOTHING" AS IT ASSUMES IT "COSTS" NOTHING.
   if(type == "all_costs") {
     all_act = apply(actions, 3, function(x) {
@@ -630,6 +827,116 @@ plot_yield = function(gmse_res, type = "all") {
     
   }
   
+}
+
+
+###
+### plot_gmse_sims()
+###
+### This function is intended to plot the results from "new style", "flat-file" gmse_apply sim outputs.
+
+
+plot_gmse_sims = function(pop, usr=NULL) {
+  
+  # Reconstruct number of sims and number of years in output:
+  s = max(pop$SIM)
+  s_years = tapply(pop$YEAR, pop$SIM, max)
+  y = max(s_years)
+  
+  if(!is.null(usr)) {
+    # Reconstruct no. of stakeholders
+    stakeholders = max(as.numeric(names(table(usr$usr))))
+  }
+  
+  if(!is.null(usr)) {
+    # Set up plots
+    par(mfrow=c(2,2))
+  } else {
+    par(mfrow=c(1,1))
+  }
+  
+  if(is.null(usr)) {
+    # 1. Resources
+    y_max = bufRange(pop[,"N"], end="hi",incl_val = gmse_paras$manage_target)
+    y_min = bufRange(pop[,"N"], end="lo",incl_val = gmse_paras$manage_target)
+    plot(pop$YEAR, pop$N, type="n", ylab = "Resource population", xlab = "Time step", 
+         ylim=c(y_min,y_max), xlim = c(0, max(pop$YEAR)))
+    for(i in 1:s) {
+      lines(pop[pop["SIM"]==i,"YEAR"], pop[pop["SIM"]==i,"N"])
+    }
+    abline(h = gmse_paras$manage_target, col  = "red", lty = "dashed")
+    
+  } else {
+    
+    # 1. Resources
+    y_max = bufRange(pop[,"N"], end="hi",incl_val = gmse_paras$manage_target)
+    y_min = bufRange(pop[,"N"], end="lo",incl_val = gmse_paras$manage_target)
+    plot(pop$YEAR, pop$N, type="n", ylab = "Resource population", xlab = "Time step", 
+         ylim=c(y_min,y_max), xlim = c(0, max(pop$YEAR)))
+    for(i in 1:s) {
+      lines(pop[pop["SIM"]==i,"YEAR"], pop[pop["SIM"]==i,"N"])
+    }
+    abline(h = gmse_paras$manage_target, col  = "red", lty = "dashed")
+    
+    # 2. Actions
+    curacts = c("scares","kills","crops","noact")
+    pltact = subset(usr, select = c("SIM","YEAR","usr", curacts))
+    y_max = bufRange(pltact[,curacts], end="hi", buffer = 0.075)
+    y_min = bufRange(pltact[,curacts], end="lo")
+    # Calculate mean actions across simulations for each user (row) per year (column)
+    kills_mn = tapply(pltact$kills,list(pltact$usr,pltact$YEAR), function(x) mean(x, na.rm=T))
+    crops_mn = tapply(pltact$crops,list(pltact$usr,pltact$YEAR), function(x) mean(x, na.rm=T))
+    scares_mn = tapply(pltact$scares,list(pltact$usr,pltact$YEAR), function(x) mean(x, na.rm=T))
+    noact_mn = tapply(pltact$noact,list(pltact$usr,pltact$YEAR), function(x) mean(x, na.rm=T))
+    
+    act_cols = brewer.pal(5, "PRGn")
+    act_cols = act_cols[c(1,2,5)]
+    alph = 0.8
+    
+    plot(pltact$YEAR,pltact$kills,type="n", ylim=c(y_min,y_max), 
+         xlab = "Time step", ylab = "Mean stakeholder actions", xlim = c(0, max(pltact$YEAR)))
+    for(i in 1:stakeholders) {
+      lines(1:y,kills_mn[i,], col = alpha(act_cols[1],alph))
+      lines(1:y,scares_mn[i,], col = alpha(act_cols[2],alph))
+      lines(1:y,crops_mn[i,], col = alpha(act_cols[3],alph))
+    }
+    
+    legend(x = 1, y = y_max*1.05, legend = c("Culling","Scaring","Farming"), 
+           fill = act_cols, horiz = T, bty = "n", x.intersp = 0.1, text.width = c(1,1,1))
+    
+    
+    # 3. Yields
+    
+    y_range = c(bufRange(usr$yld, end = "lo"),bufRange(usr$yld, end = "hi") ) 
+    plot(usr$YEAR,usr$yld, type="n", xlab = "Time step", ylab = "Yield per user", 
+         ylim = y_range,xlim = c(0, max(usr$YEAR)))
+    
+    stakeholder_cols = alpha(brewer.pal(stakeholders, "Paired"),0.8)
+    
+    for(u in 1:stakeholders) {
+      u_col = stakeholder_cols[u]
+      
+      for(sim in 1:s) {
+        set = usr[(usr$usr == u & usr$SIM == sim),]
+        lines(set$YEAR,set$yld, col = u_col)
+      }
+      
+    }
+    
+    # 4. Budgets
+    y_range = c(bufRange(usr$bud, end = "lo"),bufRange(usr$bud, end = "hi") ) 
+    plot(usr$YEAR,usr$bud, type="n", xlab = "Time step", ylab = "Budget per user", ylim = y_range, xlim = c(0, max(usr$YEAR)))
+    stakeholder_cols = alpha(brewer.pal(stakeholders, "Paired"),0.8)
+    for(u in 1:stakeholders) {
+      u_col = stakeholder_cols[u]
+      for(sim in 1:s) {
+        set = usr[(usr$usr == u & usr$SIM == sim),]
+        lines(set$YEAR,set$bud, col = u_col)
+      }
+    }
+    
+  }
+    
 }
 
 

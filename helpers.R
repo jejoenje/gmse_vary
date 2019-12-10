@@ -1,6 +1,37 @@
 ### Alias for length()
 len = length
 
+### Generalised beta distribution with mean, var, min and max.
+rgbeta <- function(n, mean, var, min = 0, max = 1)
+{
+  dmin <- mean - min
+  dmax <- max - mean
+  
+  if (dmin <= 0 || dmax <= 0)
+  {
+    stop(paste("mean must be between min =", min, "and max =", max)) 
+  }
+  
+  if (var >= dmin * dmax)
+  {
+    stop(paste("var must be less than (mean - min) * (max - mean) =", dmin * dmax))
+  }
+  
+  # mean and variance of the standard beta distributed variable
+  mx <- (mean - min) / (max - min)
+  vx <- var / (max - min)^2
+  
+  # find the corresponding alpha-beta parameterization
+  a <- ((1 - mx) / vx - 1 / mx) * mx^2
+  b <- a * (1 / mx - 1)
+  
+  # generate standard beta observations and transform
+  x <- rbeta(n, a, b)
+  y <- (max - min) * x + min
+  
+  return(y)
+}
+
 ### Return number of values (len()) and number of unique values in vector:
 ulen = function(x) {
   return(c(len(x), len(unique(x))))
