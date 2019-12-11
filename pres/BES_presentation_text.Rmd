@@ -176,7 +176,7 @@ and is thus under greater risk of extinction overall.
 
 ## 12. Conclusion & discussion
 
-So in conclusion, the sort of resulting pattern of apparent reduced extinction risk with increased economic inequality
+So in conclusion, theresulting pattern of apparent reduced extinction risk with increased economic inequality
 is counterintuitive and goes against empirical evidence of the sort I discussed earlier. Obviously I should stress that
 the simulations I have shown here are just a simple toy example, with many parameters and aspects of real systems not
 modelled.
@@ -184,7 +184,7 @@ Having said that, I strongly believe that what this simple modelling excercise d
 about taking intuitive patterns for granted, and the need for really accounting for complexity in socio-economic
 systems. Many factors will affect the likely relationship between social equity and biodiversity, and to make effective
 predictions, we need to be able to account for this in our models.
-Although it should be pretty obvious that the results shown here shouldn't be taken as the final answer, I hope that you
+I hope that you
 can see that using GMSE it will be possible to start adding the necessary complexity to these models quite quickly.
 Specifically, it will be relatively straightforward to start adding, for example, more realistic yield return functions,
 perhaps even ones that vary by stakeholder.

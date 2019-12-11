@@ -49,6 +49,13 @@ class:title-slide
   
 &lt;/div&gt;
 
+???
+
+Hello everyone and thank you very much for the opportunity to present this work. What I will be talking about here is
+part of the work that is ongoing in the ConFooBio group at Stirling University. I should stress that the results I'll be
+presenting are still very much a work in progress.
+What's more - this is very much a collaborative project - in particular, I should make mention of Brad Duthie who has
+been responsible for the development of the modelling platform I am using here.
 
 ---
 # Introduction: .font90[*Increasing populations, increasing pressures*]...
@@ -71,24 +78,16 @@ class:title-slide
 
 &lt;img src="pics/goosehunter.jpg" width="65%" /&gt;
 ]
-  
----
 
-# Introduction: .font90[*Management Strategy Evaluation*]
+???
 
-.left-column75[
-&lt;div style="text-align: center"&gt; 
-&lt;img src="pics/MSE1.png" width="80%" /&gt;
-
-.font120[
-  
-  From [Bunnefeld *et al*. (2011)](dx.doi.org/10.1016/j.tree.2011.05.003)]
-&lt;/div&gt;
-]
-
-.right-column25[
-&lt;img src="https://live.staticflickr.com/4842/45580281184_6adf8b370c_k.jpg" width="100%" /&gt;
-]
+It should be no news to anyone in this room that with rapidly increasing world populations - the image here on the left
+is from the recent Living Planet Index report - anthropogenic pressures on the planet are also increasing rapidly. In
+particular, exploitation of natural resources is a significant component of this. This could of course take the form
+of extraction of resources such as timber, it also includes concurrent growth demand for food production through
+agriculture, harvesting of animal populations, and also control of animal populations that may hinder crop productions.
+In other words, the extent of conflicts between human interest in natural resources, and the conservation of animal
+populations is growing.
 
 ---
 
@@ -110,6 +109,13 @@ class:title-slide
 &lt;img src="pics/goosehunter.jpg" width="100%" /&gt;
 ]
 
+???
+
+As a consequence of such conflicts, the need for, and interest in, effective management of socio-economic systems has
+increased in recent years. Management strategy evaluation approaches are conceptual frameworks for modelling dynamics of systems where stakeholders - both resource users and managers - interact with a resource population.
+I don't intend to go into much detail about these in general here, but suffice to
+say that they have their origins in fisheries management, but in recent years they have been applied to to non-fisheries systems, such as terrestrial herbivores, for example.
+
 ---
 
 # Introduction: .font90[*.. however, variation matters*]
@@ -121,7 +127,6 @@ class:title-slide
 &lt;img src="https://live.staticflickr.com/28/54237852_9983ba6d5f_k.jpg" width="60%" /&gt;
 &lt;/div&gt;
 ]
---
 
 .pull-right[
 &lt;div style="text-align: left"&gt; 
@@ -134,6 +139,14 @@ class:title-slide
 &lt;div style="text-align: center"&gt; 
 .font120[.. but most MSE approaches do not (cannot) account for this]
 &lt;/div&gt;
+
+???
+
+However, what almost such frameworks are lacking, are easy ways to take account of, and include variability among
+stakeholders. 
+This is obviously important on many different spatial scales - individual farmers or farms for example often have highly variable financial means - property sizes, budgets, or even extent of possible farming activities will vary. 
+Although it is intuitively clear that such variation will affect the extent to which such stakeholders affect natural
+resources, most implementations of MSE cannot account for this.
 
 ---
 
@@ -155,6 +168,17 @@ class:title-slide
 &lt;/div&gt;
 )
 ]
+
+???
+
+This is potentially an important shortcoming, because from previous studies we know that socio-political variation can
+affect biodiversity conservation.
+On a global level, for example, these two different studies by Holland et al and Mikkelson et al. both show the effect
+of country-level differences in measures of economic inequality (here measured as the Gini-index) on species threat
+status. Specifically, as economic inequality increases, both analyses suggest that a greater number of species are at
+greater risk of extinction.
+In some ways, this is a fairly intuitive result - it is relatively easy to imagine that greater levels of economic
+inequality will lead to increased difficulties in managing threatened species effectively.
 
 ---
 
@@ -182,6 +206,16 @@ class:title-slide
 
 ]
 
+???
+
+So, that brings me to the aims of the current talk.
+They are two-fold.
+First, I intend to introduce GMSE, or Generalised MSE. This is a highly flexible and extensible modelling framework for
+MSE, which was developed over the last few years in the ConFooBio group at Stirling University. I will give a very quick overview of its methodologies and potential.
+Secondly, I will then try to kill two birds with one stone, and demonstrate the utility and capabilities of GMSE by
+using it to test the effect of variation in stakeholder properties on the resulting population management. Specifically,
+does variation in wealth and land ownership affect extinction risk of the species under management?
+
 ---
 # Generalised Management Strategy Evaluation (1)
 
@@ -206,30 +240,28 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 
 ]
 
----
-# Generalised Management Strategy Evaluation (2)
+???
 
-.pull-left[
-&lt;div style="text-align: center"&gt;
-&lt;img src="pics/gmse_typical1.jpg" width="80%" /&gt;
-&lt;img src="pics/gmse_typical3.jpg" width="80%" /&gt;
-&lt;/div&gt;
-]
+So, GMSE - a very brief introduction to GMSE. Unfortunately I'll have very little time to get into all of the details,
+but if you are interested, a good starting point is the paper I've linked to here, through which you will be able to
+find a large collection of examples and background material.
+As said, GMSE is a specific implementation of a MSE framework. As such, it follows the rough outline we have
+already seen, and consists of four main component models. The natural resource is modelled, which is observed through an
+observation model, feeds into a manager model, and then into a user model. Users' decision affect the resource, after
+which the cycle starts again.
+In GMSE, each of these four models are entirely customisable, but by default they are individually-based and spatially explicit. 
+In the default set up, it is easiest to conceptualise this framework as users being farmers which aim to maximise yield
+from their crop, and  the manager being a government setting a target resource population which they are trying to
+maintain. The resource population would be animals which can damage crop yield.
 
-.pull-right[
-&lt;img src="pics/GMSE_logo_name.jpg" width="45%" style="display: block; margin: auto auto auto 0;" /&gt;
-  
-Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-210X.13091](http://doi.wiley.com/10.1111/2041-210X.13091)**
-
-- Individual-based &amp; spatially explicit
-- **"Manager"**: .red[**maintain resource**]
-- **"Users"**: .red[**maximise yield**]  
-  .font90[("resource" may negatively affect yield)]
-- "Users" can choose to e.g. farm, kill resources, etc.
-- Cost of each action set by manager
-  
-- Available as an [**R package**](https://cran.r-project.org/web/packages/GMSE/index.html) 
-]
+Actions taken by users may or may not affect the resource population - examples are farming, killing resources or
+scaring resources (which moves the resource away from a farmers' land).
+Each of the users' actions have a cost, which they have to pay from their budget. 
+Costs for each action are set by the manager. The manager chooses a cost for each of the users' action, according to
+their own budget, the managers target level of the resource population, and the distance between this target and the
+current population level.
+As said, I don't have time to go into much detail here, but GMSE is available as an R package with extensive
+documentation, including many examples.
 
 ---
 
@@ -246,7 +278,6 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 - Users can farm, kill resources on their land, or "scare" resources off their land  
 - All land is "privately" owned; users can only kill on their own land  
 ]
---
 
 .pull-right[
 ## Stakeholder variation
@@ -258,6 +289,35 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 
 
 ]
+
+???
+
+Instead, what I will do here, is provide you with a specific example of using GMSE to explore the effect of variation
+among stakeholders.
+As a general set up, I will be simulating a resource population of animals which is under management but also damages
+the crop yield by farmers. I should stress that in this case, this should be viewed as an entirely hypothetical animal
+population, and I haven't parameterised this for any specific examples, but think for example of a managed population of
+herbivores such as geese.
+I model a total of 8 stakeholders - or "users" in GMSE terminology - who own various bits of the landscape. In each
+model time step, these users can take one of three actions - either farm their land to increase crop yield, shoot a
+number of resource animals to lower the damage they cause, or they can scare the animals off their land.
+In this scenario, the users (farmers) can only affect resources which are on their own land.
+The managers' target population size is 1000 animals of the resource.
+
+In addition to this basic GMSE set up, I have here introduced variation among stakeholders.
+Specifically, the users' budget in each time step is a function of the yield they achieve; for simplicity, here I
+have implemented this as a simple linear function with a little bit of variation around it.
+In addition to this, I vary land distribution in four different scenarios - one following the default GMSE land
+distribution, where each user simply has an equal share of the landscape, and three where the land distribution is
+increasingly uneven - from 25% of the landscape belonging to a single user, to 50% to 75%. [In these images, the
+landscape is represented by a square and each colour is the land owned by the different farmers.]
+This variation in land ownership will obviously have consequences for both potential yield, but also potential effect on
+the resource population.
+As a final note, I should stress that in this toy example, the animals distribute themselves randomly across the
+landscape in each time step, and the manager's budget is fixed to the mean of the users' budget in each scenario.
+
+Given this parameter selection, I have simulated 100 time steps (100 years) of this socio-ecological system, and
+repeated this for 100 replicates.
 
 ---
 
@@ -273,6 +333,20 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 &lt;img src="pics/pop_trends_1.jpg" width="100%" /&gt;
 ]
 
+???
+
+So, much to my surprise, the initial results of this simulation appeared to be rather counter-intuitive. Instead of
+extinction risk increasing with increasing levels of stakeholder inequality in land distribution, it appears that the
+opposite is true.
+In this figure on the left, I have simply summarised the percentage of extinctions that occured in each land
+distribution scenario - as you can see, extinction is more frequent when the land is distribution - and thus user budget
+- is equal, compared the the more inequitable land distributions, and decreases to 0 when the land is distributed most
+unevenly.
+The same pattern is of course also reflected in the population trajectories themselves, which you can see in the panels
+on  the right here, where each line is the population size in a single simulation, with cases where the population went
+extinct highlighted in red. 
+Note that not only are extinctions more frequent as land distribution becomes more equal, the overall trends are more
+steeply negative as well.
 
 ---
 
@@ -287,6 +361,21 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 .pull-right[
 &lt;img src="pics/budgets_1.jpg" width="100%" /&gt;
 ]
+
+???
+
+Given what I was talking about earlier and the previous empirical evidence this is a rather surprising result, so why is
+this going on?
+It is informative to actually start looking at what is going on with both the individual farmers' budgets, as well as
+the spatial distribution of the animal populations.
+Let's start with the users (or farmers') budgets - I've here plotted the mean budget for each of the eight users across
+all 100 simulations, for each of the land distribution scenarios.
+It should be immediately obvious that, as well as increasing budgets over time, because users' budget is a function of
+their yield, as inequality in land distribution increases, so does the gap in wealth between a single larger land owner,
+and a bigger number of smaller land owners.
+Because a users' ability to take certain actions (such as kill or scare resources off their land) is dependent on their
+budget, what this in turn means, is that in the more unequal scenarios, the power of the users' becomes biased towards
+the bigger land owner.
 
 ---
 
@@ -310,6 +399,25 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 &lt;img src="pics/anim1/anim_1.gif" width="60%" /&gt;
 &lt;img src="pics/anim2/anim_2.gif" width="60%" /&gt;
 ]
+
+???
+
+Knowing this, the observed decrease in extinction risk with increasing socio-economic inequality may become more
+understandable, particularly when also considering the effect on spatial distribution of the animal population.
+In this pair of plots, I've produced the position of each individual animal on the landscape throughout two of the
+simulated scenarios - the most unequal land distribution at the top, and the even land distribution in the bottom. The
+graphs on the right just shows the resulting population trajectory in a single simulation example
+As you can see, what actually happens in the case of highly unequal land ownership, the single "rich" landowner has
+sufficient ability to simply kill and scare resources off their land, which results in a progressive shift of the animal
+distribution into the small landholders' lands. These landowners in turn have such a limited budget in the first place
+(because the yield from their land is small), they have very little ability to affect the population. In effect, the
+poorer landholders' land becomes a de facto population refuge, allowing the population to maintain a reasonable
+level.
+
+By contrast, when looking at the population distribution and concurrent population trajectories in the equal land
+distribution scenario, all users have equal budget and thus equal ability to affect the population - by virtue of the
+equal land distribution, the population is also equally exposed to each land owner. As a result, the population takes
+bigger hits and is thus under greater risk of extinction overall.
 
 ---
 
@@ -342,6 +450,24 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
   - ...
 
 ]
+
+???
+
+Having said all of this, to conclude, it is still counterintuitive to say that increasing inequality is going to be
+associated wih lower extinction risk.
+Obviously I should stress that the simulations I have shown here are just a simple toy example, with many parameters and
+aspects of real systems not modelled.
+Having said that, I strongly believe that what this simple modelling excercise does show, is the need to be careful
+about taking apparently intuitive patterns for granted, and the need to account for complexity in socio-economic
+systems. Many factors will affect the apparent relationships between social equity and biodiversity, and to make
+effective predictions, we need to be able to account for this in our models.
+However, I hope that I have convinced you that using GMSE it will be possible to start adding the necessary complexity
+to these models quite quickly.
+Specifically, it will be relatively straightforward to start adding, for example, more realistic yield return functions,
+perhaps even ones that vary by stakeholder.
+As another example specific to the simualtions I have just shown, GMSE would be able to account for redistribution of
+land as a result of farmers going bust; so it will be possible to start looking at effects of societal change on
+population management. Given the flexible GMSE framework, the possibilities are really endless.
 
 ---
 
@@ -387,6 +513,12 @@ Duthie et al. (2018) *Methods in Ecology &amp; Evolution*. **[DOI: 10.1111/2041-
 &lt;img src="https://sticsdotorg.files.wordpress.com/2019/06/image.png?w=960" width="40%" style="display: block; margin: auto;" /&gt;
 
 ]
+
+???
+
+So I hope this has given you some idea of what this modelling framework can do.
+I just wanted to specifically say thanks to these two gentlemen here, without whom I probably wouldn't be talking to you
+about this today. Thanks very much for your attention.
 
 ---
     </textarea>
