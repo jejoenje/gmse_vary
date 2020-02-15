@@ -329,6 +329,24 @@ set_budgets = function(prv, nxt, yv, yield_type = "beta1") {
   
 }
 
+#' Plot a "land" matrix as produced by GMSE (LAND[,,3]) as coloured image.
+#' 
+#' @param x A matrix of whole integer numbers where each number represents a land "owner".
+#' @param col A \code{\link{RColorBrewer}} color set code to indicate the colors to use. 
+#' @return Nothing, plots an image.
+#' @examples
+#' plot_land(sim$LAND[,,3])
+plot_land = function(x, col = "BrBG") {
+  # Pick colors
+  land_cols = brewer.pal(len(table(x))+1, col)
+  land_cols = land_cols[!land_cols=="#F5F5F5"]
+  
+  if(sum(x == 1)>0) land_cols[1] = "#FFFFFF"
+  
+  image(x = x, col = land_cols, yaxt = "n", xaxt = "n")  
+}
+
+
 ### Set manager budget according to user budgets
 set_man_budget = function(u_buds, type = "max", fixed_budget = 1000) {
   allowed_types = c("fixed", "max","mean","0.75","0.9","0.99")
