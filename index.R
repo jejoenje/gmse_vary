@@ -5,7 +5,10 @@ library(RColorBrewer)
 source('helpers.R')
 source('gmse_apply_helpers.R')
 
-source("global_pars2.R")
+source("build_para_grid.R")
+
+
+
 
 years = 10
 sims = 10

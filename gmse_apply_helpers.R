@@ -152,9 +152,115 @@ yield_to_return = function(yield, yield_return, type = "direct") {
   
 }
 
-### set_land()
+### distribute_land()
 
+### THIS FUNCTION IS INTENDED TO REPLACE set_land()!
+
+### Function to distribute a matrix of landscape cells among s owners.
+### Landscape dimensions are controlled by xd (rows) and y (cols).
+### Public land is set by public_land. This is a fraction of the total landscape, the remainder of the landscape
+###  is divided up between the s stakeholders - these are numbered 2-(s+1) in the output, public land is equal to 1.
+### Type sets the type of distribution produced among owners. Currently only two types are supported.
+###  "equal" means an even distribution of non-public land between stakeholders.
+###  "oneRich" means that a fraction of non-public land, equal to rich_frac, is allocated to a single owner, with the 
+###   remainder evenly split between the rest.
+### Public land is always placed on the left-hand side of the matrix, and any non-even ("oneRich") type land on the 
+###  right of the matrix. Thus, the remaining evenly distributed land is either in between public land a potential 
+###  larger landowner, to the right of public land, or to the left of a single large landowner. 
+
+distribute_land = function(xd, yd, s, public_land = 0, type = "equal", rich_frac = NULL) {
+  land = matrix(NA, nrow = yd, ncol = xd)
+  total_cells = xd*yd
+  
+  if(public_land > 0) {
+    public_cells =  total_cells*public_land
+    owned_cells = total_cells-public_cells
+    # Allocate public land:
+    land[1:public_cells] = 1
+    #land = t(land)
+  } else {
+    public_cells = 0
+    owned_cells = total_cells
+  }
+  
+  # Allocate owned cells:
+  
+  if(type == "equal") {
+    stakeholder_cells = rep(owned_cells/s,s)
+    stakeholder_series = rep(1:(len(stakeholder_cells))+1, stakeholder_cells)
+    
+    for(row in 1:xd) {
+      for(col in 1:yd) {
+        if(is.na(land[row,col])) {
+          land[row,col] = stakeholder_series[1]
+          stakeholder_series = stakeholder_series[2:length(stakeholder_series)]
+        }
+      }
+    }
+    
+    land = rcw(land)
+    
+  }
+  
+  if(type == "oneRich") {
+    
+    if(s<2) stop("Distribution type 'oneRich' requires at least two stakeholders!")
+    
+    if(is.null(rich_frac)) stop("If using type = 'oneRich', need to specify rich_frac (0-1)")
+    
+    rich_cells = owned_cells*rich_frac
+    others_cells = owned_cells-rich_cells
+    others_cells = rep(floor(others_cells/(s-1)),s-1)
+    # Find any orphaned (leftover) cells:
+    leftover = (owned_cells-rich_cells)-sum(others_cells)
+    others_cells[1:leftover] = others_cells[1:leftover]+1 
+    
+    others_cells = rep(2:s, others_cells)
+    
+    if(public_cells==0) {
+      land[1:rich_cells] = 9
+      
+      for(row in 1:xd) {
+        for(col in 1:yd) {
+          if(is.na(land[row,col])) {
+            land[row,col] = others_cells[1]
+            others_cells = others_cells[2:length(others_cells)]
+          }
+        }
+      }
+      land = rccw(land)
+    }
+    
+    if(public_cells>0) {
+      land = rcw(rcw(land))
+      land[1:rich_cells] = 9
+      land = rccw(rccw(land))
+      
+      for(row in 1:xd) {
+        for(col in 1:yd) {
+          if(is.na(land[row,col])) {
+            land[row,col] = others_cells[1]
+            others_cells = others_cells[2:length(others_cells)]
+          }
+        }
+      }
+      land = rcw(land)
+      
+    }
+    
+  } # endif 'type == "oneRich"'
+  
+  return(land)
+  
+} # End of function
+
+###
+### set_land()
+###
+### NOW REPLACED BY distribute_land(); ONLY HERE FOR LEGACY REASONS!
 set_land = function(land, s, type, hi_frac = NULL, up_frac = NULL, lo_frac = NULL) {
+  print("set_land() is deprecated, please use distribute_land() instead!")
+  
   pub_land_present = FALSE
   tland = table(land)
   
