@@ -82,3 +82,8 @@ list.to.df = function(l) {
 }
 
 
+#first reverse, then transpose, it's the same as rotate 90 degrees
+rcw = function(x) { t(apply(x, 2, rev))}
+#first transpose, then reverse, it's the same as rotate -90 degrees:
+rccw = function(x) { apply(t(x),2, rev)}
+
