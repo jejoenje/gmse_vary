@@ -30,12 +30,49 @@ sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       converge_crit = gmse_paras$converge_crit,
                       ga_mingen = gmse_paras$ga_mingen)
 
-plot_land(sim_old$LAND[,,3])
-sim_old$LAND[,,3] = distribute_land ...
+# plot_land(sim_old$LAND[,,3])
+# sim_old$LAND[,,3] = distribute_land(xd = gmse_paras$land_dim_1, 
+#                                     yd = gmse_paras$land_dim_2, 
+#                                     s = gmse_paras$stakeholders, 
+#                                     public_land = gmse_paras$public_land,
+#                                     type = gmse_paras$land_type,
+#                                     rich_frac = gmse_paras$land_type_max_frac)
+# plot_land(sim_old$LAND[,,3])
+
+yields = as.data.frame(NULL)
+kills = as.data.frame(NULL)
+scares = as.data.frame(NULL)
+crops = as.data.frame(NULL)
+
+for(i in 1:100) {
+  sim_new = gmse_apply(get_res = "Full", old_list=sim_old)
+  yields = rbind(yields, extractUser(sim_new, "yield"))
+  kills = rbind(kills, extractUser(sim_new, "kills"))
+  scares = rbind(scares, extractUser(sim_new, "scares"))
+  crops = rbind(crops, extractUser(sim_new, "crops"))
+  
+  sim_old = sim_new
+}
+par(mfrow = c(2,2))
+plot(yields[,1], ylim = c(min(yields),max(yields)), type = "n")
+apply(yields, 2, function(x) lines(x))
+plot(kills[,1], ylim = c(min(kills),max(kills)), type = "n")
+apply(kills, 2, function(x) lines(x))
+plot(scares[,1], ylim = c(min(scares),max(scares)), type = "n")
+apply(scares, 2, function(x) lines(x))
+plot(crops[,1], ylim = c(min(crops),max(crops)), type = "n")
+apply(crops, 2, function(x) lines(x))
 
 
-years = 10
-sims = 10
+
+hist(sample_budgets_ManyPoorFewRich(nstakeholders = gmse_paras$stakeholders, 
+                                    manager_budget = gmse_paras$manager_budget, 
+                                    scale = 2), 
+     breaks = 8)
+
+
+
+
 
 res = list()
 

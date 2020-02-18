@@ -462,7 +462,7 @@ calcProd_damage = function(res, land, res_consume) {
   res_count = matrix(0, nrow = nrow(land[,,3]), ncol = ncol(land[,,3]) )
   
   for(i in 1:nrow(res)) {
-    res_count[res[i,5],res[i,5]] = res_count[res[i,5],res[i,5]]+1
+    res_count[res[i,5],res[i,6]] = res_count[res[i,5],res[i,6]]+1
   }
   ### Update production with damage by resource:
   land[,,2] = land[,,2]*(gmse_paras$res_consume^res_count)

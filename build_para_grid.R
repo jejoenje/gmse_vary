@@ -30,6 +30,6 @@ gmse_paras = expand.grid(
                           converge_crit =   0.1,
                           ga_mingen =       40,
                       # Additional parameters to vary in gmse_apply() loop.
-                          land_type = "oneRich",
-                          land_type_max_frac = 0.5
+                          land_type = "equal",
+                          land_type_max_frac = NA
             )
