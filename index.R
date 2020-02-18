@@ -5,7 +5,23 @@ library(RColorBrewer)
 source('helpers.R')
 source('gmse_apply_helpers.R')
 
+# Garbage bucket
+
+placeResources = function(res, xd, yd) {
+  land_res = matrix(0, nrow = xd, ncol = yd)
+  for(i in 1:nrow(res)) {
+    land_res[res[i,5]+1,res[i,6]+1] = land_res[res[i,5]+1,res[i,6]+1]+1
+  }
+  land_res[land_res==0] = NA
+  
+  return(land_res)
+}
+
 source("build_para_grid.R")
+
+
+### FOR TESTING
+gmse_paras$res_movement = 0
 
 sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       land_dim_1 = gmse_paras$land_dim_1,
@@ -28,7 +44,35 @@ sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       agent_view = gmse_paras$agent_view,
                       agent_move = gmse_paras$agent_move,
                       converge_crit = gmse_paras$converge_crit,
-                      ga_mingen = gmse_paras$ga_mingen)
+                      ga_mingen = gmse_paras$ga_mingen,
+                      res_movement = gmse_paras$res_movement)
+
+image(sim_old$LAND[,,2], col = brewer.pal(9, "Greys"))
+par(new = T)
+res_positions = placeResources(sim_old$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
+image(res_positions, col = "red")
+
+
+
+sim_new = gmse_apply(get_res = "Full", old_list = sim_old, res_consume = 0.5)
+
+par(new=T)
+image(sim_new$LAND[,,2], col = brewer.pal(9, "YlGn"))
+
+res_positions = placeResources(sim_new$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
+image(res_positions, col = alpha(brewer.pal(9,"Reds")[6:9], 0.75))
+
+
+
+
+image(sim_new$LAND[,,2], col = brewer.pal(9, "YlGn"))
+par(new = T)
+res_positions = placeResources(sim_new$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
+image(res_positions, col = alpha(brewer.pal(9,"Reds")[6:9], 0.75))
+
+sim_old = sim_new
+
+
 
 # plot_land(sim_old$LAND[,,3])
 # sim_old$LAND[,,3] = distribute_land(xd = gmse_paras$land_dim_1, 
