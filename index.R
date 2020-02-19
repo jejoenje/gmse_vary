@@ -17,11 +17,21 @@ placeResources = function(res, xd, yd) {
   return(land_res)
 }
 
+yield_res_rel = function(res_pos, yld) {
+  res_pos[is.na(res_pos)] = 0
+  no_per_cell = as.numeric(names(table(res_pos)))
+  mn_yld = as.vector(NULL)
+  for(i in 1:length(no_per_cell)) {
+    mn_yld = c(mn_yld, mean(yld[res_pos == no_per_cell[i]]))
+  }
+  return(data.frame(no_per_cell = no_per_cell, mn_yd = mn_yld))
+}
+
 source("build_para_grid.R")
 
 
 ### FOR TESTING
-gmse_paras$res_movement = 0
+gmse_paras$res_movement = 20
 
 sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       land_dim_1 = gmse_paras$land_dim_1,
@@ -47,21 +57,47 @@ sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       ga_mingen = gmse_paras$ga_mingen,
                       res_movement = gmse_paras$res_movement)
 
+plot_land(sim_old$LAND[,,3])
+plot_land(sim_old$LAND[,,3], col = "none")
+
+
+out = as.data.frame(NULL)
+user_yields = as.data.frame(NULL)
+for(i in 1:50) {
+  res_positions = placeResources(sim_old$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
+  yield_res_rel_i = yield_res_rel(res_pos = res_positions, yld = sim_old$LAND[,,2])
+  yield_res_rel_i$sim = i
+  out = rbind(out, yield_res_rel_i)
+  
+  user_yields = rbind(user_yields, extractUser(sim_old, "yield"))
+  
+  sim_new = sim_new = gmse_apply(get_res = "Full", old_list = sim_old)
+  sim_old = sim_new
+}
+
+par(mfrow=c(1,2))
+plot(out$no_per_cell, out$mn_yd, type = "n", xlim = c(0,5), ylim = c(0,max(out$mn_yd)))
+for(i in 1:max(out$sim)) {
+  out_i = out[out$sim==i,]
+  lines(out_i$no_per_cell,out_i$mn_yd, type = "b", bg="grey", col = "black", pch = 21)
+}
+plot(1:nrow(user_yields), user_yields[,1], ylim = c(min(user_yields),max(user_yields)), type = "n")
+apply(user_yields, 2, function(x) lines(x) )
+
+
+
 image(sim_old$LAND[,,2], col = brewer.pal(9, "Greys"))
 par(new = T)
 res_positions = placeResources(sim_old$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
 image(res_positions, col = "red")
 
-
-
 sim_new = gmse_apply(get_res = "Full", old_list = sim_old, res_consume = 0.5)
 
-par(new=T)
 image(sim_new$LAND[,,2], col = brewer.pal(9, "YlGn"))
-
+par(new = T)
 res_positions = placeResources(sim_new$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
 image(res_positions, col = alpha(brewer.pal(9,"Reds")[6:9], 0.75))
-
+sim_old = sim_new
 
 
 

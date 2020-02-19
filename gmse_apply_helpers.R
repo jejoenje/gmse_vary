@@ -337,13 +337,14 @@ set_budgets = function(prv, nxt, yv, yield_type = "beta1") {
 #' @examples
 #' plot_land(sim$LAND[,,3])
 plot_land = function(x, col = "BrBG") {
+  
   # Pick colors
   land_cols = brewer.pal(len(table(x))+1, col)
   land_cols = land_cols[!land_cols=="#F5F5F5"]
-  
+    
   if(sum(x == 1)>0) land_cols[1] = "#FFFFFF"
-  
-  image(x = x, col = land_cols, yaxt = "n", xaxt = "n")  
+  image(x = x, col = land_cols, yaxt = "n", xaxt = "n")
+ 
 }
 
 
