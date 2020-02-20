@@ -57,37 +57,35 @@ sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                       ga_mingen = gmse_paras$ga_mingen,
                       res_movement = gmse_paras$res_movement)
 
-plot_land(sim_old$LAND[,,3], col = "Greys")
-plot_land(sim_old$LAND[,,2], col = "Greens")
+#plot_land(sim_old$LAND[,,3], col = "Greys")
+#plot_land(sim_old$LAND[,,2], col = "Greens")
+image(sim_old$LAND[,,2], col = brewer.pal(9, "Greens"))
 par(new = T)
 res_pos = placeResources(sim_old$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
-plot_land(res_pos, col = "Reds")
+image(res_pos, col = "red", xaxt = "n", yaxt = "n")
 
 
+# Test land_point_buffer() function:
 
-land_ownership = rasterToPolygons(raster(t(sim_old$LAND[,,3])), dissolve = T)
+sim_old$RESOURCES[1,5:6]
 
-test = rasterize(land_ownership, raster(ncol=ncol(sim_old$LAND[,,3]), nrow=nrow(sim_old$LAND[,,3])))
-plot(test)
-
-
-plot(land_ownership)
-
-
-land_ownership = rasterize(land_ownership)
-plot(land_ownership)
-
-
-
-res_pos = placeResources(sim_old$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
-res_pos = raster(t(res_pos))
+res1_buffer = land_point_buffer(x = sim_old$RESOURCES[1,5]+1, 
+                                y = sim_old$RESOURCES[1,6]+1,
+                                land = sim_old$LAND[,,2],
+                                buffer = gmse_paras$res_movement
+                                )
+land = sim_old$LAND[,,2]
+land[!res1_buffer] = NA
 par(new = T)
-plot(res_pos, col = "red", legend = F)
+image(land, col = brewer.pal(9, "Greens"))
+
+
+sim_new = gmse_apply(get_res = "Full", old_list = sim_old)
+sim_old = sim_new
 
 
 
-par(new = T)
-image(placeResources(sim_old$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2), col = "red")
+
 
 
 out = as.data.frame(NULL)
