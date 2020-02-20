@@ -339,10 +339,10 @@ set_budgets = function(prv, nxt, yv, yield_type = "beta1") {
 plot_land = function(x, col = "BrBG") {
   
   # Pick colors
-  land_cols = brewer.pal(len(table(x))+1, col)
+  land_cols = brewer.pal(len(table(x))+2, col)
   land_cols = land_cols[!land_cols=="#F5F5F5"]
-    
-  if(sum(x == 1)>0) land_cols[1] = "#FFFFFF"
+
+  if(sum(x == 1, na.rm = T)>0) land_cols[1] = "#FFFFFF"
   image(x = x, col = land_cols, yaxt = "n", xaxt = "n")
  
 }
@@ -1153,4 +1153,32 @@ gmse_sims = function(years = 5 , sims = 5, sim_paras) {
   
 }
 
-
+# This function creates a square buffer with side == buffer, centered on x,y point in a given matrix land.
+# Returns a matrix of the same size as land, with values for TRUE if within given buffer of the x,y point.
+# "Wraps" buffer on the edge of the matrix to appear on the mirroring side.
+#
+land_point_buffer = function(x,y,land,buffer) {
+  
+  # Extract landscape dimensions (mins/maxs)
+  xd = dim(land)[1]
+  yd = dim(land)[2]
+  
+  xr = (x-buffer):(x+buffer) # X range given coordinate and buffer
+  yr = (y-buffer):(y+buffer) # Y range given coordinate and buffer
+  
+  # "Wrap" X/Y range as needed if coordinates outwidth min/max dimensions.
+  yr[yr>yd] = yr[yr>yd]-yd                 
+  yr[yr<1] = yd+yr[yr<1]
+  xr[xr>xd] = xr[xr>xd]-xd  
+  xr[xr<1] = xd+xr[xr<1]
+  
+  # Create "empty" output mask:
+  land_mask = matrix(FALSE, nrow = xd, ncol = yd)
+  
+  # Set output cells to "true" if for those within boundaries:
+  land_mask[xr, yr] = TRUE
+  
+  # Return landscape mask:
+  return(land_mask)
+  
+}
