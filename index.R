@@ -79,6 +79,17 @@ land[!res1_buffer] = NA
 par(new = T)
 image(land, col = brewer.pal(9, "Greens"))
 
+# Test of new "type" argument for land_point_buffer()
+
+res1_buffer_xy = land_point_buffer(x = sim_old$RESOURCES[1,5]+1, 
+                  y = sim_old$RESOURCES[1,6]+1,
+                  land = sim_old$LAND[,,2],
+                  buffer = gmse_paras$res_movement,
+                  type = "xy")
+res1_buffer_x = res1_buffer_xy$x
+res1_buffer_y = res1_buffer_xy$y
+
+
 
 sim_new = gmse_apply(get_res = "Full", old_list = sim_old)
 sim_old = sim_new

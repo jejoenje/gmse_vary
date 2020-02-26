@@ -1157,7 +1157,7 @@ gmse_sims = function(years = 5 , sims = 5, sim_paras) {
 # Returns a matrix of the same size as land, with values for TRUE if within given buffer of the x,y point.
 # "Wraps" buffer on the edge of the matrix to appear on the mirroring side.
 #
-land_point_buffer = function(x,y,land,buffer) {
+land_point_buffer = function(x,y,land,buffer,type = "matrix") {
   
   # Extract landscape dimensions (mins/maxs)
   xd = dim(land)[1]
@@ -1178,7 +1178,33 @@ land_point_buffer = function(x,y,land,buffer) {
   # Set output cells to "true" if for those within boundaries:
   land_mask[xr, yr] = TRUE
   
-  # Return landscape mask:
-  return(land_mask)
+  if(type == "matrix") {
+    # Return landscape mask:
+    return(land_mask)  
+  }
   
+  if(type == "xy") {
+    return(list(x=xr, y = yr))
+  }
+  
+}
+
+# Function takes landscape yield matrix and a matrix of the same size with TRUE/FALSE values for which cells are 
+#  within spatial reaching distance (as returned by land_point_buffer(.., type = "matrix)), and returns a list with 
+#  new x and y coordinates to which a given resource (as defined by the the input/output of land_point_buffer() ) will 
+#  move. This is the result of a random pick of one of the cells within mask, which is also greater than a given quantile 
+#  value of the distribution of yield within that mask. 
+res_move_adjusted = function(mask, yield, qtl = 0.975) {
+  
+  # Take existing mask (spatial range of point) and further limit by what is above a given qtl of yield:
+  mask_extra = (yield > quantile(yield[mask], qtl)) & mask
+  
+  # Get XY positions for the above:
+  xy_picks = which(mask_extra, arr.ind = T)
+  
+  # Pick one new position at random:
+  xy_pick = xy_picks[sample(1:nrow(xy_picks),1),]
+  
+  # Return new X/Y location
+  return(list(x = as.numeric(xy_pick["row"]), y = as.numeric(xy_pick["col"])))
 }
