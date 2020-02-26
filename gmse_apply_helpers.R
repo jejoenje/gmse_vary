@@ -1238,3 +1238,28 @@ yield_res_rel = function(res_pos, yld) {
   }
   return(data.frame(no_per_cell = no_per_cell, mn_yd = mn_yld))
 }
+
+# This function will take GMSE RESOURCES array, and for each row (ie resource), run land_point_buffer() and 
+#  res_move_adjusted() functions; i.e. establish movement range and then pick a new position within range that
+#  also has a relatively high yield.
+move_resources_adjusted = function(res, land, buffer, qtl) {
+  
+  new_positions = as.data.frame(NULL)
+  for(i in 1:nrow(res)) {
+    # Extract X and Y coordinates for resource. Note need to +1 to adjust for 0-base x/y coordinates in RESOURCES
+    res_x = res[i,5]+1
+    res_y = res[i,6]+1
+    
+    res_buffer = land_point_buffer(x = res_x, y = res_y, land = land, buffer = buffer)
+    
+    new_xy = res_move_adjusted(mask= res_buffer, yield = land)
+    
+    new_positions = rbind(new_positions, unlist(new_xy))
+    
+  }
+  
+  # Note - need to "back translate" to coordinates with base 0
+  new_positions = new_positions-1
+  return(as.matrix(new_positions))
+  
+}
