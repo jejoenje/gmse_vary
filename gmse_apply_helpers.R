@@ -1208,3 +1208,33 @@ res_move_adjusted = function(mask, yield, qtl = 0.975) {
   # Return new X/Y location
   return(list(x = as.numeric(xy_pick["row"]), y = as.numeric(xy_pick["col"])))
 }
+
+
+### This function takes a GMSE RESOURCE array and the landscape dimensions, and places each individual resource
+###  into a matrix which can be directly compared the the relevant GMSE LAND array.
+###
+### NOTE - DUE TO INCREMENTING DIFFERENCES BETWEEN R and C, THE X AND Y COORDINATES IN THE RESOURCE ARRAY
+###  START FROM ZERO (AND GO UP TO xd-1, yd-1). HENCE THE VALUES RETURNED (AND THUS WHERE RESOURCES ARE PLACED)
+###  IN THE OUTPIT MATRIX ARE +1!
+placeResources = function(res, xd, yd) {
+  land_res = matrix(0, nrow = xd, ncol = yd)
+  for(i in 1:nrow(res)) {
+    land_res[res[i,5]+1,res[i,6]+1] = land_res[res[i,5]+1,res[i,6]+1]+1
+  }
+  land_res[land_res==0] = NA
+  
+  return(land_res)
+}
+
+### This function takes a resource position matrix (as output from placeResources() and returns a table with a count of
+###  (non-zero) landscape positions, and the resulting mean yield in that cell.
+### This is largely for testing purposes alone (relating yield to resource positions)
+yield_res_rel = function(res_pos, yld) {
+  res_pos[is.na(res_pos)] = 0
+  no_per_cell = as.numeric(names(table(res_pos)))
+  mn_yld = as.vector(NULL)
+  for(i in 1:length(no_per_cell)) {
+    mn_yld = c(mn_yld, mean(yld[res_pos == no_per_cell[i]]))
+  }
+  return(data.frame(no_per_cell = no_per_cell, mn_yd = mn_yld))
+}
