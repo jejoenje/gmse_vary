@@ -79,6 +79,32 @@ land[!res1_buffer] = NA
 par(new = T)
 image(land, col = brewer.pal(9, "Greens"))
 
+
+# Test res_move_adjusted() function:
+image(sim_old$LAND[,,2], col = brewer.pal(9, "Greens"))
+
+out = as.data.frame(NULL)
+for(i in 1:200) {
+  xy = res_move_adjusted(res1_buffer, sim_old$LAND[,,2])
+  out = rbind(out, xy)
+}
+temp = matrix(NA, nrow = nrow(sim_old$LAND[,,2]), ncol = ncol(sim_old$LAND[,,2]))
+for(i in 1:nrow(out)) {
+  temp[out[i,"x"],out[i,"y"]] = TRUE
+}
+par(new = T)
+image(temp, col = "red")
+
+
+
+out2 = as.vector(NULL)
+for(i in 1:nrow(out)) {
+  out2 = c(out2, sim_old$LAND[,,2][out[i,"x"],out[i,"y"]])
+}
+out2
+
+
+
 # Test of new "type" argument for land_point_buffer()
 
 res1_buffer_xy = land_point_buffer(x = sim_old$RESOURCES[1,5]+1, 

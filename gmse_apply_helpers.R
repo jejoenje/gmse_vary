@@ -1197,7 +1197,7 @@ land_point_buffer = function(x,y,land,buffer,type = "matrix") {
 res_move_adjusted = function(mask, yield, qtl = 0.975) {
   
   # Take existing mask (spatial range of point) and further limit by what is above a given qtl of yield:
-  mask_extra = (yield > quantile(yield[mask], qtl)) & mask
+  mask_extra = (yield >= quantile(yield[mask], qtl)) & mask
   
   # Get XY positions for the above:
   xy_picks = which(mask_extra, arr.ind = T)
