@@ -5,28 +5,6 @@ library(RColorBrewer)
 source('helpers.R')
 source('gmse_apply_helpers.R')
 
-# Garbage bucket
-
-placeResources = function(res, xd, yd) {
-  land_res = matrix(0, nrow = xd, ncol = yd)
-  for(i in 1:nrow(res)) {
-    land_res[res[i,5]+1,res[i,6]+1] = land_res[res[i,5]+1,res[i,6]+1]+1
-  }
-  land_res[land_res==0] = NA
-  
-  return(land_res)
-}
-
-yield_res_rel = function(res_pos, yld) {
-  res_pos[is.na(res_pos)] = 0
-  no_per_cell = as.numeric(names(table(res_pos)))
-  mn_yld = as.vector(NULL)
-  for(i in 1:length(no_per_cell)) {
-    mn_yld = c(mn_yld, mean(yld[res_pos == no_per_cell[i]]))
-  }
-  return(data.frame(no_per_cell = no_per_cell, mn_yd = mn_yld))
-}
-
 source("build_para_grid.R")
 
 
@@ -66,8 +44,6 @@ image(res_pos, col = "red", xaxt = "n", yaxt = "n")
 
 
 # Test land_point_buffer() function:
-
-sim_old$RESOURCES[1,5:6]
 
 res1_buffer = land_point_buffer(x = sim_old$RESOURCES[1,5]+1, 
                                 y = sim_old$RESOURCES[1,6]+1,
