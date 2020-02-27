@@ -8,6 +8,7 @@ gmse_paras = expand.grid(
                           land_dim_2 = 200,
                           land_ownership =  TRUE, 
                           res_movement = 20,               # default = 20
+                          res_move_type = 0,               # was 1 (DEFAULT)
                           tend_crops =      TRUE,         # was TRUE
                           tend_crop_yld =   0.9, 
                           scaring =         TRUE,
