@@ -1194,10 +1194,19 @@ land_point_buffer = function(x,y,land,buffer,type = "matrix") {
 #  new x and y coordinates to which a given resource (as defined by the the input/output of land_point_buffer() ) will 
 #  move. This is the result of a random pick of one of the cells within mask, which is also greater than a given quantile 
 #  value of the distribution of yield within that mask. 
-res_move_adjusted = function(mask, yield, qtl = 0.975) {
+res_move_adjusted = function(mask, yield, type = "qtl", qtl = 0.975) {
   
-  # Take existing mask (spatial range of point) and further limit by what is above a given qtl of yield:
-  mask_extra = (yield >= quantile(yield[mask], qtl)) & mask
+  type_check = FALSE
+  if(type == "qtl") {
+    # Take existing mask (spatial range of point) and further limit by what is above a given qtl of yield:
+    mask_extra = (yield >= quantile(yield[mask], qtl)) & mask
+    type_check = TRUE
+  }
+  if(type == "max") {
+    mask_extra = (yield == max(yield[mask]) & mask)
+    type_check = TRUE
+  }
+  if(type_check==FALSE) { stop("Invalid 'type' argument, please choose 'qtl' or 'max'") }
   
   # Get XY positions for the above:
   xy_picks = which(mask_extra, arr.ind = T)
@@ -1242,7 +1251,7 @@ yield_res_rel = function(res_pos, yld) {
 # This function will take GMSE RESOURCES array, and for each row (ie resource), run land_point_buffer() and 
 #  res_move_adjusted() functions; i.e. establish movement range and then pick a new position within range that
 #  also has a relatively high yield.
-move_resources_adjusted = function(res, land, buffer, qtl) {
+move_resources_adjusted = function(res, land, buffer, type = "qtl", qtl = 0.975) {
   
   new_positions = as.data.frame(NULL)
   for(i in 1:nrow(res)) {
@@ -1252,7 +1261,7 @@ move_resources_adjusted = function(res, land, buffer, qtl) {
     
     res_buffer = land_point_buffer(x = res_x, y = res_y, land = land, buffer = buffer)
     
-    new_xy = res_move_adjusted(mask= res_buffer, yield = land)
+    new_xy = res_move_adjusted(mask= res_buffer, yield = land, type = type, qtl = qtl)
     
     new_positions = rbind(new_positions, unlist(new_xy))
     

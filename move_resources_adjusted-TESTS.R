@@ -43,3 +43,16 @@ res_new = placeResources(res_new, xd = gmse_paras$land_dim_1, yd = gmse_paras$la
 par(new=T)
 image(res_new, col = "blue")
 
+### Further tests with changes to res_move_adjusted()
+image(sim_old$LAND[,,2], col = brewer.pal(9, "Greens"))
+par(new = T)
+res_pos = placeResources(sim_old$RESOURCES, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
+image(res_pos, col = "red", xaxt = "n", yaxt = "n")
+res_new = sim_old$RESOURCES
+res_new[,5:6] = move_resources_adjusted(sim_old$RESOURCES, sim_old$LAND[,,2], buffer = gmse_paras$res_movement, type = "max")
+res_new = placeResources(res_new, xd = gmse_paras$land_dim_1, yd = gmse_paras$land_dim_2)
+par(new=T)
+image(res_new, col = "blue")
+
+
+
