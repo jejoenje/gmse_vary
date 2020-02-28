@@ -10,28 +10,32 @@ gmse_paras = expand.grid(
                           res_movement = 20,               # default = 20
                           res_move_type = 0,               # was 1 (DEFAULT)
                           tend_crops =      TRUE,         # was TRUE
-                          tend_crop_yld =   0.9, 
+                          tend_crop_yld =   0.8,          # was 0.9
                           scaring =         TRUE,
                           minimum_cost =    10,
-                          remove_pr =       0.075,       
+                          remove_pr =       0.15,       # was 0.075
                           res_death_type =  3,
                           lambda =          0.25,           
                           res_death_K =     10000,                   
-                          RESOURCE_ini =    1000,           
-                          manage_target =   1000,
+                          RESOURCE_ini =    1000,            # was 1000          
+                          manage_target =   1000,            # was 1000
                           manager_budget =  1000, 
                           user_budget =     1000,
                           public_land =     0,       
-                          stakeholders =    16,              # was 8
+                          stakeholders =    8,              # was 8
                           res_consume =     0.2,            # was 0.2
                           observe_type =    0,
                           res_move_obs =    TRUE,
-                          agent_view =      100,           
-                          times_observe =   10,
+                          agent_view =      50,              # Was 100           
+                          times_observe =   4,               # Was 10
                           agent_move =      100,         
                           converge_crit =   0.1,
                           ga_mingen =       40,
                       # Additional parameters to vary in gmse_apply() loop.
                           land_type = "equal",
-                          land_type_max_frac = NA
+                          land_type_max_frac = NA,
+                          n_sims = 50,
+                          n_years = 20,
+                          res_move_to_yield = TRUE        # only set as TRUE if res_move_type == 0
+                      
             )
