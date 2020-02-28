@@ -57,20 +57,45 @@ par(new=T)
 image(res_new, col = "blue")
 
 
-list(yield = t(as.data.frame(extractUser(sim_old, "yield"))),
-     budget = t(as.data.frame(extractUser(sim_old, "budget"))),
-     crops =  t(as.data.frame(extractUser(sim_old, "crops"))),
-     kills = t(as.data.frame(extractUser(sim_old, "kills"))),
-     scares = t(as.data.frame(extractUser(sim_old, "scares"))),
-     noact =  t(as.data.frame(extractUser(sim_old, "noact"))),
-     land_yield = list(as.matrix(NA)),
-     land_res = list(as.matrix(NA))
-     )
+out = list(yield = t(as.data.frame(extractUser(sim_old, "yield"))),
+           budget = t(as.data.frame(extractUser(sim_old, "budget"))),
+           crops =  t(as.data.frame(extractUser(sim_old, "crops"))),
+           kills = t(as.data.frame(extractUser(sim_old, "kills"))),
+           scares = t(as.data.frame(extractUser(sim_old, "scares"))),
+           noact =  t(as.data.frame(extractUser(sim_old, "noact"))),
+           pop = t(as.data.frame(c(sim_old$basic_output$resource_results, sim_old$basic_output$observation_results))),
+           res = list(sim_old$RESOURCES),
+           land_yield = list(sim_old$LAND[,,2])
+          )
 
-for(i in 1:10) {
+for(i in 1:20) {
+  #print(paste("Time step", i, "..."))
+  print(sprintf("Time step %d", i))
   sim_old$RESOURCES[,5:6] = move_resources_adjusted(sim_old$RESOURCES, sim_old$LAND[,,2], 
                                                     buffer = gmse_paras$res_movement, 
                                                     type = "max")
   
   sim_new = gmse_apply(get_res = "Full", old_list = sim_old)
+
+  out$yield = rbind(out$yield, t(as.data.frame(extractUser(sim_new, "yield"))))
+  out$budget = rbind(out$budget, t(as.data.frame(extractUser(sim_new, "budget"))))
+  out$crops = rbind(out$crops, t(as.data.frame(extractUser(sim_new, "crops"))))
+  out$kills = rbind(out$kills, t(as.data.frame(extractUser(sim_new, "kills"))))
+  out$scares = rbind(out$scares, t(as.data.frame(extractUser(sim_new, "scares"))))
+  out$noact = rbind(out$noact, t(as.data.frame(extractUser(sim_new, "noact"))))
+  out$pop = rbind(out$pop,  t(as.data.frame(c(sim_new$basic_output$resource_results, 
+                                              sim_new$basic_output$observation_results))))
+  out$res[[i+1]] = sim_new$RESOURCES
+  out$land_yield[[i+1]] = sim_old$LAND[,,2]
+  
+  sim_old = sim_new
+  
 }
+
+# For plotting output above
+# Population trajectory:
+plot(out$pop[,1], type = "l")
+# Yield (Per user)
+plot(out$yield[,1], type = "n", ylim = c(min(out$yield), max(out$yield)))
+apply(out$yield, 2, function(x) lines(x))
+#
