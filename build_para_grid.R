@@ -10,7 +10,7 @@ gmse_paras = expand.grid(
                           res_movement = 20,               # default = 20
                           res_move_type = 0,               # was 1 (DEFAULT)
                           tend_crops =      TRUE,         # was TRUE
-                          tend_crop_yld =   0.8,          # was 0.9
+                          tend_crop_yld =   0.6,          # was 0.9
                           scaring =         TRUE,
                           minimum_cost =    10,
                           remove_pr =       0.15,       # was 0.075
@@ -23,7 +23,7 @@ gmse_paras = expand.grid(
                           user_budget =     1000,
                           public_land =     0,       
                           stakeholders =    8,              # was 8
-                          res_consume =     0.2,            # was 0.2
+                          res_consume =     0.225,            # was 0.2
                           observe_type =    0,
                           res_move_obs =    TRUE,
                           agent_view =      50,              # Was 100           
