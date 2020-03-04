@@ -2,6 +2,8 @@ rm(list=ls())
 library(GMSE)
 library(scales)
 library(RColorBrewer)
+library(parallel)
+library(foreach)
 source('helpers.R')
 source('gmse_apply_helpers.R')
 
@@ -13,7 +15,6 @@ n_years = gmse_paras$n_years
 sims = list()
 
 for(K in 1:n_sims) {
-  
   sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                         land_dim_1 = gmse_paras$land_dim_1,
                         land_dim_2 = gmse_paras$land_dim_2,
@@ -111,9 +112,9 @@ for(K in 1:n_sims) {
   
 } # end of sims
 
-
-# For plotting output above
-#par(mfrow=c(2,2))
+# 
+# # For plotting output above
+par(mfrow=c(2,2))
 # Population trajectories, one for each sim:
 y_lo = min(unlist(lapply(sims, function(x) min(x$pop[,1]))))
 y_hi = max(unlist(lapply(sims, function(x) max(x$pop[,1]))))
