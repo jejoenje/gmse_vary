@@ -12,9 +12,12 @@ source("build_para_grid.R")
 n_sims = gmse_paras$n_sims
 n_years = gmse_paras$n_years
 
+cl = parallel::makeForkCluster(6)
+doParallel::registerDoParallel(cl)
+
 sims = list()
 
-for(K in 1:n_sims) {
+sims = foreach(K = 1:n_sims, .inorder = FALSE, .errorhandling = "remove") %dopar% {
   sim_old <- gmse_apply(get_res = gmse_paras$get_res,
                         land_dim_1 = gmse_paras$land_dim_1,
                         land_dim_2 = gmse_paras$land_dim_2,
@@ -52,7 +55,9 @@ for(K in 1:n_sims) {
                land_yield = list(sim_old$LAND[,,2])
   )
   
-  for(i in 1:n_years) {
+  foreach(i = 1:n_years, .errorhandling = "remove") %do% {
+    err_found = FALSE
+    
     #print(paste("Time step", i, "..."))
     print(sprintf("Simulation %d, Time step %d", K, i))
     
@@ -63,9 +68,11 @@ for(K in 1:n_sims) {
                                                         type = "max")  
     }
     if(gmse_paras$res_move_to_yield==TRUE && gmse_paras$res_move_type!=0) {
+      err_found = TRUE
       stop("Invalid res_move_to_yield / res_move_type combination")
     }
     if(gmse_paras$res_move_to_yield==FALSE && gmse_paras$res_move_type==0) {
+      err_found = TRUE
       stop("res_move_type set to 0 (no movement) but res_move_to_yield also FALSE - static resources!")
     }
     
@@ -76,14 +83,17 @@ for(K in 1:n_sims) {
     if(class(sim_new)=="try-error") {
       if(grepl("Extinction", sim_new[1])) {
         print(sprintf("True extinction, skipping to next sim."))
-        break()
+        err_found = TRUE
+        #break()
       } else {
         if(grepl("Error in estimate_abundances", sim_new[1])) {
           print(sprintf("Observed extinction, skipping to next sim."))
-          break()
+          err_found = TRUE
+          #break()
         } else {
           print(sprintf("Observed extinction, skipping to next sim."))
-          break()
+          err_found = TRUE
+          #break()
         }
       }
     } else {
@@ -98,19 +108,26 @@ for(K in 1:n_sims) {
       out_i$pop = rbind(out_i$pop,  t(as.data.frame(c(sim_new$basic_output$resource_results, 
                                                       sim_new$basic_output$observation_results))))
       out_i$res[[i+1]] = sim_new$RESOURCES
-      out_i$land_yield[[i+1]] = sim_old$LAND[,,2]
+      out_i$land_yield[[i+1]] = sim_new$LAND[,,2]
       
       ### ... reset current time step data, and remove the existing "new":
       sim_old = sim_new
-      rm(sim_new)    
+      rm(sim_new)
     } # endif error check for next time step 
-    
+    if(err_found==FALSE) {
+      out_i  
+    }
   } # end of year
   
   ### When all years within sims are done, store results for current simulation in next list element
-  sims[[K]] = out_i
+  
+  #sims[[K]] = out_i
+  
+  out_i
   
 } # end of sims
+
+parallel::stopCluster(cl)
 
 # 
 # # For plotting output above
