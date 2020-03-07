@@ -26,15 +26,14 @@ gmse_paras = expand.grid(
                           res_consume =     0.225,            # was 0.2
                           observe_type =    0,
                           res_move_obs =    TRUE,
-                          agent_view =      50,              # Was 100           
-                          times_observe =   4,               # Was 10
+                          agent_view =      50,              # Was 50           
+                          times_observe =   4,               # Was 4
                           agent_move =      100,         
                           converge_crit =   0.1,
                           ga_mingen =       40,
                       # Additional parameters to vary in gmse_apply() loop.
                           land_type = "equal",
                           land_type_max_frac = NA,
-                          n_sims = 50,
                           n_years = 20,
                           res_move_to_yield = TRUE        # only set as TRUE if res_move_type == 0
                       

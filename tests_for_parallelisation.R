@@ -1,30 +1,41 @@
 rm(list=ls())
+
+scenario_name = "tests_for_parallelisation"
+out_path = paste0("./sims/",scenario_name)
+
 library(GMSE)
 library(scales)
 library(RColorBrewer)
-library(parallel)
-library(foreach)
+library(doParallel)
 source('helpers.R')
 source('gmse_apply_helpers.R')
 source("build_para_grid.R")
 
-n_sims = gmse_paras$n_sims
+# Create root output dir for scenario_name, if not create it:
+if(!dir.exists(out_path)) {
+  dir.create(out_path)
+}
+
 n_years = gmse_paras$n_years
 
-cl = parallel::makeForkCluster(6)
-doParallel::registerDoParallel(cl)
+sim_old = init_sims(gmse_paras)
+yr_res = init_sim_out(sim_old)
 
-sims = list()
-
-sims = foreach(K = 1:n_sims) %dopar% {
-  sim_old = init_sims(gmse_paras)
-  sims = init_sim_out(sim_old)
-  
-  foreach(i = 1:n_years) %do% {
-    sim_new = gmse_apply(get_res = "Full", old_list = sim_old)
-    append_output(new = sim_new, existing=sims, i = i)
-  }
-  
-  
-    
+for(i in 1:n_years) {
+  sim_new = gmse_apply(get_res = "Full", old_list = sim_old)  
+  yr_res = append_output(sim_new, yr_res)
 }
+
+# Add parameters to output list:
+yr_res$par = gmse_paras
+
+# Save output list:
+
+# Create millisecond timestamp with overprecision:
+tstamp = format(Sys.time(), "%Y%m%d%H%M%OS6")
+tstamp = sub("\\.","",tstamp)
+
+saveRDS(yr_res, file = paste0(out_path,"/",tstamp,".Rds"))
+
+
+
