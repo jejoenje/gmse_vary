@@ -1352,3 +1352,66 @@ move_resources_adjusted = function(res, land, buffer, type = "qtl", qtl = 0.975)
   return(as.matrix(new_positions))
   
 }
+
+### This is a simple wrapper for a call to move_resources_adjusted() which does some error
+###  checking for weid parameter combinations
+move_res = function(old = sim_old, paras = gmse_paras) {
+  
+  ### Move resources according to yield, if needed:
+  if(paras$res_move_to_yield==TRUE && paras$res_move_type==0 ) {
+    old$RESOURCES[,5:6] = move_resources_adjusted(old$RESOURCES, old$LAND[,,2], 
+                                                      buffer = paras$res_movement, 
+                                                      type = "max")  
+  }
+  if(paras$res_move_to_yield==TRUE && paras$res_move_type!=0) {
+    stop("Invalid res_move_to_yield / res_move_type combination")
+  }
+  if(paras$res_move_to_yield==FALSE && paras$res_move_type==0) {
+    stop("res_move_type set to 0 (no movement) but res_move_to_yield also FALSE - static resources!")
+  }
+  
+  return(old)
+  
+}
+
+### This is a wrapper to do some error checks of the state (class) of a recent gmse_apply() run, to make
+###  sure no extinctions occurred. 
+### Basically, function checks class of sim_new == "try-error". If so, attempts to identify why and print a message.
+###  Then returns a text string to indicate extinction.
+### If not, return "ok" string.
+### 
+### NOTE THIS ASSUMES THAT ANY "BREAKING" OUT OF A LOOP OCCURS OUTWITH THIS FUNCTION!
+check_gmse_extinction = function(new = sim_new, silent = FALSE) {
+  
+  if(class(new)=="try-error") {
+    if(grepl("Extinction", sim_new[1])) {
+      if(silent == FALSE) print(sprintf("True extinction, skipping to next sim."))
+    } else {
+      if(grepl("Error in estimate_abundances", sim_new[1])) {
+        if(silent == FALSE) print(sprintf("Observed extinction, skipping to next sim."))
+      } else {
+        if(silent == FALSE) print(sprintf("Observed extinction, skipping to next sim."))
+      }
+    }
+    return("extinct")
+  } else {
+    return("ok")
+  }
+}
+
+### Reads all .rds files in given folder, assuming these are outputs from gmse_apply() simulation runs as 
+###  created by init_sims(), init_sim_out() and append_output().
+### Loads each output file and combines into a single data file.
+
+gmse_rds_summary = function(folder) {
+  file_list = list.files(folder)
+  is_rds = grepl(".Rds", list.files(folder))
+  rds_files = file_list[is_rds]
+  
+  all_dat = list()
+  for(i in 1:length(rds_files)) {
+    all_dat[[i]] = readRDS(paste0(folder, rds_files[i]))
+  }
+  
+  return(all_dat)
+}

@@ -1,7 +1,7 @@
 rm(list=ls())
 
 ### Set and create output folder for scenario run:
-scenario_name = "scenario1"
+scenario_name = "scenario0"
 out_path = paste0("./sims/",scenario_name)
 
 library(GMSE)
@@ -13,8 +13,7 @@ source('gmse_apply_helpers.R')
 source("build_para_grid.R")
 
 ### Override basic parameters according to scenario:
-gmse_paras$res_move_type = 0
-gmse_paras$res_move_to_yield = TRUE
+# None needed for scenario0
 
 # Create root output dir for scenario_name, if not create it:
 if(!dir.exists(out_path)) {

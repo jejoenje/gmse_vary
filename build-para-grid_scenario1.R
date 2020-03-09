@@ -8,12 +8,12 @@ gmse_paras = expand.grid(
                           land_dim_2 = 100, # was 200
                           land_ownership =  TRUE, 
                           res_movement = 20,               # default = 20
-                          res_move_type = 1,               # was 1 (DEFAULT)
+                          res_move_type = 0,               # was 1 (DEFAULT)
                           tend_crops =      TRUE,          # was TRUE
                           tend_crop_yld =   0.55,          # was 0.9 (0.6 imm prev)
                           scaring =         TRUE,
                           minimum_cost =    10,
-                          remove_pr =       0.125,       # was 0.075
+                          remove_pr =       0.125,          # was 0.075
                           res_death_type =  3,
                           lambda =          0.25,
                           res_death_K =     10000,
@@ -35,6 +35,6 @@ gmse_paras = expand.grid(
                           land_type = "equal",
                           land_type_max_frac = NA,
                           n_years = 20,
-                          res_move_to_yield = FALSE        # only set as TRUE if res_move_type == 0
+                          res_move_to_yield = TRUE        # only set as TRUE if res_move_type == 0
                       
             )
