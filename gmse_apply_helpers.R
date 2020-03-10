@@ -219,7 +219,7 @@ yield_to_return = function(yield, yield_return, type = "direct") {
       yield_return = 1
       warning("'yield_return' not specified, assuming 1.")
     }
-    return(rpois(len(yield), lambda = yield*yield_return))
+    return(rpois(length(yield), lambda = yield*yield_return))
   }
   if(type == "beta1") {
     s1 = 5

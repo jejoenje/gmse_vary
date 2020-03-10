@@ -37,9 +37,10 @@ for(i in 1:n_years) {
   ### Next time step's budget equals current budget, minus expenses, plus current yield return.
   # First get yield return according to yield:
   yield_i = extractUser(sim_old, "yield")
-  return_i = yield_to_return(yield_i, type = "beta1", yield_return = 1); return_i
+  # Return is a 1-1 function of yield 
+  return_i = yield_to_return(yield_i, type = "linear", yield_return = 1)
   # Next year's budget:
-  new_budget = extractUser(sim_old, "budget") - extractUser(sim_old, "expenses") + return_i; new_budget
+  new_budget = extractUser(sim_old, "budget") - extractUser(sim_old, "expenses") + return_i
   
     
   ### Try to run next time step
