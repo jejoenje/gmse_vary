@@ -224,9 +224,7 @@ yield_to_return = function(yield, yield_return, type = "direct") {
   if(type == "beta1") {
     s1 = 5
     s2 = (s1/yield_return)-s1
-    # test = rbeta(1000, s1, s2)
-    # hist(test); summary(test)
-    u_yield_returns = rbeta(8, s1, s2)
+    u_yield_returns = rbeta(length(yield), s1, s2)
     return(yield*u_yield_returns)
   }
   
