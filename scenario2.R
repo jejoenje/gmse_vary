@@ -34,15 +34,13 @@ for(i in 1:n_years) {
   ### Move resources according to yield
   sim_old = move_res(sim_old, gmse_paras)
   
-  ### Next time step's budget equals current budget, minus expenses, plus current yield return.
-  # First get yield return according to yield:
-  yield_i = extractUser(sim_old, "yield")
-  # Return is a 1-1 function of yield 
-  return_i = yield_to_return(yield_i, type = "linear", yield_return = 1)
-  # Next year's budget:
-  new_budget = extractUser(sim_old, "budget") - extractUser(sim_old, "expenses") + return_i
+  ### Set next time step's user budgets
+  new_b = set_budgets(cur = sim_old, type = "2020", yield_type = "linear", yv = 1)
+  sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = new_b
   
-    
+  ### Set next time step's manager's budget, according to new user budgets
+  sim_old$AGENTS[1,17] = set_man_budget(u_buds = new_b, type = "max")
+
   ### Try to run next time step
   sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
 

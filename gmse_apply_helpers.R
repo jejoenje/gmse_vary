@@ -395,18 +395,44 @@ set_land = function(land, s, type, hi_frac = NULL, up_frac = NULL, lo_frac = NUL
 
 ### set_budgets()
 ### Takes AGENTS data frame as argument and returns a series of new budgets based on 
-set_budgets = function(prv, nxt, yv, yield_type = "beta1") {
+### 
+### prv = current gmse_apply() list output [ONLY USED IN DEPRECATED PARAMTERISATION]
+### nxt = current gmse_apply() list output [ONLY USED IN DEPRECATED PARAMTERISATION]
+### yv = yield return value (to be passed to yield_to_return())
+### yield_type = yield return type (to be passed to yield_to_return())
+### cur = current gmse_apply() list output
+### type = function type flag. Original = pre-2020 parameterisation. 2020 is newer one.
+### 
+set_budgets = function(prv = NULL, nxt = NULL, yv, yield_type = "beta1", cur = NULL, type = "original") {
   
-  rem = extractUser(prv, "budget")-extractUser(nxt, "expenses")
-
-  carryover = rem + extractUser(nxt, "leftover")
+  if(type == "original") {
+    # THIS IS THE PARAMETERISATION AS USED PRE-2020.
+    rem = extractUser(prv, "budget")-extractUser(nxt, "expenses")
+    carryover = rem + extractUser(nxt, "leftover")
+    curr_yield = extractUser(nxt, "yield")
+    profit = yield_to_return(yield = curr_yield, yield_return = yv, type = yield_type)
+    return(carryover+profit)
+  }
   
-  curr_yield = extractUser(nxt, "yield")
-  
-  profit = yield_to_return(yield = curr_yield, yield_return = yv, type = yield_type)
-  
-  return(carryover+profit)
-  
+  if(type == "2020") {
+    
+    if(is.null(cur)) stop("For '2020' parameterisation type, need to explicitly specify 'cur'." )
+    
+    ### Set next time step's budget
+    # Extract yield, current budget, and expenses:
+    y = extractUser(cur, "yield")
+    b = extractUser(cur, "budget")
+    e = extractUser(cur, "expenses")
+    # Calculate yield return according to input paras 
+    r = yield_to_return(y, type = yield_type, yield_return = yv)
+    # "Scale" the return (as a function of budget) by the budget in the previous time step.
+    r = b+(((r-mean(r))/r)*b)
+    # New USER budget is old budget, minus expenses, plus scaled return:
+    new_b = b-e+r
+    
+    return(new_b)
+  }
+    
 }
 
 #' Plot a "land" matrix as produced by GMSE (LAND[,,3]) as coloured image.
