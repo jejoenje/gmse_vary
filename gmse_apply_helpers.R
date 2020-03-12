@@ -1446,3 +1446,32 @@ gmse_rds_summary = function(folder) {
   
   return(all_dat)
 }
+
+### This function plots summaries from a list of gmse_apply() output series.
+### Each list element of 'dat' is expected to be the output of a simulation run of years, consisting of ten list elements 
+###  themselves: yield, budget, crops, kills, scares, noact, pop, res, land_yield and par, the first nine of which
+###  lists the results of each of these for each simulation year.
+### type = "pop" or "yield". Plots population trajectories for each simulation, or mean yield across users against year, 
+###  for each simulation. Remaining parameters are plotting controls passed on to low-level plotting functions.
+gmse_vary_plot = function(dat, type = "pop", col = "black", lwd = 1, ylim = NULL, xlim = NULL) {
+  
+  par(mfrow = c(1,1))
+  
+  if(type == "pop") {
+    # Population trajectories, one for each sim:
+    y_lo = min(unlist(lapply(dat, function(x) min(x$pop[,1]))))
+    y_hi = max(unlist(lapply(dat, function(x) max(x$pop[,1]))))
+    plot(dat[[1]]$pop[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1)
+    lapply(dat, function(x) lines(x$pop[,1], col = col, lwd = 1))
+  }
+  
+  if(type == "yield") {
+    # Average yield across users, per year.
+    y_lo = min(unlist(lapply(dat, function(x) min(x$yield))))
+    y_hi = max(unlist(lapply(dat, function(x) max(x$yield))))
+    plot(dat[[1]]$yield[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1)
+    lapply(dat, function(x) lines(apply(x$yield,1,mean), col = col, lwd = 1))
+  }
+  
+  
+}
