@@ -1430,6 +1430,11 @@ check_gmse_extinction = function(new = sim_new, silent = FALSE) {
 ### Loads each output file and combines into a single data file.
 
 gmse_rds_summary = function(folder) {
+  
+  if(substr(folder, nchar(folder), nchar(folder)) != "/" ) {
+    folder = paste0(folder, "/")
+  }
+  
   file_list = list.files(folder)
   is_rds = grepl(".Rds", list.files(folder))
   rds_files = file_list[is_rds]
