@@ -1,7 +1,7 @@
 rm(list=ls())
 
 ### Set and create output folder for scenario run:
-scenario_name = "scenario2"
+scenario_name = "scenario2a"
 out_path = paste0("./sims/",scenario_name)
 
 library(GMSE)
@@ -34,10 +34,10 @@ for(i in 1:n_years) {
   #print(sprintf("Time step %d", i))
     
   ### Move resources according to yield
-  sim_old = move_res(sim_old, gmse_paras)
+  #sim_old = move_res(sim_old, gmse_paras)
   
   ### Set next time step's user budgets
-  new_b = set_budgets(cur = sim_old, type = "2020", yield_type = "linear", yv = 0.8)
+  new_b = set_budgets(cur = sim_old, type = "2020", yield_type = "linear", yv = 1)
   new_b[new_b>10000] = 10000
   new_b[new_b<gmse_paras$minimum_cost] = gmse_paras$minimum_cost
   
