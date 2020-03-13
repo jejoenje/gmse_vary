@@ -53,8 +53,8 @@ init_sim_out = function(dat) {
                pop = t(as.data.frame(c(dat$basic_output$resource_results, 
                                        dat$basic_output$observation_results))),
                res = list(dat$RESOURCES),
-               land_yield = list(dat$LAND[,,2]),
-               land_owner = list(dat$LAND[,,3])
+               land_yield = list(dat$LAND[,,2])
+               #land_owner = list(dat$LAND[,,3])
                )
   
   return(out_i)
@@ -80,7 +80,7 @@ append_output = function(new, existing) {
                                                         new$basic_output$observation_results))))
   existing$res[[ length(existing$res)+1]] = new$RESOURCES
   existing$land_yield[[ length(existing$land_yield) +1 ]] = new$LAND[,,2]
-  existing$land_owner[[ length(existing$land_owner) +1 ]] = new$LAND[,,3]
+  #existing$land_owner[[ length(existing$land_owner) +1 ]] = new$LAND[,,3]
   
   return(existing)
 }
