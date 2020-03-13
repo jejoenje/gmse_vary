@@ -34,7 +34,7 @@ gmse_paras = expand.grid(
                       # Additional parameters to vary in gmse_apply() loop.
                           land_type = "equal",
                           land_type_max_frac = NA,
-                          n_years = 20,
+                          n_years = 50,
                           res_move_to_yield = FALSE        # only set as TRUE if res_move_type == 0
                       
             )

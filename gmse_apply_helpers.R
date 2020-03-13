@@ -1455,8 +1455,6 @@ gmse_rds_summary = function(folder) {
 ###  for each simulation. Remaining parameters are plotting controls passed on to low-level plotting functions.
 gmse_vary_plot = function(dat, type = "pop", col = "black", lwd = 1, ylim = NULL, xlim = NULL) {
   
-  par(mfrow = c(1,1))
-  
   if(type == "pop") {
     # Population trajectories, one for each sim:
     y_lo = min(unlist(lapply(dat, function(x) min(x$pop[,1]))))

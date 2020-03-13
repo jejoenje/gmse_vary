@@ -29,9 +29,6 @@ yr_res = init_sim_out(sim_old)
 
 # Loop through nunmber of years
 for(i in 1:n_years) {
-  
-  ### Move resources according to yield
-  sim_old = move_res(sim_old, gmse_paras)
     
   ### Try to run next time step
   sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
