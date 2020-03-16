@@ -1,7 +1,7 @@
 rm(list=ls())
 
 ### Set and create output folder for scenario run:
-scenario_name = "scenario1"
+scenario_name = "scenario2"
 out_path = paste0("./sims/",scenario_name)
 
 library(GMSE)
@@ -28,12 +28,24 @@ sim_old = init_sims(gmse_paras)
 # Initialise output for simulation run:
 yr_res = init_sim_out(sim_old)
 
+###### REDISTRIBUTE LAND HERE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+###### REDISTRIBUTE LAND HERE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+###### REDISTRIBUTE LAND HERE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+###### REDISTRIBUTE LAND HERE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # Loop through nunmber of years
 for(i in 1:n_years) {
   
   ### Move resources according to yield
   sim_old = move_res(sim_old, gmse_paras)
-    
+  
+  ### Set next time step's user budgets
+  new_b = set_budgets(cur = sim_old, type = "2020", yield_type = "linear", yv = 1)
+  sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = new_b
+  
+  ### Set next time step's manager's budget, according to new user budgets
+  sim_old$AGENTS[1,17] = set_man_budget(u_buds = new_b, type = "mean")
+
   ### Try to run next time step
   sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
 
@@ -65,6 +77,6 @@ tstamp = sub("\\.","",tstamp)
 saveRDS(yr_res, file = paste0(out_path,"/",tstamp,".Rds"))
 
 # To run 30 of this script in parallel:
-#  seq 30 | xargs -I{} -P 6 /usr/bin/Rscript scenario1.R
+#  seq 100 | xargs -I{} -P 6 /usr/bin/Rscript scenario2.R
 
 

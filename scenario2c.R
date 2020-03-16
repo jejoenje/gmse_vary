@@ -1,7 +1,7 @@
 rm(list=ls())
 
 ### Set and create output folder for scenario run:
-scenario_name = "scenario2b"
+scenario_name = "scenario2c"
 out_path = paste0("./sims/",scenario_name)
 
 library(GMSE)
@@ -87,6 +87,6 @@ tstamp = sub("\\.","",tstamp)
 saveRDS(yr_res, file = paste0(out_path,"/",tstamp,".Rds"))
 
 # To run 30 of this script in parallel:
-#  seq 100 | xargs -I{} -P 6 /usr/bin/Rscript scenario2.R
+#  seq 100 | xargs -I{} -P 6 /usr/bin/Rscript scenario2c.R
 
 

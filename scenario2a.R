@@ -77,6 +77,6 @@ tstamp = sub("\\.","",tstamp)
 saveRDS(yr_res, file = paste0(out_path,"/",tstamp,".Rds"))
 
 # To run 30 of this script in parallel:
-#  seq 100 | xargs -I{} -P 6 /usr/bin/Rscript scenario2.R
+#  seq 100 | xargs -I{} -P 6 /usr/bin/Rscript scenario2a.R
 
 

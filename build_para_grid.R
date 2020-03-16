@@ -10,7 +10,7 @@ gmse_paras = expand.grid(
                           res_movement = 20,               # default = 20
                           res_move_type = 1,               # was 1 (DEFAULT)
                           tend_crops =      TRUE,          # was TRUE
-                          tend_crop_yld =   0.55,          # was 0.9 (0.6 imm prev)
+                          tend_crop_yld =   0.25,          # was 0.9 (0.55 imm prev)
                           scaring =         TRUE,
                           minimum_cost =    10,
                           remove_pr =       0.125,       # was 0.075

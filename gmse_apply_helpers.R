@@ -458,11 +458,15 @@ plot_land = function(x, col = "BrBG") {
 
 
 ### Set manager budget according to user budgets
-set_man_budget = function(u_buds, type = "max", fixed_budget = 1000) {
-  allowed_types = c("fixed", "max","mean","0.75","0.9","0.99")
+set_man_budget = function(u_buds, type = "max", p = NULL, fixed_budget = 1000) {
+  allowed_types = c("fixed", "max","mean","prop","0.75","0.9","0.99")
   
   if(!(type %in% allowed_types)) {
     stop(sprintf("Type '%s' not implemented, please choose from: %s", type, paste(allowed_types, collapse=", ")))
+  }
+  
+  if(type == "prop" & is.null(p)) {
+    stop("If type = prop, need to specify p.")
   }
   
   if(type == "max") {
@@ -470,6 +474,9 @@ set_man_budget = function(u_buds, type = "max", fixed_budget = 1000) {
   }
   if(type == "mean") {
     return(mean(u_buds))
+  }
+  if(type == "prop") {
+    return(sum(u_buds*p))
   }
   if(type == "0.75") {
     return(as.numeric(quantile(u_buds, probs = c(0.75))))

@@ -11,6 +11,11 @@
 # Resources distributed randomly. User budget is a function of yield, manager budget a function of user budgets.
 ### Scenario 2b
 # Resources distributed according to yield. User budget is a function of yield, manager budget a function of user budgets.
+### Scenario 2c
+# As 2b, but started with variable budget (truncated normal)
+
+
+
 
 ### Scenario 3
 # Resources distribute according to yield. User budget is a function of yield, manager budget a function of user budgets. 

@@ -3,7 +3,7 @@ source("helpers.R")
 source("gmse_apply_helpers.R")
 
 # Folder for testing
-folder = "sims/scenario2b"
+folder = "sims/scenario2c"
 
 # Read output files in folder
 sims = gmse_rds_summary(folder)
