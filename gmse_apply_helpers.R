@@ -1465,13 +1465,15 @@ gmse_rds_summary = function(folder) {
 ###  for each simulation. Remaining parameters are plotting controls passed on to low-level plotting functions.
 ### For type == yield and type == budget, parameter sumtype is necessary, which defaults to mean, plotting the
 ###  mean across users. Can also be "min", "max", "median".
-gmse_vary_plot = function(dat, type = "pop", col = "black", lwd = 1, ylim = NULL, xlim = NULL, sumtype = "mean") {
+gmse_vary_plot = function(dat, type = "pop", col = "black", lwd = 1, ylim = NULL, xlim = NULL, 
+                          sumtype = "mean", ylab = "", xlab = "") {
   
   if(type == "pop") {
     # Population trajectories, one for each sim:
     y_lo = min(unlist(lapply(dat, function(x) min(x$pop[,1]))))
     y_hi = max(unlist(lapply(dat, function(x) max(x$pop[,1]))))
-    plot(dat[[1]]$pop[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1)
+    plot(dat[[1]]$pop[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1, 
+         ylab = ylab, xlab = xlab)
     lapply(dat, function(x) lines(x$pop[,1], col = col, lwd = 1))
   }
   
@@ -1479,7 +1481,8 @@ gmse_vary_plot = function(dat, type = "pop", col = "black", lwd = 1, ylim = NULL
     # Average yield across users, per year.
     y_lo = min(unlist(lapply(dat, function(x) min(x$yield))))
     y_hi = max(unlist(lapply(dat, function(x) max(x$yield))))
-    plot(dat[[1]]$yield[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1)
+    plot(dat[[1]]$yield[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1, 
+         ylab = ylab, xlab = xlab)
     lapply(dat, function(x) lines(apply(x$yield,1,sumtype), col = col, lwd = 1))
   }
   
@@ -1488,7 +1491,8 @@ gmse_vary_plot = function(dat, type = "pop", col = "black", lwd = 1, ylim = NULL
     y_hi = unlist(lapply(dat, function(x) max(x$budget)))
     y_lo = bufRange(y_lo, end = "lo")
     y_hi = bufRange(y_hi, end = "hi")
-    plot(dat[[1]]$budget[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1)
+    plot(dat[[1]]$budget[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1,
+         ylab = ylab, xlab = xlab)
     lapply(dat, function(x) lines(apply(x$budget,1,sumtype), col = col, lwd = 1))
   }
   
