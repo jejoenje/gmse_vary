@@ -405,8 +405,10 @@ set_land = function(land, s, type, hi_frac = NULL, up_frac = NULL, lo_frac = NUL
 ### yield_type = yield return type (to be passed to yield_to_return())
 ### cur = current gmse_apply() list output
 ### type = function type flag. Original = pre-2020 parameterisation. 2020 is newer one.
+### scale = flag to "scale" the return (as a function of budget) by the budget in the previous time step. 
+###  PROBABLY REQUIRED when not using "tax" type of reduction in profit. Defaults to TRUE for legacy purposes.
 ### 
-set_budgets = function(prv = NULL, nxt = NULL, yv, yield_type = "beta1", cur = NULL, type = "original") {
+set_budgets = function(prv = NULL, nxt = NULL, yv, yield_type = "beta1", cur = NULL, type = "original", scale = TRUE) {
   
   if(type == "original") {
     # THIS IS THE PARAMETERISATION AS USED PRE-2020.
@@ -429,7 +431,9 @@ set_budgets = function(prv = NULL, nxt = NULL, yv, yield_type = "beta1", cur = N
     # Calculate yield return according to input paras 
     r = yield_to_return(y, type = yield_type, yield_return = yv)
     # "Scale" the return (as a function of budget) by the budget in the previous time step.
-    r = b+(((r-mean(r))/r)*b)
+    if(scale == TRUE) {
+      r = b+(((r-mean(r))/r)*b)
+    }
     # New USER budget is old budget, minus expenses, plus scaled return:
     new_b = b-e+r
     
