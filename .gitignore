@@ -13,11 +13,5 @@ sims/varyBudget/
 sims/varyBudget-1/
 sims/varyBudget-2/
 sims/varyBudget-3/
-sims/scenario0/
-sims/scenario1/
-sims/scenario2/
-sims/scenario2a/
-sims/scenario2b/
-sims/scenario2c/
-sims/scenario3/
-sims/scenario_TEST/
+sims/scenarios_superseded/
+.~lock*
