@@ -30,12 +30,17 @@ yr_res = init_sim_out(sim_old)
 
 # Loop through nunmber of years
 for(i in 1:n_years) {
-  
+
+  #print(sprintf("Time step %d", i))
+    
   ### Move resources according to yield
   sim_old = move_res(sim_old, gmse_paras)
   
   ### Set next time step's user budgets
-  new_b = set_budgets(cur = sim_old, type = "2020", yield_type = "linear", yv = 1)
+  new_b = set_budgets(cur = sim_old, type = "2020", yield_type = "linear", yv = 0.8)
+  new_b[new_b>10000] = 10000
+  new_b[new_b<gmse_paras$minimum_cost] = gmse_paras$minimum_cost
+  
   sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = new_b
   
   ### Set next time step's manager's budget, according to new user budgets

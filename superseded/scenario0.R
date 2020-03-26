@@ -29,9 +29,6 @@ yr_res = init_sim_out(sim_old)
 
 # Loop through nunmber of years
 for(i in 1:n_years) {
-  
-  ### Move resources according to yield
-  sim_old = move_res(sim_old, gmse_paras)
     
   ### Try to run next time step
   sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
@@ -64,6 +61,6 @@ tstamp = sub("\\.","",tstamp)
 saveRDS(yr_res, file = paste0(out_path,"/",tstamp,".Rds"))
 
 # To run 30 of this script in parallel:
-#  seq 30 | xargs -I{} -P 6 /usr/bin/Rscript tests_for_parallelisation.R
+#  seq 30 | xargs -I{} -P 6 /usr/bin/Rscript scenario0.R
 
 
