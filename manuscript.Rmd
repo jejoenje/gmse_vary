@@ -1,0 +1,37 @@
+---
+title: "Stakeholder variability effects on resource management"
+author: "Jeroen Minderman"
+date: "16/04/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Natural resource management is an increasingly "wicked problem" as human pressures on the environment increase.
+
+Range of existing modelling frameworks exist to address this, but most/many do not or cannot address either dynamic
+decision making on the part of stakeholders, or variability among stakeholders, e.g. in terms of ability of affect the
+system at hand.
+
+This is problematic, because from previous work it is expected that stakeholder variation has a crucial role to play in
+shaping (and potentially even determining the outcome of) natural resource management. For example, it is often thought
+that economic inequality will have negative repurcussions for the conservation of natural resources.
+
+In this paper, our aims are twofold. First, we aim to use GMSE to assess the effect of variability among stakeholders on
+simulated natural resource management. We specifically focus on the potential effects of socio-economic inequity arising
+from variability in budget (financial inequity) and land ownership, and its interrelationship. Second, in doing so, we
+aim to further demonstrate the capabilities of GMSE as a general tool for management strategy evaluation, particularly
+in circumstances where the consideration of variability among stakeholders is essential. In particular, our simulations
+serve as a demonstration of how "base" GMSE can easily be customised using user-specified functions, to reflect
+processess of interest in specific case studies.
+
+## Methods
+
+## Results
+
+## Discussion
+

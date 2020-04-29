@@ -1,20 +1,23 @@
 rm(list=ls())
 
 ### Set and create output folder for scenario run:
-scenario_name = "scenario1"
+scenario_name = "scenario4"
 out_path = paste0("./sims/",scenario_name)
 
 library(GMSE)
 library(scales)
 library(RColorBrewer)
 library(doParallel)
+library(truncnorm)
+library(landscapetools)
+library(NLMR)
 source('helpers.R')
 source('gmse_apply_helpers.R')
 source("build_para_grid.R")
 
 ### Override basic parameters according to scenario:
-# gmse_paras$res_move_type = 0
-# gmse_paras$res_move_to_yield = TRUE
+gmse_paras$res_move_type = 0
+gmse_paras$res_move_to_yield = TRUE
 
 # Create root output dir for scenario_name, if not create it:
 if(!dir.exists(out_path)) {
@@ -26,6 +29,25 @@ n_years = gmse_paras$n_years
 # Initialise simulation run with first time step (i.e. time = 0)
 sim_old = init_sims(gmse_paras)
 
+# Reset user budgets (truncated normal):
+start_budgets = rtruncnorm(gmse_paras$stakeholders, 
+                           a = 0.8*gmse_paras$user_budget, 
+                           b = 1.2*gmse_paras$user_budget, 
+                           mean = gmse_paras$user_budget, 
+                           sd = gmse_paras$user_budget/10)
+sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = start_budgets
+
+# Set manager budget according to user budgets:
+sim_old$AGENTS[1,17] = set_man_budget(u_buds = start_budgets, type = "prop", p = gmse_paras$man_bud_prop)
+
+# Set variable land:
+sim_old$LAND[,,3] = distribute_land(xd = gmse_paras$land_dim_1, 
+                                    yd = gmse_paras$land_dim_2, 
+                                     s = gmse_paras$stakeholders, 
+                           public_land = gmse_paras$public_land, 
+                                  type = gmse_paras$land_type, 
+                             rich_frac = gmse_paras$land_type_max_frac)
+
 # Initialise output for simulation run:
 yr_res = init_sim_out(sim_old)
 
@@ -35,17 +57,23 @@ for(i in 1:n_years) {
   #print(sprintf("Time step %d", i))
     
   ### Move resources according to yield
-  #sim_old = move_res(sim_old, gmse_paras)
+  sim_old = move_res(sim_old, gmse_paras)
   
   ### Set next time step's user budgets
-  # new_b = set_budgets(cur = sim_old, type = "2020", yield_type = "linear", yv = 1)
-  # new_b[new_b>10000] = 10000
-  # new_b[new_b<gmse_paras$minimum_cost] = gmse_paras$minimum_cost
-  # 
-  # sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = new_b
+  new_b = set_budgets(cur = sim_old, 
+                      type = "2020", 
+                      yield_type = gmse_paras$yield_type, 
+                      yv = gmse_paras$yield_value, 
+                      scale = FALSE)
+  new_b[new_b>10000] = 10000
+  new_b[new_b<gmse_paras$minimum_cost] = gmse_paras$minimum_cost
+   
+  sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = new_b
   
   ### Set next time step's manager's budget, according to new user budgets
-  # sim_old$AGENTS[1,17] = set_man_budget(u_buds = new_b, type = "mean")
+  sim_old$AGENTS[1,17] = set_man_budget(u_buds = new_b, 
+                                        type = "prop", 
+                                        p = gmse_paras$man_bud_prop)
 
   ### Try to run next time step
   sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
@@ -78,6 +106,6 @@ tstamp = sub("\\.","",tstamp)
 saveRDS(yr_res, file = paste0(out_path,"/",tstamp,".Rds"))
 
 # To run 30 of this script in parallel:
-#  seq 100 | xargs -I{} -P 6 /usr/bin/Rscript scenario1.R
+#  seq 100 | xargs -I{} -P 6 /usr/bin/Rscript scenario2.R
 
 

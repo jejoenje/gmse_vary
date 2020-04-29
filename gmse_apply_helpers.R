@@ -2,9 +2,15 @@
 ### 
 ### 
 
+require(truncnorm)
+
 ### This is a helper function to run a single gmse_apply call as a first time step, using a given list of input parameters.
 ### Only intended as a convenience function to ensure simulation scripts can be relatively "clean".
 init_sims = function(gmse_paras = gmse_paras) {
+  if(is.null(gmse_paras$consume_surv)) gmse_paras$consume_surv = 0
+  if(is.null(gmse_paras$consume_repr)) gmse_paras$consume_repr = 0
+  if(is.null(gmse_paras$times_feeding)) gmse_paras$times_feeding = 1
+  
   gmse_apply(get_res = gmse_paras$get_res,
              land_dim_1 = gmse_paras$land_dim_1,
              land_dim_2 = gmse_paras$land_dim_2,
@@ -333,9 +339,111 @@ distribute_land = function(xd, yd, s, public_land = 0, type = "equal", rich_frac
     
   } # endif 'type == "oneRich"'
   
+  if (type == "nlm_mosaictess") {
+    if(public_land == FALSE) {
+      x = nlm_mosaictess(xd, yd, germs = s)
+      v = x@data@values
+      v = factor(v)
+      levels(v) = 2:(nlevels(v)+1)
+      v = as.numeric(as.vector(v))
+      land = matrix(v, nrow = xd, ncol = yd)
+    }
+    if(public_land == TRUE) {
+      x = nlm_mosaictess(xd, yd, germs = s+1)
+      v = x@data@values
+      v = factor(v)
+      stop("Public land not implemented with chosen type.")
+    }
+  }
+  
   return(land)
   
 } # End of function
+
+### This is an alternative to distribute_land(), using a simplified process.
+### The only parameter is land_var, a proportion which determines the ratio of the standard 
+###  deviation to the mean, of a truncated normal distribution form which each stakeholder's 
+###  land holding is drawn. For example, a land_var of 0.1 means that the standard deviation of 
+###  each random land draw is 0.1 times its mean (i.e. an equal proportion of the total land 
+###  remaining). Thus, land_var needs to be >0 and <1, and values approaching 0 mean a more or 
+###  less uniform land distribution.
+### Currently, public land is not supported.
+distribute_land_simplified = function(xd, yd, s, land_var = NULL) {
+  
+  if(is.null(land_var)) land_var = 0.0000001
+  if(land_var<0 | land_var>0.999999) stop("land_var needs to be >0 and <1.")
+  
+  landf = as.vector(NULL)
+  remaining_size = xd*yd
+  S = s
+  
+  for(i in 1:s) {
+    equal = (1/S)*remaining_size
+    min_size = equal-equal*land_var
+    max_size = remaining_size-(equal+equal*land_var)
+    pick_size = rtruncnorm(1, a = min_size, b = max_size, mean = equal, sd = equal*land_var )
+    landf = c(landf, pick_size)
+    remaining_size = remaining_size - pick_size
+    S = S-1
+    
+  }
+  remaining_size = (xd*yd)-sum(landf,na.rm=T)
+  
+  if(remaining_size>0) {
+    if(len(landf[is.na(landf)])>1) {
+      split_remaining = rtruncnorm(1, mean = remaining_size/2, 
+                                   sd = (remaining_size/2)*land_var, 
+                                   a = land_var*(remaining_size/2), 
+                                   b = remaining_size-(land_var*(remaining_size/2)) )
+      landf[is.na(landf)]
+      landf[is.na(landf)] = c(split_remaining,(remaining_size-split_remaining ))
+    } else {
+      landf[is.na(landf)] = remaining_size
+    }
+  }
+  
+  landf = floor(landf)
+  
+  missing = (xd*yd)-sum(landf)
+  pad_out = sample(1:s,missing,replace=T)
+  for(i in 1:length(pad_out)) {
+    landf[pad_out[i]] = landf[pad_out[i]] + sign(missing)
+  }
+  #sum(landf)
+  
+  land = rep(1:s, landf)
+  land = matrix(land, xd, yd)
+  
+  return(land)
+}
+
+
+### function to calculate some summary statistics for a given LAND matrix - 
+###  specifically, the Shannon diversity index, evenness index, variance and cv.
+### Type specifies whether the calculate using proportions in the landscape or absolute counts.
+### Latter only affects VAR and CV output.
+summarise_land = function(land, type = "absolute") {
+  require(vegan)
+  
+  if(type == "absolute") {
+    H = diversity(table(land))
+    J = H/log(length(table(land)))
+    v = var(table(land))
+    cv = var(table(land))/mean(table(land))
+  }
+  
+  if(type == "prop") {
+    pland = table(land)/sum(table(land))
+    H = diversity(pland)
+    J = H/log(length(pland))
+    v = var(pland)
+    cv = var(pland)/mean(pland)
+  }
+  
+  
+  return(data.frame(H = H, J = J, var = v, cv = cv))
+}
+
 
 ###
 ### set_land()
@@ -408,7 +516,8 @@ set_land = function(land, s, type, hi_frac = NULL, up_frac = NULL, lo_frac = NUL
 ### scale = flag to "scale" the return (as a function of budget) by the budget in the previous time step. 
 ###  PROBABLY REQUIRED when not using "tax" type of reduction in profit. Defaults to TRUE for legacy purposes.
 ### 
-set_budgets = function(prv = NULL, nxt = NULL, yv, yield_type = "beta1", cur = NULL, type = "original", scale = TRUE) {
+set_budgets = function(prv = NULL, nxt = NULL, yv, yield_type = "beta1", cur = NULL, 
+                       type = "original", scale = TRUE) {
   
   if(type == "original") {
     # THIS IS THE PARAMETERISATION AS USED PRE-2020.
@@ -449,12 +558,18 @@ set_budgets = function(prv = NULL, nxt = NULL, yv, yield_type = "beta1", cur = N
 #' @return Nothing, plots an image.
 #' @examples
 #' plot_land(sim$LAND[,,3])
-plot_land = function(x, col = "BrBG") {
+plot_land = function(x, col = "BrBG", random_order = TRUE) {
   
   # Pick colors
-  land_cols = brewer.pal(len(table(x))+2, col)
-  land_cols = land_cols[!land_cols=="#F5F5F5"]
+  #land_cols = brewer.pal(len(table(x))+2, col)
+  #land_cols = land_cols[!land_cols=="#F5F5F5"]
 
+  land_cols = gray.colors(len(table(x)), start = 0.05, end = 0.8)
+  if(random_order==TRUE) {
+    scramble = sample(1:len(table(x)),len(table(x)),replace=FALSE)
+    land_cols = land_cols[scramble]
+  }
+  
   if(sum(x == 1, na.rm = T)>0) land_cols[1] = "#FFFFFF"
   image(x = x, col = land_cols, yaxt = "n", xaxt = "n")
  
@@ -1443,7 +1558,7 @@ check_gmse_extinction = function(new = sim_new, silent = FALSE) {
 ###  created by init_sims(), init_sim_out() and append_output().
 ### Loads each output file and combines into a single data file.
 
-gmse_rds_summary = function(folder) {
+gmse_rds_summary = function(folder, read_number = NULL) {
   
   if(substr(folder, nchar(folder), nchar(folder)) != "/" ) {
     folder = paste0(folder, "/")
@@ -1454,8 +1569,15 @@ gmse_rds_summary = function(folder) {
   rds_files = file_list[is_rds]
   
   all_dat = list()
-  for(i in 1:length(rds_files)) {
-    all_dat[[i]] = readRDS(paste0(folder, rds_files[i]))
+  
+  if(is.null(read_number)) {
+    for(i in 1:length(rds_files)) {
+      all_dat[[i]] = readRDS(paste0(folder, rds_files[i]))
+    }
+  } else {
+    for(i in 1:read_number) {
+      all_dat[[i]] = readRDS(paste0(folder, rds_files[i]))
+    }
   }
   
   return(all_dat)
@@ -1470,34 +1592,116 @@ gmse_rds_summary = function(folder) {
 ### For type == yield and type == budget, parameter sumtype is necessary, which defaults to mean, plotting the
 ###  mean across users. Can also be "min", "max", "median".
 gmse_vary_plot = function(dat, type = "pop", col = "black", lwd = 1, ylim = NULL, xlim = NULL, 
-                          sumtype = "mean", ylab = "", xlab = "") {
+                          sumtype = "mean", ylab = "", xlab = "", ctext = NULL) {
   
   if(type == "pop") {
     # Population trajectories, one for each sim:
-    y_lo = min(unlist(lapply(dat, function(x) min(x$pop[,1]))))
-    y_hi = max(unlist(lapply(dat, function(x) max(x$pop[,1]))))
+    #y_lo = min(unlist(lapply(dat, function(x) min(x$pop[,1]))))
+    y_lo = 0
+    y_hi = max(unlist(lapply(dat, function(x) max(x$pop[,1]))))*1.1
     plot(dat[[1]]$pop[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1, 
          ylab = ylab, xlab = xlab)
     lapply(dat, function(x) lines(x$pop[,1], col = col, lwd = 1))
+    if(!is.null(ctext)) {
+      text(ctext, x = dat[[1]]$par$n_years*0.85, y = y_hi*0.95) 
+    }
   }
   
   if(type == "yield") {
     # Average yield across users, per year.
-    y_lo = min(unlist(lapply(dat, function(x) min(x$yield))))
-    y_hi = max(unlist(lapply(dat, function(x) max(x$yield))))
+    #y_lo = min(unlist(lapply(dat, function(x) min(x$yield))))
+    y_lo = 0
+    y_hi = max(unlist(lapply(dat, function(x) max(x$yield))))*1.1
     plot(dat[[1]]$yield[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1, 
          ylab = ylab, xlab = xlab)
     lapply(dat, function(x) lines(apply(x$yield,1,sumtype), col = col, lwd = 1))
+    if(!is.null(ctext)) {
+      text(ctext, x = dat[[1]]$par$n_years*0.85, y = y_hi*0.95) 
+    }
+  }
+  
+  if(type == "yield_usermean") {
+    # Average yield per user, across sims, per year.
+    
+    # Work out yield means per stakeholder first.
+    s = dat[[1]]$par$stakeholders
+    n_sims = length(dat)
+    n_years = dat[[1]]$par$n_years+1
+    out = matrix(NA, nrow = n_years, ncol = s)
+    # Iterate through all stakeholders
+    for(i in 1:s) {
+      out_i = matrix(NA, nrow = n_years, ncol = n_sims)
+      # Iterate through all sims per stakeholder
+      for(j in 1:n_sims) {
+        yield_j_i = as.vector(dat[[j]]$yield[,i])
+        if(length(yield_j_i) != n_years) {
+          yield_j_i = c(yield_j_i, rep(NA, n_years-length(yield_j_i)))
+        }
+        out_i[,j] = yield_j_i
+      }
+      out[,i] = apply(out_i, 1, function(x) mean(x, na.rm = T))
+    }
+    
+    #y_lo = bufRange(out, "lo")
+    y_lo = 0
+    y_hi = bufRange(out, "hi")
+    
+    plot(out[,1], type = "n", ylim = c(y_lo, y_hi), xlim = c(0,dat[[1]]$par$n_years)+1, 
+         xlab = xlab, ylab = ylab)
+    apply(out, 2, function(x) lines(x, col = col, lwd = 1))
+    
+    if(!is.null(ctext)) {
+      text(ctext, x = dat[[1]]$par$n_years*0.85, y = y_hi*0.95) 
+    }
   }
   
   if(type == "budget") {
-    y_lo = unlist(lapply(dat, function(x) min(x$budget)))
-    y_hi = unlist(lapply(dat, function(x) max(x$budget)))
-    y_lo = bufRange(y_lo, end = "lo")
+    #y_lo = unlist(lapply(dat, function(x) min(x$budget)))
+    y_hi = unlist(lapply(dat, function(x) max(x$budget)))*1.1
+    #y_lo = bufRange(y_lo, end = "lo")
     y_hi = bufRange(y_hi, end = "hi")
+    y_lo = 0
     plot(dat[[1]]$budget[,1], type = "n", ylim = c(y_lo,y_hi), xlim = c(0,dat[[1]]$par$n_years)+1,
          ylab = ylab, xlab = xlab)
     lapply(dat, function(x) lines(apply(x$budget,1,sumtype), col = col, lwd = 1))
+    if(!is.null(ctext)) {
+      text(ctext, x = dat[[1]]$par$n_years*0.85, y = y_hi*0.95) 
+    }
   }
   
+  if(type == "budget_usermean") {
+    # Average BUDGET per user, across sims, per year.
+    
+    # Work out budget means per stakeholder first.
+    s = dat[[1]]$par$stakeholders
+    n_sims = length(dat)
+    n_years = dat[[1]]$par$n_years+1
+    out = matrix(NA, nrow = n_years, ncol = s)
+    # Iterate through all stakeholders
+    for(i in 1:s) {
+      out_i = matrix(NA, nrow = n_years, ncol = n_sims)
+      # Iterate through all sims per stakeholder
+      for(j in 1:n_sims) {
+        yield_j_i = as.vector(dat[[j]]$budget[,i])
+        if(length(yield_j_i) != n_years) {
+          yield_j_i = c(yield_j_i, rep(NA, n_years-length(yield_j_i)))
+        }
+        out_i[,j] = yield_j_i
+      }
+      out[,i] = apply(out_i, 1, function(x) mean(x, na.rm = T))
+    }
+    
+    #y_lo = bufRange(out, "lo")
+    y_lo = 0
+    y_hi = bufRange(out, "hi")
+    
+    plot(out[,1], type = "n", ylim = c(y_lo, y_hi), xlim = c(0,dat[[1]]$par$n_years)+1, 
+         xlab = xlab, ylab = ylab)
+    apply(out, 2, function(x) lines(x, col = col, lwd = 1))
+    if(!is.null(ctext)) {
+      text(ctext, x = dat[[1]]$par$n_years*0.85, y = y_hi*0.95) 
+    }
+  }
+  
+
 }

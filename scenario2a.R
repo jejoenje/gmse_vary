@@ -1,13 +1,14 @@
 rm(list=ls())
 
 ### Set and create output folder for scenario run:
-scenario_name = "scenario1"
+scenario_name = "scenario2a"
 out_path = paste0("./sims/",scenario_name)
 
 library(GMSE)
 library(scales)
 library(RColorBrewer)
 library(doParallel)
+library(truncnorm)
 source('helpers.R')
 source('gmse_apply_helpers.R')
 source("build_para_grid.R")
@@ -26,6 +27,17 @@ n_years = gmse_paras$n_years
 # Initialise simulation run with first time step (i.e. time = 0)
 sim_old = init_sims(gmse_paras)
 
+# Reset user budgets (truncated normal):
+# start_budgets = rtruncnorm(gmse_paras$stakeholders, 
+#                            a = 0.8*gmse_paras$user_budget, 
+#                            b = 1.2*gmse_paras$user_budget, 
+#                            mean = gmse_paras$user_budget, 
+#                            sd = gmse_paras$user_budget/10)
+# sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = start_budgets
+# 
+# # Set manager budget according to user budgets:
+# sim_old$AGENTS[1,17] = set_man_budget(u_buds = start_budgets, type = "prop", p = gmse_paras$man_bud_prop)
+
 # Initialise output for simulation run:
 yr_res = init_sim_out(sim_old)
 
@@ -38,14 +50,14 @@ for(i in 1:n_years) {
   #sim_old = move_res(sim_old, gmse_paras)
   
   ### Set next time step's user budgets
-  # new_b = set_budgets(cur = sim_old, type = "2020", yield_type = "linear", yv = 1)
-  # new_b[new_b>10000] = 10000
-  # new_b[new_b<gmse_paras$minimum_cost] = gmse_paras$minimum_cost
-  # 
-  # sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = new_b
+  new_b = set_budgets(cur = sim_old, type = "2020", yield_type = gmse_paras$yield_type, yv = gmse_paras$yield_value, scale = FALSE)
+  new_b[new_b>10000] = 10000
+  new_b[new_b<gmse_paras$minimum_cost] = gmse_paras$minimum_cost
+   
+  sim_old$AGENTS[2:nrow(sim_old$AGENTS),17] = new_b
   
   ### Set next time step's manager's budget, according to new user budgets
-  # sim_old$AGENTS[1,17] = set_man_budget(u_buds = new_b, type = "mean")
+  sim_old$AGENTS[1,17] = set_man_budget(u_buds = new_b, type = "prop", p = gmse_paras$man_bud_prop)
 
   ### Try to run next time step
   sim_new = try({gmse_apply(get_res = "Full", old_list = sim_old)}, silent = T)
@@ -78,6 +90,6 @@ tstamp = sub("\\.","",tstamp)
 saveRDS(yr_res, file = paste0(out_path,"/",tstamp,".Rds"))
 
 # To run 30 of this script in parallel:
-#  seq 100 | xargs -I{} -P 6 /usr/bin/Rscript scenario1.R
+#  seq 100 | xargs -I{} -P 6 /usr/bin/Rscript scenario2.R
 
 
