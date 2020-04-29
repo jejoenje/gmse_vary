@@ -34,12 +34,21 @@ I compare five scenarios, summarised in the Table below.
 | Scenario 4     | $\sigma_{land}$ = 0.3| ~ yield        | ~ User budget     |
 | Scenario 5     | $\sigma_{land}$ = 0.9| ~ yield        | ~ User budget     |
 
-The first scenario replicates the "default" GMSE parameterisation,
-where land is distributed evenly among stakeholders, and both user and manager budget are constant and equal. In the
-second scenario, land distribution remains equal, but the user budget in each time step is a function of yield, and
-manager budget in turn is a function of users' budgets (equal to a the sum of a fixed proportion of user budgets). In
-scenarios 3-5, user and manager budgets are calculated in the same way as scenario 2, but in addition land ownership
-varies between users, with variability increased from scenario 3-5 (details below).
+The first scenario replicates the "default" GMSE parameterisation, where land is distributed evenly among stakeholders,
+and both user and manager budget are constant and equal. In the second scenario, land distribution remains equal, but
+the user budget in each time step is a function of yield (set through custom functions
+[`set_budget()`](https://github.com/jejoenje/gmse_vary/blob/9c545cbd3b78f54e999e31b13f0069d9e3599e06/gmse_apply_helpers.R#L507)
+and
+[`yield_to_return()`](https://github.com/jejoenje/gmse_vary/blob/9c545cbd3b78f54e999e31b13f0069d9e3599e06/gmse_apply_helpers.R#L214)
+called in each time step, and controlled by extra parameters `yield_type` and `yield_value`), and manager budget in turn
+is a function of users' budgets (equal to a the sum of a fixed proportion of user budgets, set by custom function
+[`set_man_budget()`](https://github.com/jejoenje/gmse_vary/blob/9c545cbd3b78f54e999e31b13f0069d9e3599e06/gmse_apply_helpers.R#L580)
+and controlled by parameter `man_bud_prop`). In scenarios 3-5, user and manager budgets are calculated in the same way
+as scenario 2, but in addition land ownership varies between users, with variability increased from scenario 3-5.
+Variable land distribution is achieved by custom function
+[`distribute_land_simplified()`](https://github.com/jejoenje/gmse_vary/blob/9c545cbd3b78f54e999e31b13f0069d9e3599e06/gmse_apply_helpers.R#L371)
+which is called once per simulation set (i.e. land distribution is constant throughout `n_years`); variability in land
+ownership is controlled by parameter `land_var`.
 
 In the output below, I have repeated the five scenarios three times. The first and second set are run using the current
 GMSE version (0.4.0.13). The first set uses the default GMSE resource movement, i.e. randomly across the landscape. In
@@ -51,8 +60,7 @@ range). The third and final set of simulations uses the updated GMSE 0.5.0.0, us
 As plotted below, each scenario consists of 20 replicates of 100 time steps, with 12 stakeholders, a starting resource
 population of 1000 individuals and a manager target population size of 1000 resource individuals. The simulated landscape consists of 100\times 100 cells, and users can kill resources, scare resources, or tend their crops.
 
-Other parameters used
-across all scenarios are listed in [Table 2](#common-parameters-across-simulations).
+Other parameters used across all scenarios are listed in [Table 2](#common-parameters-across-simulations).
 
 ## (1) GMSE 0.4.0.13 & default resource movement {#section1}
 
@@ -64,7 +72,8 @@ knitr::include_graphics("sims/scenarioA.jpeg")
 
 ## (2) GMSE 0.4.0.13 & **resource movement according to yield** {#section2}
 
-This set of scenarios replicates the ones above but "turns off" default resource movement, instead using a custom function which moves each resource unit to a cell with maximum yield within its movement range, in each time step. As such, resource individuals will move to where yield (and thus budget in Scenarios 2-5) is highest. All other parameters are for the set of scenarios above.
+This set of scenarios replicates the ones above but "turns off" default resource movement, instead using a custom function which moves each resource unit to a cell with maximum yield within its movement range, in each time step. As such, resource individuals will move to where yield (and thus budget in Scenarios 2-5) is highest. This is achieved using custom function [`res_move_adjusted()`](https://github.com/jejoenje/gmse_vary/blob/9c545cbd3b78f54e999e31b13f0069d9e3599e06/gmse_apply_helpers.R#L1432) which is called in between `gmse_apply()` calls, which in turn calls [`land_point_buffer()`](https://github.com/jejoenje/gmse_vary/blob/9c545cbd3b78f54e999e31b13f0069d9e3599e06/gmse_apply_helpers.R#L1395). Note that all other resource movement (as used in GMSE by default) is turned off when this function is used, i.e. `res_move_type` = 1. 
+All other parameters are for the set of scenarios above.
 
 ```{r fig.cap="Figure 2", out.width = '80%'}
 knitr::include_graphics("sims/scenario0.jpeg")
