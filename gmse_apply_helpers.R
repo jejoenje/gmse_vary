@@ -1703,5 +1703,40 @@ gmse_vary_plot = function(dat, type = "pop", col = "black", lwd = 1, ylim = NULL
     }
   }
   
-
+  if(type == "actions_sum") {
+    s = dat[[1]]$par$stakeholders
+    n_sims = length(dat)
+    n_years = dat[[1]]$par$n_years+1
+    
+    # Work out means of each action across stakeholders, for each sim
+    # (Result should be a matrix of years*sims)
+    # KILLS
+    kills_sums = lapply(dat, function(x) apply(x$kills,1,sum))
+    scares_sums = lapply(dat, function(x) apply(x$scares,1,sum))
+    crops_sums = lapply(dat, function(x) apply(x$crops,1,sum))
+    
+    kills = matrix(NA, nrow = n_years, ncol = n_sims)
+    scares = matrix(NA, nrow = n_years, ncol = n_sims)
+    crops = matrix(NA, nrow = n_years, ncol = n_sims)
+    for(i in 1:n_sims) {
+      kills[,i] = as.vector(kills_sums[[i]])
+      scares[,i] = as.vector(scares_sums[[i]])
+      crops[,i] = as.vector(crops_sums[[i]])
+    }
+    
+    #y_lo = bufRange(out, "lo")
+    y_lo = 0
+    y_hi = bufRange(max(c(max(kills, na.rm=T),max(scares,na.rm=T),max(crops,na.rm=T))), "hi")
+    
+    z = sample(1:n_sims,1)
+    sample_plot = rbind(kills[,z],scares[,z],crops[,z])
+    barplot(sample_plot, 
+            col = c("darkred","lightblue","darkgreen"),
+            border = c("darkred","lightblue","darkgreen"),
+            space = 0,
+            xlab = "Time",
+            ylab = "Total actions across stakeholders"
+            )
+  }
+  
 }
