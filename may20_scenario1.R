@@ -7,10 +7,10 @@ source("parasMay2020.R")
 
 ### Setup output folder:
 # Output scenario name:
-scenario_name = "may20_scenario1_05"
+scenario_name = "may20_scenario1_04"
 
 ### Scenario-specific parameters
-ov = 0
+ov = 0 # == ownership_var
 
 # Setup/check output folder:
 out_folder = paste0("sims/",scenario_name,"/")
@@ -63,27 +63,9 @@ for(i in 2:n_years) {
   ### Check output of next time step; if there are errors (extinctions or no obs), skip to the next sim.
   ### (The following function call should call break() if class(sim_new) == "try-error").
   check_ext = check_gmse_extinction(sim_new, silent = T)
-  
-  ### So this shoudld only happen if "check_gmse_extinction(sim_new)" has not called break().
-  ### So if NOT extinct, append output and reset time step:
+  ### If NOT extinct, append output and reset time step:
   if(check_ext == "ok") {
-    
     sims[[i]] = sim_new
-
-    ### Re-set user budgets according to current yield
-    # new_b = set_budgets(cur = sims[[i]], 
-    #                     yield_type = yield_type, 
-    #                     yv = yield_value)
-    # new_b[new_b>10000] = 10000
-    # new_b[new_b<minimum_cost] = minimum_cost
-    # sims[[i]]$AGENTS[2:(stakeholders+1),17] = new_b
-    # 
-    # ### Set next time step's manager's budget, according to new user budgets
-    # sims[[i]]$AGENTS[1,17] = set_man_budget(u_buds = new_b, type = "prop", p = man_bud_prop)
-    
-    # Output:
-    # print_sim_status(i, sims[[i]])
-    
     rm(sim_new)
   } else {
     break()

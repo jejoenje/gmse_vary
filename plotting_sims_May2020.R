@@ -25,13 +25,13 @@ if(length(unique(manage_targets))>1) {
   manage_target = manage_targets[1]
 }
 
-
-# ID sim with highest end pop:
+# Pick a simulation to plot action sums for - here the longest times series:
 plot_for_act = which.max(unlist(lapply(out, length)))
+
 layout(matrix(c(1,2,3,4,4,4), nrow = 2, byrow=T))
 plot_gmse_apply(out, displaytype = "pop", pop_col = plot_for_act, manage_target = manage_target, n_yrs = 50)
 plot_gmse_apply(out, displaytype = "mean_yields", n_yrs = 50)
 plot_gmse_apply(out, displaytype = "mean_budgets", n_yrs = 50)
 plot_gmse_apply(out, displaytype = "actions", act_type = "prop", act_sim = plot_for_act, n_yrs = 50)
 
-#plot_resources_landscape(folder = folder, sim_i = max_i, time_i = 0, filename = "anim.gif")
+plot_resources_landscape(folder = folder, sim_i = plot_for_act, time_i = 0, filename = "anim.gif")

@@ -1,4 +1,4 @@
-rm(list=ls())
+#rm(list=ls())
 
 ### Set and create output folder for scenario run:
 scenario_name = "scenario2"
