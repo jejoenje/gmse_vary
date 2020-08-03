@@ -39,6 +39,9 @@ sims/scenarioC4b/
 sims/scenarioC4c/
 sims/may20_scenario1_05/
 sims/may20_scenario1_rev/
-sims/gmse_vary_06
 .~lock*
-sims/*.tar.gz
+sims/gmse_vary_06/*.tar.gz
+sims/gmse_vary_06/*.Rds
+sims/gmse_vary_06/superseded/
+sims/gmse_vary_06/test/
+sims/gmse_vary_06/backups/
