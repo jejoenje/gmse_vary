@@ -41,3 +41,4 @@ sims/may20_scenario1_05/
 sims/may20_scenario1_rev/
 sims/gmse_vary_06
 .~lock*
+sims/*.tar.gz

@@ -1,4 +1,4 @@
-rm(list=ls())
+rm(list=ls()[!(ls() %in% "z")])
 
 library(GMSE)
 
@@ -12,14 +12,14 @@ outname = gsub("\\.", "", outname)
 ###### Pick parameters
 
 ### Load parameter grid
-load("sims/gmse_vary_06/para_grid.Rdata")
+load("sims/gmse_vary_06/batch4_para_grid.Rdata")
 ### Find which parameter combination is "next"; i.e. which one is the first yet to be done and
 ###  is not yet due to be completed by anything currently running:
-cpar = min(which((par1$done<par1$J) & ((par1$J-par1$done) > par1$act)))
+cpar = min( which((par1$done<par1$J) & ((par1$J-par1$done) > par1$act)) )
 ### Set this first one to "active":
 par1$act[cpar] = par1$act[cpar]+1
 ### Save parameter grid:
-save(par1, file = "sims/gmse_vary_06/para_grid.Rdata")
+save(par1, file = "sims/gmse_vary_06/batch4_para_grid.Rdata")
 
 ###### Run simulations
 
@@ -48,3 +48,12 @@ sims[[length(sims)+1]] = par1[cpar,]
 
 ### Save output list:
 saveRDS(sims, file = paste0("sims/gmse_vary_06/",outname,".Rds"))
+
+### Add one to "done" and remove one from "active":
+### Load parameter grid
+load("sims/gmse_vary_06/batch4_para_grid.Rdata")
+par1$act[cpar] = par1$act[cpar]-1
+par1$done[cpar] = par1$done[cpar]+1
+save(par1, file = "sims/gmse_vary_06/batch4_para_grid.Rdata")
+
+

@@ -89,14 +89,17 @@ set_man_budget = function(u_buds, type = "max", p = NULL, fixed_budget = 1000) {
 ###
 ### extractUser() does the same as get_user_data but on a single gmse_apply() list output (single sim/year)
 ###### DIRECT COPY FROM gmse_apply_helpers.R ON 7/05/2020
+###### REVISED TO WORK WITH SINGLE gmse() CALL OUTPUT
 extractUser = function(dat, type) {
   
+  #### NOT CURRENTLY WORKING
+  
   # Get number of stakeholders
-  n_stakeholders = dat$stakeholders
+  n_stakeholders = nrow(dat[["agents"]][[1]])-1
   # Get all AGENTS data for users only (exlude manager)
-  agents = dat[["AGENTS"]][2:nrow(dat[["AGENTS"]]),]
+  agents = dat[["agents"]][2:nrow(dat[["agents"]]),]
   # Get all ACTION data for users only (exclude manager)
-  actions = dat[["ACTION"]][,,2:(n_stakeholders+1)]
+  actions = dat[["action"]][,,2:(n_stakeholders+1)]
   
   # Get costs set per user.
   # Not used currently:
